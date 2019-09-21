@@ -1,0 +1,10 @@
+<Project>
+  <PropertyGroup>
+    <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AngleSharpVersion>0.13.0</AngleSharpVersion>
+    <FxCopAnalyzersVersion>2.9.4</FxCopAnalyzersVersion>
+  </PropertyGroup>
+</Project>
