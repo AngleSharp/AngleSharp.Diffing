@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using AngleSharp.Dom;
 
 namespace Egil.AngleSharp.Diffing
 {
+
     public enum CompareResult
     {
         Same,
@@ -16,7 +16,8 @@ namespace Egil.AngleSharp.Diffing
     {
         bool NodeFilter(INode node);
         bool AttributeFilter(IAttr attribute, IElement owningElement);
-        CompareResult Compare(in Comparison comparison);
+        CompareResult CompareNode(in Comparison comparison);
+        CompareResult CompareAttribute(string attributeName, in Comparison comparisonContext);
     }
 
     public class HtmlDifferenceEngine
@@ -28,48 +29,58 @@ namespace Egil.AngleSharp.Diffing
             _strategy = strategy;
         }
 
-        public IReadOnlyCollection<Diff> Compare(INodeList controlNodes, INodeList testNodes) => DoCompare(controlNodes, testNodes);
+        public IReadOnlyList<Diff> Compare(INodeList controlNodes, INodeList testNodes) => DoCompare(controlNodes, testNodes);
 
-        private IReadOnlyCollection<Diff> DoCompare(INodeList controlNodes, INodeList testNodes)
+        private IReadOnlyList<Diff> DoCompare(INodeList rootControlNodes, INodeList rootTestNodes)
         {
-            if (controlNodes is null) throw new ArgumentNullException(nameof(controlNodes));
-            if (testNodes is null) throw new ArgumentNullException(nameof(testNodes));
+            if (rootControlNodes is null) throw new ArgumentNullException(nameof(rootControlNodes));
+            if (rootTestNodes is null) throw new ArgumentNullException(nameof(rootTestNodes));
 
             var result = new List<Diff>();
 
-            var comparisons = GetComparisons(controlNodes, testNodes);
+            var compareQueue = new Queue<(INodeList ControlNodes, INodeList TestNodes)>();
+            compareQueue.Enqueue((rootControlNodes, rootTestNodes));
 
-            foreach (var comparison in comparisons)
+            while (compareQueue.Count > 0)
             {
-                result.AddRange(GetDifferences(in comparison));
-                //// Compare child nodes
-                //if (comparison.Control.HasChildNodes)
-                //    foreach (var diff in Compare(comparison.Control.ChildNodes, comparison.Test.ChildNodes))
-                //        yield return diff;
-            }
+                var (controlNodes, testNodes) = compareQueue.Dequeue();
+                var comparisons = GetComparisons(controlNodes, testNodes);
 
-            var matchedTestNodes = comparisons.Where(x => x.Test.HasValue).Select(x => x.Test.Value);
-            var unmatchedTestNodes = testNodes.Select((n, i) => new ComparisonSource(n, i)).Except(matchedTestNodes);
-
-            // detect unmatched test nodes
-            foreach (var node in unmatchedTestNodes)
-            {
-                result.Add(node.Node.NodeType switch
+                foreach (var comparison in comparisons)
                 {
-                    NodeType.Comment => new Diff(DiffType.UnexpectedComment, test: node),
-                    NodeType.Element => new Diff(DiffType.UnexpectedElement, test: node),
-                    NodeType.Text => new Diff(DiffType.UnexpectedTextNode, test: node),
-                    _ => throw new InvalidOperationException($"Unexpected nodetype, {node.Node.NodeType}, in test nodes list.")
-                });
+                    result.AddRange(GetDifferences(in comparison));
+                }
+
+                var matchedTestNodes = comparisons.Where(x => x.Test.HasValue).Select(x => x.Test.Value);
+                var unmatchedTestNodes = testNodes.Select((n, i) => new ComparisonSource(n, i)).Except(matchedTestNodes);
+
+                // detect unmatched test nodes
+                foreach (var node in unmatchedTestNodes)
+                {
+                    result.Add(node.Node.NodeType switch
+                    {
+                        NodeType.Comment => new Diff(DiffType.UnexpectedComment, test: node),
+                        NodeType.Element => new Diff(DiffType.UnexpectedElement, test: node),
+                        NodeType.Text => new Diff(DiffType.UnexpectedTextNode, test: node),
+                        _ => throw new InvalidOperationException($"Unexpected nodetype, {node.Node.NodeType}, in test nodes list.")
+                    });
+                }
+
+                foreach (var c in comparisons)
+                {
+                    if (c.Status == MatchStatus.TestNodeNotFound) continue;
+                    if (c.Control.Node.HasChildNodes || (c.Test?.Node.HasChildNodes ?? false))
+                        compareQueue.Enqueue((c.Control.Node.ChildNodes, c.Test?.Node.ChildNodes ?? EmptyNodeList.Instance));
+                }
             }
 
             return result;
         }
 
-        private ICollection<Comparison> GetComparisons(INodeList controlNodes, INodeList testNodes)
+        private List<Comparison> GetComparisons(INodeList controlNodes, INodeList testNodes)
         {
             var evenTreeBranch = controlNodes.Length == testNodes.Length;
-            var result = new Comparison[controlNodes.Length];
+            var result = new List<Comparison>(controlNodes.Length);
             var lastFoundIndex = -1;
 
             for (int index = 0; index < controlNodes.Length; index++)
@@ -83,13 +94,13 @@ namespace Egil.AngleSharp.Diffing
                     ? EqualTreeSizeNodeMatcher(in controlSource)
                     : ForwardSearchingNodeMatcher(in controlSource);
 
-                result[index] = new Comparison(controlSource, testSource);
+                result.Add(new Comparison(controlSource, testSource));
             }
 
             return result;
 
             //bool ShouldSkipNode(INode node) => !_strategy.NodeFilter(node);
-            
+
             ComparisonSource? EqualTreeSizeNodeMatcher(in ComparisonSource comparisonSource)
             {
                 // Consider skipping strategy effect
@@ -135,99 +146,39 @@ namespace Egil.AngleSharp.Diffing
                     _ => throw new InvalidOperationException($"Unexpected nodetype, {comparison.Control.Node.NodeType}, in test nodes list.")
                 });
             }
-            else if (comparison.Status == MatchStatus.TestNodeFound && _strategy.Compare(in comparison) == CompareResult.Different)
+            else
             {
-                result.Add(comparison.Control.Node.NodeType switch
+                if (_strategy.CompareNode(in comparison) == CompareResult.Different)
                 {
-                    NodeType.Comment => new Diff(DiffType.DifferentComment, comparison.Control, comparison.Test),
-                    NodeType.Element => new Diff(DiffType.DifferentElementTagName, comparison.Control, comparison.Test),
-                    NodeType.Text => new Diff(DiffType.DifferentTextNode, comparison.Control, comparison.Test),
-                    _ => throw new InvalidOperationException($"Unexpected nodetype, {comparison.Control.Node.NodeType}, in test nodes list.")
-                });
+                    result.Add(comparison.Control.Node.NodeType switch
+                    {
+                        NodeType.Comment => new Diff(DiffType.DifferentComment, comparison.Control, comparison.Test),
+                        NodeType.Element => new Diff(DiffType.DifferentElementTagName, comparison.Control, comparison.Test),
+                        NodeType.Text => new Diff(DiffType.DifferentTextNode, comparison.Control, comparison.Test),
+                        _ => throw new InvalidOperationException($"Unexpected nodetype, {comparison.Control.Node.NodeType}, in test nodes list.")
+                    });
+                }
+
+                var controlElm = comparison.Control.Node as IElement;
+                var testElm = comparison.Test?.Node as IElement;
+
+                if (controlElm is { } && testElm is { })
+                {
+                    foreach (var controlAttr in controlElm.Attributes)
+                    {
+                        if (testElm.HasAttribute(controlAttr.Name))
+                        {
+                            var attrCompareRes = _strategy.CompareAttribute(controlAttr.Name, in comparison);
+                            if(attrCompareRes== CompareResult.Different)
+                            {
+                                result.Add(new Diff(DiffType.DifferentAttribute, comparison.Control, comparison.Test));
+                            }
+                        }
+                    }
+                }
             }
 
             return result;
         }
-    }
-
-    public enum DiffType
-    {
-        DifferentComment,
-        DifferentElementTagName,
-        DifferentTextNode,
-        MissingComment,
-        MissingElement,
-        MissingTextNode,
-        UnexpectedComment,
-        UnexpectedElement,
-        UnexpectedTextNode
-    }
-
-    [DebuggerDisplay("Diff={Type} Control={Control?.Node.NodeName}[{Control?.Index}] Test={Test?.Node.NodeName}[{Test?.Index}]")]
-    public readonly struct Diff : IEquatable<Diff>
-    {
-        public DiffType Type { get; }
-
-        public ComparisonSource? Control { get; }
-
-        public ComparisonSource? Test { get; }
-
-        public Diff(DiffType type, in ComparisonSource? control = null, in ComparisonSource? test = null)
-        {
-            Type = type;
-            Control = control;
-            Test = test;
-        }
-
-        #region Equals and Hashcode
-        public bool Equals(Diff other) => Type == other.Type;
-        public override int GetHashCode() => (Type).GetHashCode();
-        public override bool Equals(object obj) => obj is Diff other && Equals(other);
-        public static bool operator ==(Diff left, Diff right) => left.Equals(right);
-        public static bool operator !=(Diff left, Diff right) => !(left == right);
-        #endregion
-    }
-
-    public readonly struct Comparison : IEquatable<Comparison>
-    {
-        public ComparisonSource Control { get; }
-
-        public ComparisonSource? Test { get; }
-
-        public MatchStatus Status => Test is null ? MatchStatus.TestNodeNotFound : MatchStatus.TestNodeFound;
-
-        public Comparison(in ComparisonSource control, in ComparisonSource? test)
-        {
-            Control = control;
-            Test = test;
-        }
-
-        #region Equals and HashCode
-        public bool Equals(Comparison other) => Control == other.Control && Test == other.Test;
-        public override bool Equals(object obj) => obj is Comparison other && Equals(other);
-        public override int GetHashCode() => (Control, Test).GetHashCode();
-        public static bool operator ==(Comparison left, Comparison right) => left.Equals(right);
-        public static bool operator !=(Comparison left, Comparison right) => !(left == right);
-        #endregion
-    }
-
-    public readonly struct ComparisonSource : IEquatable<ComparisonSource>
-    {
-        public INode Node { get; }
-        public int Index { get; }
-
-        public ComparisonSource(INode node, int index)
-        {
-            Node = node;
-            Index = index;
-        }
-
-        #region Equals and HashCode
-        public bool Equals(ComparisonSource other) => Node == other.Node && Index == other.Index;
-        public override int GetHashCode() => (Node, Index).GetHashCode();
-        public override bool Equals(object obj) => obj is ComparisonSource other && Equals(other);
-        public static bool operator ==(ComparisonSource left, ComparisonSource right) => left.Equals(right);
-        public static bool operator !=(ComparisonSource left, ComparisonSource right) => !(left == right);
-        #endregion
     }
 }

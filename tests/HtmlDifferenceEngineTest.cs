@@ -13,12 +13,12 @@ namespace Egil.AngleSharp.Diffing
         [Theory(DisplayName = "When comparer gives result 'Same' no diff is returned")]
         [InlineData("", "")]
         [InlineData("<p/>", "<p/>")]
-        [InlineData("<p></p><span><span/>", "<p></p><span><span/>")]
+        [InlineData("<p/><span/>", "<p/><span/>")]
         [InlineData("textnode", "textnode")]
         [InlineData("<!--comment-->", "<!--comment-->")]
         public void NoDiffsWhenTwoEqualNodeListsAreCompared(string control, string test)
         {
-            var strategy = new MockHtmlCompareStrategy(comparer: _ => CompareResult.Same);
+            var strategy = new MockHtmlCompareStrategy(nodeComparer: _ => CompareResult.Same);
             var sut = new HtmlDifferenceEngine(strategy);
 
             var res = sut.Compare(ToNodeList(control), ToNodeList(test));
@@ -28,8 +28,8 @@ namespace Egil.AngleSharp.Diffing
 
         [Theory(DisplayName = "Returns diff with type 'Missing*' when node matching fails")]
         [InlineData("<p/>", "", DiffType.MissingElement)]
-        [InlineData("<p></p><span><span/>", "<p/>", DiffType.MissingElement)]
-        [InlineData("<p></p><span><span/>", "<span/>", DiffType.MissingElement)]
+        [InlineData("<p/><span/>", "<p/>", DiffType.MissingElement)]
+        [InlineData("<p/><span/>", "<span/>", DiffType.MissingElement)]
         [InlineData("textnode", "", DiffType.MissingTextNode)]
         [InlineData("<!--comment-->", "", DiffType.MissingComment)]
         public void ReturnsMissingDiffWhenNodeMatcherFails(string control, string test, DiffType expectedDiffType)
@@ -44,7 +44,7 @@ namespace Egil.AngleSharp.Diffing
 
         [Theory(DisplayName = "Returns diff with type 'Unexpected*' when there are unmatched test-nodes")]
         [InlineData("", "<p/>", DiffType.UnexpectedElement)]
-        [InlineData("<p/>", "<p><p/><span><span/>", DiffType.UnexpectedElement)]
+        [InlineData("<p/>", "<p/><span/>", DiffType.UnexpectedElement)]
         [InlineData("", "textnode", DiffType.UnexpectedTextNode)]
         [InlineData("", "<!--comment-->", DiffType.UnexpectedComment)]
         [InlineData("<p/>", "textnode<p/>", DiffType.UnexpectedTextNode)]
@@ -66,9 +66,8 @@ namespace Egil.AngleSharp.Diffing
 
             var res = sut.Compare(ToNodeList("<p>1</p><p>2</p>"), ToNodeList("<div></div><span></span><p>1</p><p>2</p><br />"));
 
-            res.ShouldAllBe(x=>x.Type == DiffType.UnexpectedElement && x.Test.Value.Node.NodeName != "P");
+            res.ShouldAllBe(x => x.Type == DiffType.UnexpectedElement && x.Test.Value.Node.NodeName != "P");
         }
-
 
         [Theory(DisplayName = "Returns diff with type 'Different*' when comparer returns 'Different'")]
         [InlineData("<p/>", "<span/>", DiffType.DifferentElementTagName)]
@@ -76,7 +75,7 @@ namespace Egil.AngleSharp.Diffing
         [InlineData("<!--bar-->", "<!--foo-->", DiffType.DifferentComment)]
         public void ReturnsDifferentWhenComparerReturnsDifferent(string control, string test, DiffType expectedDiffType)
         {
-            var strategy = new MockHtmlCompareStrategy(comparer: _ => CompareResult.Different);
+            var strategy = new MockHtmlCompareStrategy(nodeComparer: _ => CompareResult.Different);
             var sut = new HtmlDifferenceEngine(strategy);
 
             var res = sut.Compare(ToNodeList(control), ToNodeList(test));
@@ -84,9 +83,67 @@ namespace Egil.AngleSharp.Diffing
             res.ShouldHaveSingleItem().Type.ShouldBe(expectedDiffType);
         }
 
-        // child nodes 
-        // when a parent node is the same, compare child nodes
-        // when a parent node is different, skip comparing child nodes
-        // attributes
+        [Fact(DisplayName = "Child nodes of a matched control- and test-node are compared")]
+        public void ChildNodesOfMatchedNodesAreCompared()
+        {
+            var sut = new HtmlDifferenceEngine(new MockHtmlCompareStrategy(nodeComparer: _ => CompareResult.Different));
+
+            var res = sut.Compare(
+                ToNodeList(@"<p>text<em>foo<!--foo--></em></p>"),
+                ToNodeList(@"<div>xest<strong>bar<!--bar--></strong></div>")
+                );
+
+            res.Count.ShouldBe(5);
+            res[0].ShouldSatisfyAllConditions(
+                () => res[0].Type.ShouldBe(DiffType.DifferentElementTagName),
+                () => res[0].Control?.Node.NodeName.ShouldBe("P"),
+                () => res[0].Test?.Node.NodeName.ShouldBe("DIV")
+            );
+            res[1].ShouldSatisfyAllConditions(
+                () => res[1].Type.ShouldBe(DiffType.DifferentTextNode),
+                () => res[1].Control?.Node.NodeValue.ShouldBe("text"),
+                () => res[1].Test?.Node.NodeValue.ShouldBe("xest")
+            );
+            res[2].ShouldSatisfyAllConditions(
+                () => res[2].Type.ShouldBe(DiffType.DifferentElementTagName),
+                () => res[2].Control?.Node.NodeName.ShouldBe("EM"),
+                () => res[2].Test?.Node.NodeName.ShouldBe("STRONG")
+            );
+            res[3].ShouldSatisfyAllConditions(
+                () => res[3].Type.ShouldBe(DiffType.DifferentTextNode),
+                () => res[3].Control?.Node.NodeValue.ShouldBe("foo"),
+                () => res[3].Test?.Node.NodeValue.ShouldBe("bar")
+            );
+
+            res[4].Type.ShouldBe(DiffType.DifferentComment);
+        }
+
+        [Theory(DisplayName = "Equal attributes (order independent) on control and test nodes yields no diffs")]
+        [InlineData(@"<p id=""x"" />", @"<p id=""x"" />")]
+        [InlineData(@"<p id=""x"" class=""sm-6""/>", @"<p id=""x"" class=""sm-6""/>")]
+        [InlineData(@"<p class=""sm-6"" id=""x"" />", @"<p id=""x"" class=""sm-6""/>")]
+        public void NoDiffsOnEqualAttr(string control, string test)
+        {
+            var sut = new HtmlDifferenceEngine(new MockHtmlCompareStrategy(
+                nodeComparer: _ => CompareResult.Same,
+                attrComparer: (a, c) => CompareResult.Same));
+
+            var result = sut.Compare(ToNodeList(control), ToNodeList(test));
+
+            result.ShouldBeEmpty();
+        }
+
+        [Theory(DisplayName = "Unequal attributes on control and test nodes yields one diff per unequal attribute pair")]
+        [InlineData(@"<p id=""foo"" />", @"<p id=""bar"" />", 1)]
+        [InlineData(@"<p id=""foo"" class=""sm-6""/>", @"<p id=""bar"" class=""lg-6""/>", 2)]
+        [InlineData(@"<p class=""sm-6"" id=""foo"" />", @"<p id=""bar"" class=""lg-6""/>", 2)]
+        public void DiffsOnUnequalAttrs(string control, string test, int expectedCount)
+        {
+            var sut = new HtmlDifferenceEngine(new MockHtmlCompareStrategy(attrComparer: (a, c) => CompareResult.Different));
+
+            var result = sut.Compare(ToNodeList(control), ToNodeList(test));
+
+            result.Count.ShouldBe(expectedCount);
+        }
     }
 }

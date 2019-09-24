@@ -9,21 +9,24 @@ namespace Egil.AngleSharp.Diffing
         {
             private readonly Func<INode, bool> _nodeFilter;
             private readonly Func<IAttr, IElement, bool> _attrFilter;
-            private readonly Func<Comparison, CompareResult> _comparer;
+            private readonly Func<Comparison, CompareResult> _nodeComparer;
+            private readonly Func<string, Comparison, CompareResult> _attrComparer;
 
-            public int CompareCalledTimes { get; set; }
-            public int FindMatchCalledTimes { get; set; }
+            public int CompareNodeCalledTimes { get; set; }
+            public int CompareAttributeCalledTimes { get; set; }
             public int AttributeFilterCalledTimes { get; set; }
             public int NodeFilterCalledTimes { get; set; }
 
             public MockHtmlCompareStrategy(
                 Func<INode, bool>? nodeFilter = null,
                 Func<IAttr, IElement, bool>? attrFilter = null,
-                Func<Comparison, CompareResult>? comparer = null)
+                Func<Comparison, CompareResult>? nodeComparer = null,
+                Func<string, Comparison, CompareResult>? attrComparer = null)
             {
                 _nodeFilter = nodeFilter ?? (_ => true);
                 _attrFilter = attrFilter ?? ((a, e) => true);
-                _comparer = comparer ?? (_ => CompareResult.Same);
+                _nodeComparer = nodeComparer ?? (_ => CompareResult.Same);
+                _attrComparer = attrComparer ?? ((a,c) => CompareResult.Same);
             }
 
             public bool NodeFilter(INode node)
@@ -38,10 +41,16 @@ namespace Egil.AngleSharp.Diffing
                 return _attrFilter(attribute, owningElement);
             }
 
-            public CompareResult Compare(in Comparison comparison)
+            public CompareResult CompareNode(in Comparison comparison)
             {
-                CompareCalledTimes++;
-                return _comparer(comparison);
+                CompareNodeCalledTimes++;
+                return _nodeComparer(comparison);
+            }
+
+            public CompareResult CompareAttribute(string attributeName, in Comparison comparisonContext)
+            {
+                CompareAttributeCalledTimes++;
+                return _attrComparer(attributeName, comparisonContext);
             }
         }
     }
