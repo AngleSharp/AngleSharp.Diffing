@@ -1,95 +1,62 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using AngleSharp;
-using AngleSharp.Dom;
-using AngleSharp.Html.Parser;
-using Shouldly;
-using Xunit;
+//using System;
+//using System.Collections.Generic;
+//using System.Linq;
+//using AngleSharp;
+//using AngleSharp.Dom;
+//using AngleSharp.Html.Parser;
+//using Shouldly;
+//using Xunit;
 
-namespace Egil.AngleSharp.Diffing
-{
-    public class DifferenceEngineTest
-    {
-        private readonly IBrowsingContext _context = BrowsingContext.New();
-        private readonly IHtmlParser _htmlParser;
-        private readonly IDocument _document;
-        private readonly DifferenceEngine sut;
+//namespace Egil.AngleSharp.Diffing
+//{
+//    public class DifferenceEngineTest : DiffingTestBase
+//    {
+//        private DifferenceEngine CreateSutWithDefaults()
+//        {
+//            var result = new DifferenceEngine();
+//            result.NodeFilter = x => true; //Filters.None;
+//            result.NodeMatcher = (x, y) => new Comparison<INode>();
+//            result.AttributeFilter = Filters.None;
+//            result.AttributeMatcher = (x, y) => new Comparison<IAttr>();
+//            return result;
+//        }
 
-        private INode EmptyNode => CreateTextNode();
-        private INodeList EmptyNodeList => ToNodeList("");
+//        [Fact(DisplayName = "Engine uses specified NodeFilter and NodeMatcher")]
+//        public void EngineUsesSpecifiedNodeFilterAndNodeMatcher()
+//        {
+//            var filterCalledTimes = 0;
+//            var comparisons = new List<INode>();
+//            var nodelist = ToNodeList("<p>foo</p><div>bar</div>");
+//            var sut = CreateSutWithDefaults();
+//            sut.NodeFilter = (node) => { filterCalledTimes += 1; return filterCalledTimes == 1; };
+//            sut.NodeMatcher = (node, _) => { comparisons.Add(node); return new Comparison<INode>(); };
 
-        // control node != test node -> comparisons -> differences 
-        public DifferenceEngineTest()
-        {
-            sut = new DifferenceEngine();
-            _htmlParser = _context.GetService<IHtmlParser>();
-            _document = _context.OpenNewAsync().Result;
-        }
+//            sut.Compare(nodelist, nodelist).ToList();
 
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-        [Fact(DisplayName = "Calling compare with null params throws")]
-        public void CompareNullParamsTHrows()
-        {
-            Should.Throw<ArgumentNullException>(() => sut.Compare(null, null))
-                .ParamName.ShouldBe("controlNodes");
+//            filterCalledTimes.ShouldBe(2);
+//            comparisons.Count.ShouldBe(1);
+//        }
 
-            Should.Throw<ArgumentNullException>(() => sut.Compare(EmptyNodeList, null))
-                .ParamName.ShouldBe("testNodes");
-        }
+//        [Fact(DisplayName = "Engine uses specified AttributeFilter and AttributeMatcher")]
+//        public void EngineUsesAttrFilter()
+//        {
+//            var filterCalledTimes = 0;
+//            var comparisons = new List<IAttr>();
+//            var nodelist = ToNodeList(@"<p attr=""foo"" prop=""bar""></p>");
+//            var sut = CreateSutWithDefaults();
+//            sut.AttributeFilter = (attr) => { filterCalledTimes += 1; return filterCalledTimes == 1; };
+//            sut.AttributeMatcher = (attr, _) => { comparisons.Add(attr); return new Comparison<IAttr>(); };
 
-        [Fact(DisplayName = "Setting NodeFilter to null throws")]
-        public void NullNodeFilterThrows()
-        {
-            Should.Throw<ArgumentNullException>(() => sut.NodeFilter = null)
-                .ParamName.ShouldBe("NodeFilter");
-        }
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+//            sut.Compare(nodelist, nodelist).ToList();
 
-        [Fact(DisplayName = "Comparing two empty nodelists results in empty diff")]
-        public void EmptyNodeListGivesEmptyDiff()
-        {
-            var result = sut.Compare(EmptyNodeList, EmptyNodeList);
+//            filterCalledTimes.ShouldBe(2);
+//            comparisons.Count.ShouldBe(1);
+//        }
 
-            result.ShouldBeEmpty();
-        }
+//        [Fact(DisplayName = "Engine uses specified NodeComparer and AttributeComparer to produce Diffs")]
+//        public void UsesNodeComparerAndAttrComparer()
+//        {
 
-        // [Theory(DisplayName = "When text-nodes are compared, whitespace is trimmed before and after end of text nodes by default")]
-        // [InlineData('\u000C')]
-        // [InlineData('\u000A')]
-        // [InlineData('\u000D')]
-        // [InlineData('\u0009')]
-        // [InlineData('\u000B')]
-        // [InlineData('\u0085')]
-        // public void MyTheory(char whitespace)
-        // {
-        //     var result = sut.Compare(ToNodeList(control), ToNodeList(test));
-        // }
-
-        [Fact(DisplayName = "Compare uses its NodeFilter to select nodes for comparison")]
-        public void UsesNodeFilter()
-        {
-            var nodeFilterCalledTimes = 0;
-            sut.NodeFilter = (node) =>
-            {
-                nodeFilterCalledTimes++;
-                return true;
-            };
-            
-            sut.Compare(ToNodeList(@"control"), ToNodeList(@"test"));
-
-            nodeFilterCalledTimes.ShouldBe(2);
-        }
-
-        private INodeList ToNodeList(string htmlsnippet)
-        {
-            var fragment = _htmlParser.ParseFragment(htmlsnippet, _document.Body);
-            return fragment;
-        }
-
-        private IText CreateTextNode(string? text = null)
-        {
-            return _document.CreateTextNode(text ?? string.Empty);
-        }
-    }
-}
+//        }
+//    }
+//}

@@ -1,9 +1,8 @@
 Steps in finding differences:
 
 - NodeSelector/NodeFilter - filters away nodes that should not be part of the comparison
-  - Inline selector(ignorer)
+  - Inline filter(ignorer)
 - NodeMatcher - matches a control-node with a test-node for comparison
-  - Inline matcher(css selector)
 - Compare nodes by:
   - AttributeFilter - filters away attributes not compared
     - Inline filter(ignorer)
