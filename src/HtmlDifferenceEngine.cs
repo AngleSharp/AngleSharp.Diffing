@@ -2,183 +2,91 @@
 using System.Collections.Generic;
 using System.Linq;
 using AngleSharp.Dom;
+using Egil.AngleSharp.Diffing.Comparisons;
+using Egil.AngleSharp.Diffing.Diffs;
 
 namespace Egil.AngleSharp.Diffing
 {
-
     public enum CompareResult
     {
         Same,
         Different
     }
 
-    public interface IHtmlCompareStrategy
+    public class HtmlDiffEngine
     {
-        bool NodeFilter(INode node);
-        bool AttributeFilter(IAttr attribute, IElement owningElement);
-        CompareResult CompareNode(in Comparison comparison);
-        CompareResult CompareAttribute(string attributeName, in Comparison comparisonContext);
-    }
+        private readonly IFilterStrategy _filterStrategy;
+        private readonly IMatcherStrategy _matcherStrategy;
+        private readonly ICompareStrategy _compareStrategy;
 
-    public class HtmlDifferenceEngine
-    {
-        private readonly IHtmlCompareStrategy _strategy;
-
-        public HtmlDifferenceEngine(IHtmlCompareStrategy strategy)
+        public HtmlDiffEngine(IFilterStrategy filterStrategy, IMatcherStrategy matcherStrategy, ICompareStrategy compareStrategy)
         {
-            _strategy = strategy;
+            _filterStrategy = filterStrategy;
+            _matcherStrategy = matcherStrategy;
+            _compareStrategy = compareStrategy;
         }
 
-        public IReadOnlyList<Diff> Compare(INodeList controlNodes, INodeList testNodes) => DoCompare(controlNodes, testNodes);
-
-        private IReadOnlyList<Diff> DoCompare(INodeList rootControlNodes, INodeList rootTestNodes)
+        public IReadOnlyList<IDiff> Compare(INodeList controlNodes, INodeList testNodes)
         {
-            if (rootControlNodes is null) throw new ArgumentNullException(nameof(rootControlNodes));
-            if (rootTestNodes is null) throw new ArgumentNullException(nameof(rootTestNodes));
+            if (controlNodes is null) throw new ArgumentNullException(nameof(controlNodes));
+            if (testNodes is null) throw new ArgumentNullException(nameof(testNodes));
 
-            var result = new List<Diff>();
+            return DoCompare(controlNodes, testNodes);
+        }
 
-            var compareQueue = new Queue<(INodeList ControlNodes, INodeList TestNodes)>();
-            compareQueue.Enqueue((rootControlNodes, rootTestNodes));
+        private IReadOnlyList<IDiff> DoCompare(INodeList controlNodes, INodeList testNodes, string path = "")
+        {
+            var result = new List<IDiff>();
 
-            while (compareQueue.Count > 0)
-            {
-                var (controlNodes, testNodes) = compareQueue.Dequeue();
-                var comparisons = GetComparisons(controlNodes, testNodes);
+            var controls = CreateFilteredComparisonSourceList(controlNodes, path, ComparisonSourceType.Control);
+            var tests = CreateFilteredComparisonSourceList(testNodes, path, ComparisonSourceType.Test);
 
-                foreach (var comparison in comparisons)
-                {
-                    result.AddRange(GetDifferences(in comparison));
-                }
+            var comparisons = _matcherStrategy.MatchNodes(controls, tests);
 
-                var matchedTestNodes = comparisons.Where(x => x.Test.HasValue).Select(x => x.Test.Value);
-                var unmatchedTestNodes = testNodes.Select((n, i) => new ComparisonSource(n, i)).Except(matchedTestNodes);
+            var diffs = CompareNodes(comparisons);
 
-                // detect unmatched test nodes
-                foreach (var node in unmatchedTestNodes)
-                {
-                    result.Add(node.Node.NodeType switch
-                    {
-                        NodeType.Comment => new Diff(DiffType.UnexpectedComment, test: node),
-                        NodeType.Element => new Diff(DiffType.UnexpectedElement, test: node),
-                        NodeType.Text => new Diff(DiffType.UnexpectedTextNode, test: node),
-                        _ => throw new InvalidOperationException($"Unexpected nodetype, {node.Node.NodeType}, in test nodes list.")
-                    });
-                }
+            var unmatchedDiffs = UnmatchedNodesToDiff(controls, tests, comparisons);
 
-                foreach (var c in comparisons)
-                {
-                    if (c.Status == MatchStatus.TestNodeNotFound) continue;
-                    if (c.Control.Node.HasChildNodes || (c.Test?.Node.HasChildNodes ?? false))
-                        compareQueue.Enqueue((c.Control.Node.ChildNodes, c.Test?.Node.ChildNodes ?? EmptyNodeList.Instance));
-                }
-            }
+            result.AddRange(diffs);
+            result.AddRange(unmatchedDiffs);
 
             return result;
         }
 
-        private List<Comparison> GetComparisons(INodeList controlNodes, INodeList testNodes)
+        private List<IDiff> CompareNodes(IReadOnlyList<IComparison<INode>> comparisons)
         {
-            var evenTreeBranch = controlNodes.Length == testNodes.Length;
-            var result = new List<Comparison>(controlNodes.Length);
-            var lastFoundIndex = -1;
-
-            for (int index = 0; index < controlNodes.Length; index++)
+            var result = new List<IDiff>();
+            foreach (var comparison in comparisons)
             {
-                var controlSource = new ComparisonSource(controlNodes[index], index);
-
-                //if (ShouldSkipNode(controlNode)) continue;
-
-                // How does this work when nodes are skipped due to skipping strategy?
-                var testSource = evenTreeBranch
-                    ? EqualTreeSizeNodeMatcher(in controlSource)
-                    : ForwardSearchingNodeMatcher(in controlSource);
-
-                result.Add(new Comparison(controlSource, testSource));
-            }
-
-            return result;
-
-            //bool ShouldSkipNode(INode node) => !_strategy.NodeFilter(node);
-
-            ComparisonSource? EqualTreeSizeNodeMatcher(in ComparisonSource comparisonSource)
-            {
-                // Consider skipping strategy effect
-                return new ComparisonSource(testNodes[comparisonSource.Index], comparisonSource.Index);
-            }
-
-            ComparisonSource? ForwardSearchingNodeMatcher(in ComparisonSource comparisonSource)
-            {
-                // Consider skipping strategy effect
-                ComparisonSource? result = null;
-
-                // If there are more control nodes than test nodes, then search from the last found index.
-                var index = testNodes.Length > comparisonSource.Index
-                    ? Math.Max(comparisonSource.Index, lastFoundIndex + 1)
-                    : lastFoundIndex + 1;
-
-                while (result is null && testNodes.Length > index)
+                var compareRes = _compareStrategy.Compare(in comparison);
+                if (compareRes == CompareResult.Different)
                 {
-                    // Should this be a stronger comparison than just nodename?
-                    if (comparisonSource.Node.NodeName == testNodes[index].NodeName)
-                    {
-                        result = new ComparisonSource(testNodes[index], index);
-                        lastFoundIndex = index;
-                    }
-                    index++;
+                    result.Add(DiffFactory.Create(in comparison));
                 }
 
-                return result;
+                // attr compare
+                // childnodes compare
             }
+            return result;
         }
 
-        private ICollection<Diff> GetDifferences(in Comparison comparison) // in
+        private IComparisonSource<INode>[] CreateFilteredComparisonSourceList(INodeList controlNodes, string path, ComparisonSourceType sourceType)
         {
-            var result = new List<Diff>(1);
+            return controlNodes.ToComparisonSourceList(path, sourceType)
+                .Where(source => _filterStrategy.NodeFilter(in source))
+                .ToArray();
+        }
 
-            if (comparison.Status == MatchStatus.TestNodeNotFound)
-            {
-                result.Add(comparison.Control.Node.NodeType switch
-                {
-                    NodeType.Comment => new Diff(DiffType.MissingComment, comparison.Control),
-                    NodeType.Element => new Diff(DiffType.MissingElement, comparison.Control),
-                    NodeType.Text => new Diff(DiffType.MissingTextNode, comparison.Control),
-                    _ => throw new InvalidOperationException($"Unexpected nodetype, {comparison.Control.Node.NodeType}, in test nodes list.")
-                });
-            }
-            else
-            {
-                if (_strategy.CompareNode(in comparison) == CompareResult.Different)
-                {
-                    result.Add(comparison.Control.Node.NodeType switch
-                    {
-                        NodeType.Comment => new Diff(DiffType.DifferentComment, comparison.Control, comparison.Test),
-                        NodeType.Element => new Diff(DiffType.DifferentElementTagName, comparison.Control, comparison.Test),
-                        NodeType.Text => new Diff(DiffType.DifferentTextNode, comparison.Control, comparison.Test),
-                        _ => throw new InvalidOperationException($"Unexpected nodetype, {comparison.Control.Node.NodeType}, in test nodes list.")
-                    });
-                }
-
-                var controlElm = comparison.Control.Node as IElement;
-                var testElm = comparison.Test?.Node as IElement;
-
-                if (controlElm is { } && testElm is { })
-                {
-                    foreach (var controlAttr in controlElm.Attributes)
-                    {
-                        if (testElm.HasAttribute(controlAttr.Name))
-                        {
-                            var attrCompareRes = _strategy.CompareAttribute(controlAttr.Name, in comparison);
-                            if(attrCompareRes== CompareResult.Different)
-                            {
-                                result.Add(new Diff(DiffType.DifferentAttribute, comparison.Control, comparison.Test));
-                            }
-                        }
-                    }
-                }
-            }
-
-            return result;
+        private static IEnumerable<IDiff> UnmatchedNodesToDiff(IReadOnlyCollection<IComparisonSource<INode>> controls, IReadOnlyCollection<IComparisonSource<INode>> tests, IReadOnlyList<IComparison<INode>> comparisons)
+        {
+            // TODO: Since we know indexes and always increasing order of those,
+            //       something more intelligent can be done here than 
+            //       O(n^2) .Any(..) searches through comparisons.
+            var missing = controls.Where(x => !comparisons.Any(c => c.Control == x))
+                .Select(source => DiffFactory.CreateMissing(in source));
+            var unexpected = tests.Where(x => !comparisons.Any(c => c.Test == x))
+                .Select(source => DiffFactory.CreateUnexpected(in source));
+            return missing.Concat(unexpected);
         }
     }
 }

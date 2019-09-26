@@ -1,6 +1,26 @@
 Steps in finding differences:
 
-- NodeSelector/NodeFilter - filters away nodes that should not be part of the comparison
+```
+var diffs : []
+var currentPath : string
+var controlNodes : []
+var testNodes : []
+foreach (ctrlNode, index) in controlNodes
+    if(shouldSkip(ctrlNode)) continue;
+
+    ctrlSource = {ctrlNode, index, currentPath}
+    testNode = nodeMatcher(ctrlSource)
+
+
+    testSource = 
+
+
+nodeMatcher() ->
+``` 
+
+
+
+- NodeFilter - filters away nodes that should not be part of the comparison
   - Inline filter(ignorer)
 - NodeMatcher - matches a control-node with a test-node for comparison
 - Compare nodes by:
