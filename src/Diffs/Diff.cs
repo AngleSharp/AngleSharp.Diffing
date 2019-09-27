@@ -16,7 +16,7 @@ namespace Egil.AngleSharp.Diffing
 
         public DiffResult Result { get; }
 
-        public NodeType Target => Control.Node.NodeType;
+        public DiffTarget Target { get; }
 
         internal Diff(in IComparison<TNode> comparison)
         {
@@ -24,11 +24,12 @@ namespace Egil.AngleSharp.Diffing
             Control = comparison.Control;
             Test = comparison.Test;
             Result = DiffResult.Different;
+            Target = comparison.Control.Node.NodeType.ToDiffTarget();
         }
 
-        public bool Equals(Diff<TNode> other) => Control.Equals(other.Control) && Test.Equals(other.Test) && Result == other.Result;
+        public bool Equals(Diff<TNode> other) => Control.Equals(other.Control) && Test.Equals(other.Test) && Result == other.Result && Target == other.Target;
         public override bool Equals(object obj) => obj is Diff<TNode> other && Equals(other);
-        public override int GetHashCode() => (Control, Test, Result).GetHashCode();
+        public override int GetHashCode() => (Control, Test, Result, Target).GetHashCode();
         public static bool operator ==(Diff<TNode> left, Diff<TNode> right) => left.Equals(right);
         public static bool operator !=(Diff<TNode> left, Diff<TNode> right) => !(left == right);
     }

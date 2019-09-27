@@ -19,12 +19,30 @@ namespace Egil.AngleSharp.Diffing
             var results = sut.Compare(ToNodeList("<p></p><!--comment-->text"), ToNodeList("<p></p><!--comment-->text"));
 
             results.Count.ShouldBe(6);
-            results[0].ShouldBeOfType<MissingDiff<IElement>>();
-            results[1].ShouldBeOfType<MissingDiff<IComment>>();
-            results[2].ShouldBeOfType<MissingDiff<IText>>();
-            results[3].ShouldBeOfType<UnexpectedDiff<IElement>>();
-            results[4].ShouldBeOfType<UnexpectedDiff<IComment>>();
-            results[5].ShouldBeOfType<UnexpectedDiff<IText>>();
+            results[0].ShouldBeOfType<MissingDiff<IElement>>().ShouldSatisfyAllConditions(
+                diff => diff.Result.ShouldBe(DiffResult.Missing),
+                diff => diff.Target.ShouldBe(DiffTarget.Element)
+            );
+            results[1].ShouldBeOfType<MissingDiff<IComment>>().ShouldSatisfyAllConditions(
+                diff => diff.Result.ShouldBe(DiffResult.Missing),
+                diff => diff.Target.ShouldBe(DiffTarget.Comment)
+            );
+            results[2].ShouldBeOfType<MissingDiff<IText>>().ShouldSatisfyAllConditions(
+                diff => diff.Result.ShouldBe(DiffResult.Missing),
+                diff => diff.Target.ShouldBe(DiffTarget.Text)
+            );
+            results[3].ShouldBeOfType<UnexpectedDiff<IElement>>().ShouldSatisfyAllConditions(
+                diff => diff.Result.ShouldBe(DiffResult.Unexpected),
+                diff => diff.Target.ShouldBe(DiffTarget.Element)
+            );
+            results[4].ShouldBeOfType<UnexpectedDiff<IComment>>().ShouldSatisfyAllConditions(
+                diff => diff.Result.ShouldBe(DiffResult.Unexpected),
+                diff => diff.Target.ShouldBe(DiffTarget.Comment)
+            );
+            results[5].ShouldBeOfType<UnexpectedDiff<IText>>().ShouldSatisfyAllConditions(
+                diff => diff.Result.ShouldBe(DiffResult.Unexpected),
+                diff => diff.Target.ShouldBe(DiffTarget.Text)
+            );
         }
 
         [Theory(DisplayName = "When partial match of nodes in control/test, remaining unmatched are returned as missing/unexpected diffs")]
@@ -36,7 +54,7 @@ namespace Egil.AngleSharp.Diffing
             var sut = CreateHtmlDiffEngine(
                 nodeMatcher: SpecificIndexNodeMatcher(matchIndex),
                 nodeFilter: NoneNodeFilter,
-                nodeComparer: AlwaysSameNoteComparer);
+                nodeComparer: SameResultNoteComparer);
 
             var results = sut.Compare(nodes, nodes);
 
@@ -81,197 +99,337 @@ namespace Egil.AngleSharp.Diffing
             var sut = CreateHtmlDiffEngine(
                 nodeMatcher: OneToOneNodeListMatcher,
                 nodeFilter: NoneNodeFilter,
-                nodeComparer: AlwaysDiffNoteComparer);
+                nodeComparer: DiffResultNoteComparer);
 
             var results = sut.Compare(nodes, nodes);
 
-            results[0].ShouldBeOfType<Diff<IElement>>().Control.Node.NodeName.ShouldBe("P");
-            results[1].ShouldBeOfType<Diff<IComment>>().Control.Node.NodeValue.ShouldBe("comment");
-            results[2].ShouldBeOfType<Diff<IText>>().Control.Node.NodeValue.ShouldBe("textnode");
+            results.Count.ShouldBe(3);
+            results[0].ShouldBeOfType<Diff<IElement>>().ShouldSatisfyAllConditions(
+                diff => diff.Control.Node.NodeName.ShouldBe("P"),
+                diff => diff.Result.ShouldBe(DiffResult.Different),
+                diff => diff.Target.ShouldBe(DiffTarget.Element)
+            );
+            results[1].ShouldBeOfType<Diff<IComment>>().ShouldSatisfyAllConditions(
+                diff => diff.Control.Node.NodeName.ShouldBe("#comment"),
+                diff => diff.Result.ShouldBe(DiffResult.Different),
+                diff => diff.Target.ShouldBe(DiffTarget.Comment)
+            );
+            results[2].ShouldBeOfType<Diff<IText>>().ShouldSatisfyAllConditions(
+                diff => diff.Control.Node.NodeName.ShouldBe("#text"),
+                diff => diff.Result.ShouldBe(DiffResult.Different),
+                diff => diff.Target.ShouldBe(DiffTarget.Text)
+            );
         }
 
-        // When a control/test element in a comparison only contains text, the text is compared as with the element??
+        [Fact(DisplayName = "When matched control/test nodes are the same, no diffs are returned")]
+        public void WhenNodesAreSameNoDiffIsReturned()
+        {
+            var nodes = ToNodeList("<p></p><!--comment-->textnode");
+            var sut = CreateHtmlDiffEngine(
+                nodeMatcher: OneToOneNodeListMatcher,
+                nodeFilter: NoneNodeFilter,
+                nodeComparer: SameResultNoteComparer);
 
-        // Unmatched attributes in control/test node are returned as missing/unexpected diffs
-        // When partial match of attributes in control/test node, remaining unmatched are returned as missing/unexpected diffs
-        // Filtered out attributes does not take part in comparison
-        // When matched control/test attributes are different, a diff is returned
+            var results = sut.Compare(nodes, nodes);
 
-        // If both the control or test node in a comparison has child nodes, these nodelists are compared
-        // If one of the control or test node in a comparison has child nodes, a diff is returned
+            results.ShouldBeEmpty();
+        }
 
-        // Node path in comparison sources are based on nodes tree structure
-        // Attribute path in comparison sources are based on nodes tree structure
+        [Fact(DisplayName = "Unmatched attributes in control/test node are returned as missing/unexpected diffs")]
+        public void UnmatchedAttr()
+        {
+            var nodes = ToNodeList(@"<p id=""foo""></p>");
+            var expectedElementSource = (IElement)nodes[0];
+            var sut = CreateHtmlDiffEngine(
+                nodeMatcher: OneToOneNodeListMatcher,
+                nodeFilter: NoneNodeFilter,
+                nodeComparer: SameResultNoteComparer,
+                attrMatcher: NoneAttributeMatcher,
+                attrFilter: NoneAttrFilter,
+                attrComparer: SameResultAttrComparer);
 
-        private static CompareResult AlwaysSameNoteComparer(IComparison<INode> comparison) => CompareResult.Same;
+            var results = sut.Compare(nodes, nodes);
 
-        private static CompareResult AlwaysDiffNoteComparer(IComparison<INode> comparison) => CompareResult.Different;
+            results.Count.ShouldBe(2);
+            results[0].ShouldBeOfType<MissingAttrDiff>().ShouldSatisfyAllConditions(
+                diff => diff.Result.ShouldBe(DiffResult.Missing),
+                diff => diff.Target.ShouldBe(DiffTarget.Attribute),
+                diff => diff.Control.Attribute.Name.ShouldBe("id"),
+                diff => diff.Control.ElementSource.Node.ShouldBe(expectedElementSource)
+            );
+            results[1].ShouldBeOfType<UnexpectedAttrDiff>().ShouldSatisfyAllConditions(
+                diff => diff.Result.ShouldBe(DiffResult.Unexpected),
+                diff => diff.Target.ShouldBe(DiffTarget.Attribute),
+                diff => diff.Test.Attribute.Name.ShouldBe("id"),
+                diff => diff.Test.ElementSource.Node.ShouldBe(expectedElementSource)
+            );
+        }
 
+        [Theory(DisplayName = "When partial match of attributes in control/test node, remaining unmatched are returned as missing/unexpected diffs")]
+        [InlineData("id")]
+        [InlineData("lang")]
+        [InlineData("custom")]
+        public void PartialUnmatchedAttrs(string matchedAttr)
+        {
+            var nodes = ToNodeList(@"<p id=""foo"" lang=""bar"" custom=""baz""></p>");
+            var sut = CreateHtmlDiffEngine(
+                nodeMatcher: OneToOneNodeListMatcher,
+                nodeFilter: NoneNodeFilter,
+                nodeComparer: SameResultNoteComparer,
+                attrMatcher: SpecificAttributeMatcher(matchedAttr),
+                attrFilter: NoneAttrFilter,
+                attrComparer: SameResultAttrComparer);
+
+            var results = sut.Compare(nodes, nodes);
+
+            results.Count.ShouldBe(4);
+            results[0].ShouldBeOfType<MissingAttrDiff>().Control.Attribute.Name.ShouldNotBe(matchedAttr);
+            results[1].ShouldBeOfType<MissingAttrDiff>().Control.Attribute.Name.ShouldNotBe(matchedAttr);
+            results[2].ShouldBeOfType<UnexpectedAttrDiff>().Test.Attribute.Name.ShouldNotBe(matchedAttr);
+            results[3].ShouldBeOfType<UnexpectedAttrDiff>().Test.Attribute.Name.ShouldNotBe(matchedAttr);
+        }
+
+        [Theory(DisplayName = "Filtered out attributes does not take part in comparison")]
+        [InlineData("id")]
+        [InlineData("lang")]
+        [InlineData("custom")]
+        public void FilteredAttrNotPartOfComparison(string filterOutAttrName)
+        {
+            var nodes = ToNodeList(@"<p id=""foo"" lang=""bar"" custom=""baz""></p>");
+
+            var sut = CreateHtmlDiffEngine(
+                nodeMatcher: OneToOneNodeListMatcher,
+                nodeFilter: NoneNodeFilter,
+                nodeComparer: SameResultNoteComparer,
+                attrMatcher: NoneAttributeMatcher,
+                attrFilter: SpecificAttrFilter(filterOutAttrName),
+                attrComparer: SameResultAttrComparer);
+
+            var results = sut.Compare(nodes, nodes);
+
+            results.Count.ShouldBe(4);
+            results[0].ShouldBeOfType<MissingAttrDiff>().Control.Attribute.Name.ShouldNotBe(filterOutAttrName);
+            results[1].ShouldBeOfType<MissingAttrDiff>().Control.Attribute.Name.ShouldNotBe(filterOutAttrName);
+            results[2].ShouldBeOfType<UnexpectedAttrDiff>().Test.Attribute.Name.ShouldNotBe(filterOutAttrName);
+            results[3].ShouldBeOfType<UnexpectedAttrDiff>().Test.Attribute.Name.ShouldNotBe(filterOutAttrName);
+        }
+
+        [Fact(DisplayName = "When matched control/test attributes are different, a diff is returned")]
+        public void WhenMatchedAttrsAreDiffAttrDiffIsReturned()
+        {
+            var nodes = ToNodeList(@"<p id=""foo""></p>");
+
+            var sut = CreateHtmlDiffEngine(
+                nodeMatcher: OneToOneNodeListMatcher,
+                nodeFilter: NoneNodeFilter,
+                nodeComparer: SameResultNoteComparer,
+                attrMatcher: AttributeNameMatcher,
+                attrFilter: NoneAttrFilter,
+                attrComparer: DiffResultAttrComparer);
+
+            var results = sut.Compare(nodes, nodes);
+
+            results.Count.ShouldBe(1);
+            results[0].ShouldBeOfType<AttrDiff>().ShouldSatisfyAllConditions(
+                diff => diff.Control.Attribute.Name.ShouldBe("id"),
+                diff => diff.Test.Attribute.Name.ShouldBe("id"),
+                diff => diff.Result.ShouldBe(DiffResult.Different),
+                diff => diff.Target.ShouldBe(DiffTarget.Attribute)
+            );
+        }
+
+        [Fact(DisplayName = "When matched control/test attributes are the same, no diffs are returned")]
+        public void WhenMatchedAttrsAreSameNoDiffIsReturned()
+        {
+            var nodes = ToNodeList(@"<p id=""foo"" lang=""bar"" custom=""baz""></p>");
+
+            var sut = CreateHtmlDiffEngine(
+                nodeMatcher: OneToOneNodeListMatcher,
+                nodeFilter: NoneNodeFilter,
+                nodeComparer: SameResultNoteComparer,
+                attrMatcher: AttributeNameMatcher,
+                attrFilter: NoneAttrFilter,
+                attrComparer: SameResultAttrComparer);
+
+            var results = sut.Compare(nodes, nodes);
+
+            results.ShouldBeEmpty();
+        }
+
+        [Fact(DisplayName = "If both the control or test node in a comparison has child nodes, these nodelists are compared")]
+        public void WhenBothTestAndControlHaveChildNodesTheseAreCompared()
+        {
+            var nodes = ToNodeList(@"<main><h1><!--foobar--><p>hello world</p></h1></main>");
+
+            var sut = CreateHtmlDiffEngine(
+                nodeMatcher: OneToOneNodeListMatcher,
+                nodeFilter: NoneNodeFilter,
+                nodeComparer: DiffResultNoteComparer);
+
+            var results = sut.Compare(nodes, nodes);
+
+            results.Count.ShouldBe(5);
+            results[0].ShouldBeOfType<Diff<IElement>>().Control.Node.NodeName.ShouldBe("MAIN");
+            results[1].ShouldBeOfType<Diff<IElement>>().Control.Node.NodeName.ShouldBe("H1");
+            results[2].ShouldBeOfType<Diff<IComment>>().Control.Node.NodeValue.ShouldBe("foobar");
+            results[3].ShouldBeOfType<Diff<IElement>>().Control.Node.NodeName.ShouldBe("P");
+            results[4].ShouldBeOfType<Diff<IText>>().Control.Node.NodeName.ShouldBe("#text");
+        }
+
+        [Theory(DisplayName = "When only one of the control or test node in a comparison has child nodes, a missing/unexpected diff is returned")]
+        [InlineData("<h1><p></p></h1>", "<h1></h1>", typeof(MissingDiff<IElement>))]
+        [InlineData("<h1></h1>", "<h1><p></p></h1>", typeof(UnexpectedDiff<IElement>))]
+        public void OnlyOnePartHasChildNodes(string control, string test, Type expectedDiffType)
+        {
+            var sut = CreateHtmlDiffEngine(
+                nodeMatcher: OneToOneNodeListMatcher,
+                nodeFilter: NoneNodeFilter,
+                nodeComparer: DiffResultNoteComparer);
+
+            var results = sut.Compare(ToNodeList(control), ToNodeList(test));
+
+            results.Count.ShouldBe(2);
+            results[0].ShouldBeOfType<Diff<IElement>>();
+            results[1].ShouldBeOfType(expectedDiffType);
+        }
+
+        [Fact(DisplayName = "Path in Diffs is set correctly when nested nodes are compared")]
+        public void PathIsSetCorrectly()
+        {
+            var ctrlNodes = ToNodeList(@"<main><h1><!--foo--><p>hello world</p></h1></main>");
+            var testNodes = ToNodeList(@"<!--foo--><main><h1><p>hello world</p></h1></main>");
+
+            var sut = CreateHtmlDiffEngine(
+                nodeMatcher: OneToOneNodeListMatcher,
+                nodeFilter: RemoveCommentNodeFilter,
+                nodeComparer: DiffResultNoteComparer);
+
+            var results = sut.Compare(ctrlNodes, testNodes);
+
+            results.Count.ShouldBe(4);
+            results[0].ShouldBeOfType<Diff<IElement>>().Control.Path.ShouldBe("main(0)");
+            results[0].ShouldBeOfType<Diff<IElement>>().Test.Path.ShouldBe("main(1)");
+            results[1].ShouldBeOfType<Diff<IElement>>().Control.Path.ShouldBe("main(0) > h1(0)");
+            results[1].ShouldBeOfType<Diff<IElement>>().Test.Path.ShouldBe("main(1) > h1(0)");
+            results[2].ShouldBeOfType<Diff<IElement>>().Control.Path.ShouldBe("main(0) > h1(0) > p(1)");
+            results[2].ShouldBeOfType<Diff<IElement>>().Test.Path.ShouldBe("main(1) > h1(0) > p(0)");
+            results[3].ShouldBeOfType<Diff<IText>>().Control.Path.ShouldBe("main(0) > h1(0) > p(1) > #text(0)");
+            results[3].ShouldBeOfType<Diff<IText>>().Test.Path.ShouldBe("main(1) > h1(0) > p(0) > #text(0)");
+        }
+
+        [Fact(DisplayName = "Attribute path in comparison sources are based on nodes tree structure")]
+        public void AttributeSourcePathisBasedOnParentElements()
+        {
+            var nodes = ToNodeList(@"<p id=""foo""></p>");
+
+            var sut = CreateHtmlDiffEngine(
+                nodeMatcher: OneToOneNodeListMatcher,
+                nodeFilter: NoneNodeFilter,
+                nodeComparer: SameResultNoteComparer,
+                attrMatcher: AttributeNameMatcher,
+                attrFilter: NoneAttrFilter,
+                attrComparer: DiffResultAttrComparer);
+
+            var results = sut.Compare(nodes, nodes);
+
+            results.Count.ShouldBe(1);
+            results[0].ShouldBeOfType<AttrDiff>().Control.Path.ShouldBe("p(0)[id]");
+        }
+
+        [Fact(DisplayName = "Comparison sources have their type set correctly")]
+        public void ComparisonSourcesHaveCorrectType()
+        {
+            var nodes = ToNodeList(@"<p id=""foo""></p>");
+
+            var sut = CreateHtmlDiffEngine(
+                nodeMatcher: OneToOneNodeListMatcher,
+                nodeFilter: NoneNodeFilter,
+                nodeComparer: DiffResultNoteComparer,
+                attrMatcher: AttributeNameMatcher,
+                attrFilter: NoneAttrFilter,
+                attrComparer: DiffResultAttrComparer);
+
+            var results = sut.Compare(nodes, nodes);
+
+            results.Count.ShouldBe(2);
+
+            results[0].ShouldBeOfType<Diff<IElement>>().Control.SourceType.ShouldBe(ComparisonSourceType.Control);
+            results[0].ShouldBeOfType<Diff<IElement>>().Test.SourceType.ShouldBe(ComparisonSourceType.Test);
+            results[1].ShouldBeOfType<AttrDiff>().Control.SourceType.ShouldBe(ComparisonSourceType.Control);
+            results[1].ShouldBeOfType<AttrDiff>().Test.SourceType.ShouldBe(ComparisonSourceType.Test);
+        }
+
+        #region NodeFilters
         private static bool NoneNodeFilter(IComparisonSource<INode> source) => true;
-
         private static bool RemoveCommentNodeFilter(IComparisonSource<INode> source) => source.Node.NodeType != NodeType.Comment;
+        #endregion
 
-        private static IReadOnlyList<IComparison<INode>> NoneNodeMatcher(IReadOnlyList<IComparisonSource<INode>> controlNodes, IReadOnlyList<IComparisonSource<INode>> testNodes)
+        #region NodeMatchers
+        private static IEnumerable<IComparison<INode>> NoneNodeMatcher(IReadOnlyList<IComparisonSource<INode>> controlNodes, IReadOnlyList<IComparisonSource<INode>> testNodes)
             => Array.Empty<IComparison<INode>>();
 
-        private static Func<IReadOnlyList<IComparisonSource<INode>>, IReadOnlyList<IComparisonSource<INode>>, IReadOnlyList<IComparison<INode>>> SpecificIndexNodeMatcher(int index)
+        private static Func<IReadOnlyList<IComparisonSource<INode>>, IReadOnlyList<IComparisonSource<INode>>, IEnumerable<IComparison<INode>>> SpecificIndexNodeMatcher(int index)
             => (controlNodes, testNodes) => new List<IComparison<INode>> { ComparisonFactory.Create(controlNodes[index], testNodes[index]) };
 
-        private static IReadOnlyList<IComparison<INode>> OneToOneNodeListMatcher(IReadOnlyList<IComparisonSource<INode>> controlNodes, IReadOnlyList<IComparisonSource<INode>> testNodes)
+        private static IEnumerable<IComparison<INode>> OneToOneNodeListMatcher(
+            IReadOnlyList<IComparisonSource<INode>> controlNodes,
+            IReadOnlyList<IComparisonSource<INode>> testNodes)
         {
-            var result = new List<IComparison<INode>>();
-            for (int i = 0; i < controlNodes.Count; i++)
+            var matchLength = Math.Min(controlNodes.Count, testNodes.Count);
+            for (int i = 0; i < matchLength; i++)
             {
-                result.Add(ComparisonFactory.Create(controlNodes[i], testNodes[i]));
+                yield return ComparisonFactory.Create(controlNodes[i], testNodes[i]);
             }
-            return result;
         }
 
-        //[Theory(DisplayName = "When comparer gives result 'Same' no diff is returned")]
-        //[InlineData("", "")]
-        //[InlineData("<p/>", "<p/>")]
-        //[InlineData("<p/><span/>", "<p/><span/>")]
-        //[InlineData("textnode", "textnode")]
-        //[InlineData("<!--comment-->", "<!--comment-->")]
-        //public void NoDiffsWhenTwoEqualNodeListsAreCompared(string control, string test)
-        //{
-        //    var strategy = new MockHtmlCompareStrategy(nodeComparer: _ => CompareResult.Same);
-        //    var sut = new HtmlDiffEngine(strategy);
+        #endregion
 
-        //    var res = sut.Compare(ToNodeList(control), ToNodeList(test));
+        #region NodeComparers
+        private static CompareResult SameResultNoteComparer(IComparison<INode> comparison) => CompareResult.Same;
+        private static CompareResult DiffResultNoteComparer(IComparison<INode> comparison) => CompareResult.Different;
+        #endregion
 
-        //    res.ShouldBeEmpty();
-        //}
+        #region AttributeMatchers
+        private static IReadOnlyList<IAttributeComparison> NoneAttributeMatcher(
+            IReadOnlyList<IAttributeComparisonSource> controlAttributes,
+            IReadOnlyList<IAttributeComparisonSource> testAttributes) => Array.Empty<IAttributeComparison>();
 
-        //[Theory(DisplayName = "Returns diff with type 'Missing*' when node matching fails")]
-        //[InlineData("<p/>", "", DiffType.MissingElement)]
-        //[InlineData("<p/><span/>", "<p/>", DiffType.MissingElement)]
-        //[InlineData("<p/><span/>", "<span/>", DiffType.MissingElement)]
-        //[InlineData("textnode", "", DiffType.MissingTextNode)]
-        //[InlineData("<!--comment-->", "", DiffType.MissingComment)]
-        //public void ReturnsMissingDiffWhenNodeMatcherFails(string control, string test, DiffType expectedDiffType)
-        //{
-        //    var strategy = new MockHtmlCompareStrategy();
-        //    var sut = new HtmlDiffEngine(strategy);
+        private static Func<IReadOnlyList<IAttributeComparisonSource>, IReadOnlyList<IAttributeComparisonSource>, IEnumerable<IAttributeComparison>> SpecificAttributeMatcher(string matchAttrName)
+        {
+            return (ctrlAttrs, testAttrs) => new List<IAttributeComparison>
+            {
+                new AttributeComparison(
+                    ctrlAttrs.Single(x => x.Attribute.Name == matchAttrName),
+                    testAttrs.Single(x => x.Attribute.Name == matchAttrName)
+                )
+            };
+        }
 
-        //    var res = sut.Compare(ToNodeList(control), ToNodeList(test));
+        private static IEnumerable<IAttributeComparison> AttributeNameMatcher(
+            IReadOnlyList<IAttributeComparisonSource> controlAttributes,
+            IReadOnlyList<IAttributeComparisonSource> testAttributes)
+        {
+            foreach (var ctrlAttrSrc in controlAttributes)
+            {
+                var testAttrSrc = testAttributes.SingleOrDefault(x => x.Attribute.Name == ctrlAttrSrc.Attribute.Name);
+                if (testAttrSrc is { }) yield return new AttributeComparison(ctrlAttrSrc, testAttrSrc);
+            }
+        }
 
-        //    res.ShouldHaveSingleItem().Type.ShouldBe(expectedDiffType);
-        //}
+        #endregion
 
-        //[Theory(DisplayName = "Returns diff with type 'Unexpected*' when there are unmatched test-nodes")]
-        //[InlineData("", "<p/>", DiffType.UnexpectedElement)]
-        //[InlineData("<p/>", "<p/><span/>", DiffType.UnexpectedElement)]
-        //[InlineData("", "textnode", DiffType.UnexpectedTextNode)]
-        //[InlineData("", "<!--comment-->", DiffType.UnexpectedComment)]
-        //[InlineData("<p/>", "textnode<p/>", DiffType.UnexpectedTextNode)]
-        //public void ReturnsUnexpectedDiffWhenTestNodesAreUnmatched(string control, string test, DiffType expectedDiffType)
-        //{
-        //    var strategy = new MockHtmlCompareStrategy();
-        //    var sut = new HtmlDiffEngine(strategy);
+        #region AttributeFilters 
 
-        //    var res = sut.Compare(ToNodeList(control), ToNodeList(test));
+        private static bool NoneAttrFilter(IAttributeComparisonSource source) => true;
 
-        //    res.ShouldHaveSingleItem().Type.ShouldBe(expectedDiffType);
-        //}
+        private static Func<IAttributeComparisonSource, bool> SpecificAttrFilter(string attrName) =>
+            source => source.Attribute.Name != attrName;
 
-        //[Fact(DisplayName = "Returns diff with type 'Unexpected*' when there are unmatched test-nodes")]
-        //public void ReturnsUnexpectedDiffWhenTestNodesAreUnmatchedx()
-        //{
-        //    var strategy = new MockHtmlCompareStrategy();
-        //    var sut = new HtmlDiffEngine(strategy);
+        #endregion
 
-        //    var res = sut.Compare(ToNodeList("<p>1</p><p>2</p>"), ToNodeList("<div></div><span></span><p>1</p><p>2</p><br />"));
-
-        //    res.ShouldAllBe(x => x.Type == DiffType.UnexpectedElement && x.Test!.Value.Node.NodeName != "P");
-        //}
-
-        //[Theory(DisplayName = "Returns diff with type 'Different*' when comparer returns 'Different'")]
-        //[InlineData("<p/>", "<span/>", DiffType.DifferentElementTagName)]
-        //[InlineData("textnode", "nodetext", DiffType.DifferentTextNode)]
-        //[InlineData("<!--bar-->", "<!--foo-->", DiffType.DifferentComment)]
-        //public void ReturnsDifferentWhenComparerReturnsDifferent(string control, string test, DiffType expectedDiffType)
-        //{
-        //    var strategy = new MockHtmlCompareStrategy(nodeComparer: _ => CompareResult.Different);
-        //    var sut = new HtmlDiffEngine(strategy);
-
-        //    var res = sut.Compare(ToNodeList(control), ToNodeList(test));
-
-        //    res.ShouldHaveSingleItem().Type.ShouldBe(expectedDiffType);
-        //}
-
-        //[Fact(DisplayName = "Child nodes of a matched control- and test-node are compared")]
-        //public void ChildNodesOfMatchedNodesAreCompared()
-        //{
-        //    var sut = new HtmlDiffEngine(new MockHtmlCompareStrategy(nodeComparer: _ => CompareResult.Different));
-
-        //    var res = sut.Compare(
-        //        ToNodeList(@"<p>text<em>foo<!--foo--></em></p>"),
-        //        ToNodeList(@"<div>xest<strong>bar<!--bar--></strong></div>")
-        //        );
-
-        //    res.Count.ShouldBe(5);
-        //    res[0].ShouldSatisfyAllConditions(
-        //        () => res[0].Type.ShouldBe(DiffType.DifferentElementTagName),
-        //        () => res[0].Control?.Node.NodeName.ShouldBe("P"),
-        //        () => res[0].Test?.Node.NodeName.ShouldBe("DIV")
-        //    );
-        //    res[1].ShouldSatisfyAllConditions(
-        //        () => res[1].Type.ShouldBe(DiffType.DifferentTextNode),
-        //        () => res[1].Control?.Node.NodeValue.ShouldBe("text"),
-        //        () => res[1].Test?.Node.NodeValue.ShouldBe("xest")
-        //    );
-        //    res[2].ShouldSatisfyAllConditions(
-        //        () => res[2].Type.ShouldBe(DiffType.DifferentElementTagName),
-        //        () => res[2].Control?.Node.NodeName.ShouldBe("EM"),
-        //        () => res[2].Test?.Node.NodeName.ShouldBe("STRONG")
-        //    );
-        //    res[3].ShouldSatisfyAllConditions(
-        //        () => res[3].Type.ShouldBe(DiffType.DifferentTextNode),
-        //        () => res[3].Control?.Node.NodeValue.ShouldBe("foo"),
-        //        () => res[3].Test?.Node.NodeValue.ShouldBe("bar")
-        //    );
-
-        //    res[4].Type.ShouldBe(DiffType.DifferentComment);
-        //}
-
-        //[Theory(DisplayName = "Equal attributes (order independent) on control and test nodes yields no diffs")]
-        //[InlineData(@"<p id=""x"" />", @"<p id=""x"" />")]
-        //[InlineData(@"<p id=""x"" class=""sm-6""/>", @"<p id=""x"" class=""sm-6""/>")]
-        //[InlineData(@"<p class=""sm-6"" id=""x"" />", @"<p id=""x"" class=""sm-6""/>")]
-        //public void NoDiffsOnEqualAttr(string control, string test)
-        //{
-        //    var sut = new HtmlDiffEngine(new MockHtmlCompareStrategy(
-        //        nodeComparer: _ => CompareResult.Same,
-        //        attrComparer: (a, c) => CompareResult.Same));
-
-        //    var result = sut.Compare(ToNodeList(control), ToNodeList(test));
-
-        //    result.ShouldBeEmpty();
-        //}
-
-        //[Theory(DisplayName = "Unequal attributes on control and test nodes yields one diff per unequal attribute pair")]
-        //[InlineData(@"<p id=""foo"" />", @"<p id=""bar"" />", 1)]
-        //[InlineData(@"<p id=""foo"" class=""sm-6""/>", @"<p id=""bar"" class=""lg-6""/>", 2)]
-        //[InlineData(@"<p class=""sm-6"" id=""foo"" />", @"<p id=""bar"" class=""lg-6""/>", 2)]
-        //public void DiffsOnUnequalAttrs(string control, string test, int expectedCount)
-        //{
-        //    var sut = new HtmlDiffEngine(new MockHtmlCompareStrategy(attrComparer: (a, c) => CompareResult.Different));
-
-        //    var result = sut.Compare(ToNodeList(control), ToNodeList(test));
-
-        //    result.Count.ShouldBe(expectedCount);
-        //}
-
-        //[Theory(DisplayName = "A diff contains a path to each source-node")]
-        //[InlineData()]
-        //public void DiffContainsPath(string control, string test, string expectedControlPath)
-        //{
-        //    var sut = new HtmlDifferenceEngine(new MockHtmlCompareStrategy());
-
-        //    var result = sut.Compare(ToNodeList(control), ToNodeList(test));
-
-        //    result
-        //}
+        #region AttributeComparers
+        public static CompareResult SameResultAttrComparer(IAttributeComparison comparison) => CompareResult.Same;
+        public static CompareResult DiffResultAttrComparer(IAttributeComparison comparison) => CompareResult.Different;
+        #endregion
     }
 }

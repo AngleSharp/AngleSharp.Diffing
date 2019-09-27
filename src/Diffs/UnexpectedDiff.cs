@@ -13,17 +13,18 @@ namespace Egil.AngleSharp.Diffing
 
         public DiffResult Result { get; }
 
-        public NodeType Target => Test.Node.NodeType;
+        public DiffTarget Target { get; }
 
         internal UnexpectedDiff(in IComparisonSource<TNode> test)
         {
             Test = test;
             Result = DiffResult.Unexpected;
+            Target = test.Node.NodeType.ToDiffTarget();
         }
 
-        public bool Equals(UnexpectedDiff<TNode> other) => Test.Equals(other.Test) && Result == other.Result;
+        public bool Equals(UnexpectedDiff<TNode> other) => Test.Equals(other.Test) && Result == other.Result && Target == other.Target;
         public override bool Equals(object obj) => obj is UnexpectedDiff<TNode> other && Equals(other);
-        public override int GetHashCode() => (Test, Result).GetHashCode();
+        public override int GetHashCode() => (Test, Result, Target).GetHashCode();
         public static bool operator ==(UnexpectedDiff<TNode> left, UnexpectedDiff<TNode> right) => left.Equals(right);
         public static bool operator !=(UnexpectedDiff<TNode> left, UnexpectedDiff<TNode> right) => !(left == right);
     }

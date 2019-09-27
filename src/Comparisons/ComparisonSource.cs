@@ -1,5 +1,6 @@
 ﻿using System;
 using AngleSharp.Dom;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Egil.AngleSharp.Diffing.Comparisons
 {
@@ -13,11 +14,15 @@ namespace Egil.AngleSharp.Diffing.Comparisons
 
         public ComparisonSourceType SourceType { get; }
 
+        [SuppressMessage("Globalization", "CA1308:Normalize strings to uppercase", Justification = "Path should be in lower case")]
         public ComparisonSource(TNode node, int index, string path, ComparisonSourceType sourceType)
         {
             Node = node;
             Index = index;
-            Path = path;
+            Path = string.IsNullOrEmpty(path) 
+                ? $"{Node.NodeName.ToLowerInvariant()}({Index})" 
+                : $"{path} > {Node.NodeName.ToLowerInvariant()}({Index})";
+
             SourceType = sourceType;
         }
 

@@ -22,20 +22,32 @@ namespace Egil.AngleSharp.Diffing.Diffs
             };
         }
 
-        public static IDiff CreateMissing(in IComparisonSource<INode> source) => source switch
-        {
-            IComparisonSource<IElement> elmSrc => new MissingDiff<IElement>(in elmSrc),
-            IComparisonSource<IComment> commentSrc => new MissingDiff<IComment>(in commentSrc),
-            IComparisonSource<IText> textSrc => new MissingDiff<IText>(in textSrc),
-            _ => new MissingDiff<INode>(source)
-        };
+        public static IDiff CreateMissing(in IAttributeComparisonSource source) => new MissingAttrDiff(in source);
 
-        public static IDiff CreateUnexpected(in IComparisonSource<INode> source) => source switch
+        public static IDiff CreateMissing(in IComparisonSource<INode> source)
         {
-            IComparisonSource<IElement> elmSrc => new UnexpectedDiff<IElement>(in elmSrc),
-            IComparisonSource<IComment> commentSrc => new UnexpectedDiff<IComment>(in commentSrc),
-            IComparisonSource<IText> textSrc => new UnexpectedDiff<IText>(in textSrc),
-            _ => new UnexpectedDiff<INode>(source)
-        };
+            if (source is null) throw new ArgumentNullException(nameof(source));
+            return source switch
+            {
+                IComparisonSource<IElement> elmSrc => new MissingDiff<IElement>(in elmSrc),
+                IComparisonSource<IComment> commentSrc => new MissingDiff<IComment>(in commentSrc),
+                IComparisonSource<IText> textSrc => new MissingDiff<IText>(in textSrc),
+                _ => new MissingDiff<INode>(source)
+            };
+        }
+
+        public static IDiff CreateUnexpected(in IAttributeComparisonSource source) => new UnexpectedAttrDiff(in source);
+
+        public static IDiff CreateUnexpected(in IComparisonSource<INode> source)
+        {
+            if(source is null) throw new ArgumentNullException(nameof(source));
+            return source switch
+            {
+                IComparisonSource<IElement> elmSrc => new UnexpectedDiff<IElement>(in elmSrc),
+                IComparisonSource<IComment> commentSrc => new UnexpectedDiff<IComment>(in commentSrc),
+                IComparisonSource<IText> textSrc => new UnexpectedDiff<IText>(in textSrc),
+                _ => new UnexpectedDiff<INode>(source)
+            };
+        }
     }
 }

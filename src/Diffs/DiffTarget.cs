@@ -1,4 +1,6 @@
-﻿namespace Egil.AngleSharp.Diffing
+﻿using AngleSharp.Dom;
+
+namespace Egil.AngleSharp.Diffing
 {
     public enum DiffTarget
     {
@@ -9,4 +11,19 @@
         Node,
         Text
     }
+
+    public static class NodeTypeExtensions
+    {
+        public static DiffTarget ToDiffTarget(this NodeType nodeType)
+        {
+            return nodeType switch
+            {
+                NodeType.Element => DiffTarget.Element,
+                NodeType.Comment => DiffTarget.Comment,
+                NodeType.Text => DiffTarget.Text,
+                _ => DiffTarget.Node
+            };
+    }
+    }
+
 }

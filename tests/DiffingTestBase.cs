@@ -36,17 +36,17 @@ namespace Egil.AngleSharp.Diffing
             return fragment[0];
         }
 
-        protected static HtmlDiffEngine CreateHtmlDiffEngine(
-                Func<IReadOnlyList<IComparisonSource<INode>>, IReadOnlyList<IComparisonSource<INode>>, IReadOnlyList<IComparison<INode>>>? nodeMatcher = null,
-                Func<IComparison<IElement>, IReadOnlyList<IAttributeComparison>>? attrMatcher = null,
+        protected static HtmlDifferenceEngine CreateHtmlDiffEngine(
+                Func<IReadOnlyList<IComparisonSource<INode>>, IReadOnlyList<IComparisonSource<INode>>, IEnumerable<IComparison<INode>>>? nodeMatcher = null,
+                Func<IReadOnlyList<IAttributeComparisonSource>, IReadOnlyList<IAttributeComparisonSource>, IEnumerable<IAttributeComparison>>? attrMatcher = null,
                 Func<IComparisonSource<INode>, bool>? nodeFilter = null,
                 Func<IAttributeComparisonSource, bool>? attrFilter = null,
                 Func<IComparison<INode>, CompareResult>? nodeComparer = null,
                 Func<IAttributeComparison, CompareResult>? attrComparer = null
             )
         {
-            return new HtmlDiffEngine(
-                new MockFilterStrategy(nodeFilter, attrFilter ),
+            return new HtmlDifferenceEngine(
+                new MockFilterStrategy(nodeFilter, attrFilter),
                 new MockMatcherStrategy(nodeMatcher, attrMatcher),
                 new MockCompareStrategy(nodeComparer, attrComparer)
             );
@@ -54,19 +54,24 @@ namespace Egil.AngleSharp.Diffing
 
         class MockMatcherStrategy : IMatcherStrategy
         {
-            private readonly Func<IReadOnlyList<IComparisonSource<INode>>, IReadOnlyList<IComparisonSource<INode>>, IReadOnlyList<IComparison<INode>>>? _nodeMatcher;
-            private readonly Func<IComparison<IElement>, IReadOnlyList<IAttributeComparison>>? _attrMatcher;
+            private readonly Func<IReadOnlyList<IComparisonSource<INode>>, IReadOnlyList<IComparisonSource<INode>>, IEnumerable<IComparison<INode>>>? _nodeMatcher;
+            private readonly Func<IReadOnlyList<IAttributeComparisonSource>, IReadOnlyList<IAttributeComparisonSource>, IEnumerable<IAttributeComparison>>? _attrMatcher;
 
-            public MockMatcherStrategy(Func<IReadOnlyList<IComparisonSource<INode>>, IReadOnlyList<IComparisonSource<INode>>, IReadOnlyList<IComparison<INode>>>? nodeMatcher = null, Func<IComparison<IElement>, IReadOnlyList<IAttributeComparison>>? attrMatcher = null)
+            public MockMatcherStrategy(
+                Func<IReadOnlyList<IComparisonSource<INode>>, IReadOnlyList<IComparisonSource<INode>>, IEnumerable<IComparison<INode>>>? nodeMatcher = null,
+                Func<IReadOnlyList<IAttributeComparisonSource>, IReadOnlyList<IAttributeComparisonSource>, IEnumerable<IAttributeComparison>>? attrMatcher = null)
             {
                 _nodeMatcher = nodeMatcher;
                 _attrMatcher = attrMatcher;
             }
 
-            public IReadOnlyList<IComparison<INode>> MatchNodes(IReadOnlyList<IComparisonSource<INode>> controlNodes, IReadOnlyList<IComparisonSource<INode>> testNodes)
-                => _nodeMatcher!(controlNodes, testNodes);
-            public IReadOnlyList<IAttributeComparison> MatchAttributes(IComparison<IElement> elementComparison)
-                => _attrMatcher!(elementComparison);
+            public IEnumerable<IComparison<INode>> MatchNodes(
+                IReadOnlyList<IComparisonSource<INode>> controlNodes,
+                IReadOnlyList<IComparisonSource<INode>> testNodes) => _nodeMatcher!(controlNodes, testNodes);
+
+            public IEnumerable<IAttributeComparison> MatchAttributes(
+                IReadOnlyList<IAttributeComparisonSource> controlAttributes,
+                IReadOnlyList<IAttributeComparisonSource> testAttributes) => _attrMatcher!(controlAttributes, testAttributes);
         }
 
         class MockFilterStrategy : IFilterStrategy

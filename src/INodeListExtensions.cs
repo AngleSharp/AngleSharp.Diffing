@@ -4,22 +4,10 @@ using Egil.AngleSharp.Diffing.Comparisons;
 
 namespace Egil.AngleSharp.Diffing
 {
-    internal static class INodeListExtensions
+    internal static class NodeListExtensions
     {
-        internal static IEnumerable<INode> WalkNodeTree(this INodeList nodes)
+        internal static IEnumerable<IComparisonSource<INode>> ToComparisonSourceList(this INodeList nodes, ComparisonSourceType sourceType, string path = "")
         {
-            foreach (var root in nodes)
-            {
-                foreach (var node in root.GetDescendantsAndSelf())
-                {
-                    yield return node;
-                }
-            }
-        }
-
-        internal static IEnumerable<IComparisonSource<INode>> ToComparisonSourceList(this INodeList nodes, string path, ComparisonSourceType sourceType)
-        {
-            //var result = new List<IComparisonSource<INode>>(nodes.Length);
             for (int index = 0; index < nodes.Length; index++)
             {
                 var node = nodes[index];
@@ -41,7 +29,6 @@ namespace Egil.AngleSharp.Diffing
                 }
             }
             yield break;
-            //return result;
         }
     }
 }

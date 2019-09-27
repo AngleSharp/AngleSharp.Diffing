@@ -1,8 +1,7 @@
 ﻿using System;
 using AngleSharp.Dom;
-using Egil.AngleSharp.Diffing.Comparisons;
 
-namespace Egil.AngleSharp.Diffing
+namespace Egil.AngleSharp.Diffing.Comparisons
 {
     /// <summary>
     /// Represent a comparison between two nodes.

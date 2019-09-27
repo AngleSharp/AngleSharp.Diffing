@@ -1,5 +1,4 @@
-﻿using System;
-using AngleSharp.Dom;
+﻿using AngleSharp.Dom;
 using Egil.AngleSharp.Diffing.Comparisons;
 
 namespace Egil.AngleSharp.Diffing
@@ -8,8 +7,8 @@ namespace Egil.AngleSharp.Diffing
     {
         public static IComparison<INode> Create(in IComparisonSource<INode> control, in IComparisonSource<INode> test)
         {
-            if (control is null) throw new ArgumentNullException(nameof(control));
-            if (test is null) throw new ArgumentNullException(nameof(test));
+            if (control is null) throw new System.ArgumentNullException(nameof(control));
+            if (test is null) throw new System.ArgumentNullException(nameof(test));
 
             return control switch
             {
