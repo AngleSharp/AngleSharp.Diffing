@@ -5,7 +5,18 @@ The _control_ nodes represents the expected, i.e. how the nodes are expected to 
 
 ## Usage
 
+Filters:
+- remove comments
+- whitespace only text nodes
 
+Matchers:
+- searching matcher, that will match nodes of the same type, and, optionally, element with the same element name.
+- css selector matcher nodes and for attributes
+
+Comparers:
+- ignore consecutive whitespace comparer inside textnodes (not in strings in script and style tags).
+- regex comparer
+- ignore case comparer (attr/text)
 
 ## Difference engine details
 The heart of the library is the `HtmlDifferenceEngine` class, which goes through the steps illustrated in the activity diagram below to determine if the control nodes is the same as the test nodes.
