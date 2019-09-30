@@ -5,6 +5,7 @@ namespace Egil.AngleSharp.Diffing.Comparisons
     public readonly struct AttributeComparison : IEquatable<AttributeComparison>, IAttributeComparison
     {
         public IAttributeComparisonSource Control { get; }
+
         public IAttributeComparisonSource Test { get; }
 
         public AttributeComparison(IAttributeComparisonSource control, IAttributeComparisonSource test)

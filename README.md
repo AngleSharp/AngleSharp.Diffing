@@ -1,12 +1,20 @@
-# AngleSharp.Diffing 
+# AngleSharp Diffing - A diff/compare library for AngleSharp
 This library makes it possible to compare a AngleSharp _control_ `INodeList` and a _test_ `INodeList` and get a list of `IDiff` differences between them.
 
 The _control_ nodes represents the expected, i.e. how the nodes are expected to look, and the _test_ nodes represents the other nodes that should be compared to the _control_ nodes.
 
 ## Usage
 
-Filters:
-- remove comments
+```csharp
+var diffs = DiffBuilder
+    .Compare(controlHtml)
+    .WithTest(testHtml)
+    .Build();
+
+```
+
+#### Built-in filters: 
+- **`RemoveCommentNodeFilter`**: remove all comment nodes.
 - whitespace only text nodes
 
 Matchers:
@@ -14,6 +22,7 @@ Matchers:
 - css selector matcher nodes and for attributes
 
 Comparers:
+- **`DiffIgnoreAttributeComparer`**: allows you to specify an special attribute `diff:ignore="true"` (`="true"` optional) on control elements to ignore them, their attributes, and child nodes, during comparison. E.g. `<p diff:ignore>...</p>`. 
 - ignore consecutive whitespace comparer inside textnodes (not in strings in script and style tags).
 - regex comparer
 - ignore case comparer (attr/text)

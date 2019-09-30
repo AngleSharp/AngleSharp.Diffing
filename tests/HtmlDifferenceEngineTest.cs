@@ -54,7 +54,7 @@ namespace Egil.AngleSharp.Diffing
             var sut = CreateHtmlDiffEngine(
                 nodeMatcher: SpecificIndexNodeMatcher(matchIndex),
                 nodeFilter: NoneNodeFilter,
-                nodeComparer: SameResultNoteComparer);
+                nodeComparer: SameResultNodeComparer);
 
             var results = sut.Compare(nodes, nodes);
 
@@ -99,7 +99,7 @@ namespace Egil.AngleSharp.Diffing
             var sut = CreateHtmlDiffEngine(
                 nodeMatcher: OneToOneNodeListMatcher,
                 nodeFilter: NoneNodeFilter,
-                nodeComparer: DiffResultNoteComparer);
+                nodeComparer: DiffResultNodeComparer);
 
             var results = sut.Compare(nodes, nodes);
 
@@ -128,7 +128,7 @@ namespace Egil.AngleSharp.Diffing
             var sut = CreateHtmlDiffEngine(
                 nodeMatcher: OneToOneNodeListMatcher,
                 nodeFilter: NoneNodeFilter,
-                nodeComparer: SameResultNoteComparer);
+                nodeComparer: SameResultNodeComparer);
 
             var results = sut.Compare(nodes, nodes);
 
@@ -143,7 +143,7 @@ namespace Egil.AngleSharp.Diffing
             var sut = CreateHtmlDiffEngine(
                 nodeMatcher: OneToOneNodeListMatcher,
                 nodeFilter: NoneNodeFilter,
-                nodeComparer: SameResultNoteComparer,
+                nodeComparer: SameResultNodeComparer,
                 attrMatcher: NoneAttributeMatcher,
                 attrFilter: NoneAttrFilter,
                 attrComparer: SameResultAttrComparer);
@@ -175,7 +175,7 @@ namespace Egil.AngleSharp.Diffing
             var sut = CreateHtmlDiffEngine(
                 nodeMatcher: OneToOneNodeListMatcher,
                 nodeFilter: NoneNodeFilter,
-                nodeComparer: SameResultNoteComparer,
+                nodeComparer: SameResultNodeComparer,
                 attrMatcher: SpecificAttributeMatcher(matchedAttr),
                 attrFilter: NoneAttrFilter,
                 attrComparer: SameResultAttrComparer);
@@ -200,7 +200,7 @@ namespace Egil.AngleSharp.Diffing
             var sut = CreateHtmlDiffEngine(
                 nodeMatcher: OneToOneNodeListMatcher,
                 nodeFilter: NoneNodeFilter,
-                nodeComparer: SameResultNoteComparer,
+                nodeComparer: SameResultNodeComparer,
                 attrMatcher: NoneAttributeMatcher,
                 attrFilter: SpecificAttrFilter(filterOutAttrName),
                 attrComparer: SameResultAttrComparer);
@@ -222,7 +222,7 @@ namespace Egil.AngleSharp.Diffing
             var sut = CreateHtmlDiffEngine(
                 nodeMatcher: OneToOneNodeListMatcher,
                 nodeFilter: NoneNodeFilter,
-                nodeComparer: SameResultNoteComparer,
+                nodeComparer: SameResultNodeComparer,
                 attrMatcher: AttributeNameMatcher,
                 attrFilter: NoneAttrFilter,
                 attrComparer: DiffResultAttrComparer);
@@ -246,7 +246,7 @@ namespace Egil.AngleSharp.Diffing
             var sut = CreateHtmlDiffEngine(
                 nodeMatcher: OneToOneNodeListMatcher,
                 nodeFilter: NoneNodeFilter,
-                nodeComparer: SameResultNoteComparer,
+                nodeComparer: SameResultNodeComparer,
                 attrMatcher: AttributeNameMatcher,
                 attrFilter: NoneAttrFilter,
                 attrComparer: SameResultAttrComparer);
@@ -264,7 +264,7 @@ namespace Egil.AngleSharp.Diffing
             var sut = CreateHtmlDiffEngine(
                 nodeMatcher: OneToOneNodeListMatcher,
                 nodeFilter: NoneNodeFilter,
-                nodeComparer: DiffResultNoteComparer);
+                nodeComparer: DiffResultNodeComparer);
 
             var results = sut.Compare(nodes, nodes);
 
@@ -284,7 +284,7 @@ namespace Egil.AngleSharp.Diffing
             var sut = CreateHtmlDiffEngine(
                 nodeMatcher: OneToOneNodeListMatcher,
                 nodeFilter: NoneNodeFilter,
-                nodeComparer: DiffResultNoteComparer);
+                nodeComparer: DiffResultNodeComparer);
 
             var results = sut.Compare(ToNodeList(control), ToNodeList(test));
 
@@ -302,7 +302,7 @@ namespace Egil.AngleSharp.Diffing
             var sut = CreateHtmlDiffEngine(
                 nodeMatcher: OneToOneNodeListMatcher,
                 nodeFilter: RemoveCommentNodeFilter,
-                nodeComparer: DiffResultNoteComparer);
+                nodeComparer: DiffResultNodeComparer);
 
             var results = sut.Compare(ctrlNodes, testNodes);
 
@@ -325,7 +325,7 @@ namespace Egil.AngleSharp.Diffing
             var sut = CreateHtmlDiffEngine(
                 nodeMatcher: OneToOneNodeListMatcher,
                 nodeFilter: NoneNodeFilter,
-                nodeComparer: SameResultNoteComparer,
+                nodeComparer: SameResultNodeComparer,
                 attrMatcher: AttributeNameMatcher,
                 attrFilter: NoneAttrFilter,
                 attrComparer: DiffResultAttrComparer);
@@ -344,7 +344,7 @@ namespace Egil.AngleSharp.Diffing
             var sut = CreateHtmlDiffEngine(
                 nodeMatcher: OneToOneNodeListMatcher,
                 nodeFilter: NoneNodeFilter,
-                nodeComparer: DiffResultNoteComparer,
+                nodeComparer: DiffResultNodeComparer,
                 attrMatcher: AttributeNameMatcher,
                 attrFilter: NoneAttrFilter,
                 attrComparer: DiffResultAttrComparer);
@@ -357,6 +357,38 @@ namespace Egil.AngleSharp.Diffing
             results[0].ShouldBeOfType<Diff<IElement>>().Test.SourceType.ShouldBe(ComparisonSourceType.Test);
             results[1].ShouldBeOfType<AttrDiff>().Control.SourceType.ShouldBe(ComparisonSourceType.Control);
             results[1].ShouldBeOfType<AttrDiff>().Test.SourceType.ShouldBe(ComparisonSourceType.Test);
+        }
+
+        [Fact(DisplayName = "When comparer returns SameAndBreak from an element comparison, none of the attributes or child nodes are compared")]
+        public void Test1()
+        {
+            var sut = CreateHtmlDiffEngine(
+                nodeMatcher: OneToOneNodeListMatcher,
+                nodeFilter: NoneNodeFilter,
+                nodeComparer: c => c.Control.Node.NodeName == "P" ? CompareResult.SameAndBreak : throw new Exception("NODE COMPARER SHOULD NOT BE CALLED ON CHILD NODES"),
+                attrMatcher: (x,y) => throw new Exception("ATTR MATCHER SHOULD NOT BE CALLED"),
+                attrFilter: _ => throw new Exception("ATTR FILTER SHOULD NOT BE CALLED"),
+                attrComparer: _ => throw new Exception("ATTR COMPARER SHOULD NOT BE CALLED"));
+
+            var results = sut.Compare(ToNodeList(@"<p id=""foo""><em>foo</em></p>"), ToNodeList(@"<p id=""bar""><span>baz</span></p>"));
+
+            results.ShouldBeEmpty();
+        }
+
+        [Fact(DisplayName = "When comparer returns DifferentAndBreak from an element comparison, none of the attributes or child nodes are compared")]
+        public void Test2()
+        {
+            var sut = CreateHtmlDiffEngine(
+                nodeMatcher: OneToOneNodeListMatcher,
+                nodeFilter: NoneNodeFilter,
+                nodeComparer: c => c.Control.Node.NodeName == "P" ? CompareResult.DifferentAndBreak : throw new Exception("NODE COMPARER SHOULD NOT BE CALLED ON CHILD NODES"),
+                attrMatcher: (x, y) => throw new Exception("ATTR MATCHER SHOULD NOT BE CALLED"),
+                attrFilter: _ => throw new Exception("ATTR FILTER SHOULD NOT BE CALLED"),
+                attrComparer: _ => throw new Exception("ATTR COMPARER SHOULD NOT BE CALLED"));
+
+            var results = sut.Compare(ToNodeList(@"<p id=""foo""><em>foo</em></p>"), ToNodeList(@"<p id=""bar""><span>baz</span></p>"));
+
+            results[0].ShouldBeOfType<Diff<IElement>>();
         }
 
         #region NodeFilters
@@ -385,8 +417,8 @@ namespace Egil.AngleSharp.Diffing
         #endregion
 
         #region NodeComparers
-        private static CompareResult SameResultNoteComparer(IComparison<INode> comparison) => CompareResult.Same;
-        private static CompareResult DiffResultNoteComparer(IComparison<INode> comparison) => CompareResult.Different;
+        private static CompareResult SameResultNodeComparer(IComparison<INode> comparison) => CompareResult.Same;
+        private static CompareResult DiffResultNodeComparer(IComparison<INode> comparison) => CompareResult.Different;
         #endregion
 
         #region AttributeMatchers

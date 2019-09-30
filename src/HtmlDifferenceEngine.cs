@@ -16,8 +16,8 @@ namespace Egil.AngleSharp.Diffing
         public HtmlDifferenceEngine(IFilterStrategy filterStrategy, IMatcherStrategy matcherStrategy, ICompareStrategy compareStrategy)
         {
             _filterStrategy = filterStrategy ?? throw new ArgumentNullException(nameof(filterStrategy));
-            _matcherStrategy = matcherStrategy ?? throw new ArgumentNullException(nameof(matcherStrategy)); 
-            _compareStrategy = compareStrategy ?? throw new ArgumentNullException(nameof(compareStrategy)); 
+            _matcherStrategy = matcherStrategy ?? throw new ArgumentNullException(nameof(matcherStrategy));
+            _compareStrategy = compareStrategy ?? throw new ArgumentNullException(nameof(compareStrategy));
         }
 
         public IList<IDiff> Compare(INodeList controlNodes, INodeList testNodes)
@@ -47,12 +47,7 @@ namespace Egil.AngleSharp.Diffing
 
         private IEnumerable<IDiff> CompareNodes(IReadOnlyList<IComparison<INode>> comparisons)
         {
-            return comparisons.SelectMany(comparison =>
-            {
-                var nodeDiffs = CompareNode(in comparison);
-                var childNodeDiffs = CompareChildNodes(in comparison);
-                return nodeDiffs.Concat(childNodeDiffs);
-            });
+            return comparisons.SelectMany(comparison => CompareNode(in comparison));
         }
 
         private IEnumerable<IDiff> CompareNode(in IComparison<INode> comparison)
@@ -70,33 +65,21 @@ namespace Egil.AngleSharp.Diffing
             return Array.Empty<IDiff>();
         }
 
-        private IEnumerable<IDiff> CompareChildNodes(in IComparison<INode> comparison)
-        {
-            if (!comparison.Control.Node.HasChildNodes && !comparison.Test.Node.HasChildNodes)
-                return Array.Empty<IDiff>();
-            
-            var ctrlChildNodes = comparison.Control.Node.ChildNodes;
-            var testChildNodes = comparison.Test.Node.ChildNodes;
-            var ctrlPath = comparison.Control.Path;
-            var testPath = comparison.Test.Path;
-
-            return CompareNodeLists(
-                ctrlChildNodes.ToComparisonSourceList(ComparisonSourceType.Control, ctrlPath),
-                testChildNodes.ToComparisonSourceList(ComparisonSourceType.Test, testPath)
-            );
-        }
-
         private IEnumerable<IDiff> CompareElement(in IComparison<IElement> comparison)
         {
             var result = new List<IDiff>();
 
             var compareRes = _compareStrategy.Compare(in comparison);
-            if (compareRes == CompareResult.Different)
+            if (compareRes == CompareResult.Different || compareRes == CompareResult.DifferentAndBreak)
             {
                 result.Add(new Diff<IElement>(in comparison));
             }
 
-            result.AddRange(CompareElementAttributes(in comparison));
+            if (compareRes == CompareResult.Same || compareRes == CompareResult.Different)
+            {
+                result.AddRange(CompareElementAttributes(in comparison));
+                result.AddRange(CompareChildNodes(in comparison));
+            }
 
             return result;
         }
@@ -118,10 +101,29 @@ namespace Egil.AngleSharp.Diffing
             return diffs.Concat(unmatchedDiffs);
         }
 
+        private IEnumerable<IDiff> CompareChildNodes(in IComparison<IElement> comparison)
+        {
+            if (!comparison.Control.Node.HasChildNodes && !comparison.Test.Node.HasChildNodes)
+                return Array.Empty<IDiff>();
+
+            var ctrlChildNodes = comparison.Control.Node.ChildNodes;
+            var testChildNodes = comparison.Test.Node.ChildNodes;
+            var ctrlPath = comparison.Control.Path;
+            var testPath = comparison.Test.Path;
+
+            return CompareNodeLists(
+                ctrlChildNodes.ToComparisonSourceList(ComparisonSourceType.Control, ctrlPath),
+                testChildNodes.ToComparisonSourceList(ComparisonSourceType.Test, testPath)
+            );
+        }
+
         private IEnumerable<IDiff> CompareAttributes(IEnumerable<IAttributeComparison> comparisons)
         {
-            return comparisons.Where(comparison => _compareStrategy.Compare(comparison) == CompareResult.Different)
-                .Select<IAttributeComparison, IDiff>(comparison => new AttrDiff(in comparison));
+            return comparisons.Where(comparison =>
+            {
+                var compareRes = _compareStrategy.Compare(comparison);
+                return compareRes == CompareResult.Different || compareRes == CompareResult.DifferentAndBreak;
+            }).Select<IAttributeComparison, IDiff>(comparison => new AttrDiff(in comparison));
         }
 
         private IAttributeComparisonSource[] CreateFilteredAttributeComparisonSourceList(in IComparisonSource<IElement> elementComparisonSource)

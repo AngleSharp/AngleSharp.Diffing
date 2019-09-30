@@ -30,10 +30,26 @@ namespace Egil.AngleSharp.Diffing
             return fragment;
         }
 
+        protected IEnumerable<IComparisonSource<INode>> ToComparisonSourceList(string html)
+        {
+            return ToNodeList(html).ToComparisonSourceList(ComparisonSourceType.Control);
+        }
+
         protected INode ToNode(string htmlsnippet)
         {
             var fragment = _htmlParser.ParseFragment(htmlsnippet, _document.Body);
             return fragment[0];
+        }
+
+        protected IComparisonSource<TNode> ToComparisonSource<TNode>(string html)
+            where TNode : INode
+        {
+            return (IComparisonSource<TNode>)ToComparisonSource(html);
+        }
+
+        protected IComparisonSource<INode> ToComparisonSource(string html)
+        {
+            return ToNode(html).ToComparisonSource(0, ComparisonSourceType.Control);
         }
 
         protected static HtmlDifferenceEngine CreateHtmlDiffEngine(

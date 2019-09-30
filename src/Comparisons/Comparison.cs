@@ -5,7 +5,6 @@ namespace Egil.AngleSharp.Diffing.Comparisons
 {
     /// <summary>
     /// Represent a comparison between two nodes.
-    /// Create using <see cref="ComparisonFactory.Create(in IComparisonSource{INode}, in IComparisonSource{INode})"/>.
     /// </summary>
     /// <typeparam name="TNode"></typeparam>
     public readonly struct Comparison<TNode> : IEquatable<Comparison<TNode>>, IComparison<TNode>
@@ -14,7 +13,7 @@ namespace Egil.AngleSharp.Diffing.Comparisons
         public IComparisonSource<TNode> Control { get; }
         public IComparisonSource<TNode> Test { get; }
 
-        internal Comparison(in IComparisonSource<TNode> control, in IComparisonSource<TNode> test)
+        public Comparison(in IComparisonSource<TNode> control, in IComparisonSource<TNode> test)
         {
             Control = control;
             Test = test;
