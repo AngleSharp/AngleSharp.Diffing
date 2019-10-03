@@ -1,13 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using AngleSharp.Dom;
-using Egil.AngleSharp.Diffing.Comparisons;
+using Egil.AngleSharp.Diffing.Core;
 
 namespace Egil.AngleSharp.Diffing
 {
     public static class AngleSharpDomExtensions
     {
-        public static IEnumerable<IComparisonSource<INode>> ToComparisonSourceList(this INodeList nodes, ComparisonSourceType sourceType, string path = "")
+        public static SourceCollection ToSourceCollection(this INodeList nodelist, ComparisonSourceType sourceType, string path = "")
+        {
+            return new SourceCollection(sourceType, nodelist.ToComparisonSourceList(sourceType, path));
+        }
+
+        public static IEnumerable<ComparisonSource> ToComparisonSourceList(this INodeList nodes, ComparisonSourceType sourceType, string path = "")
         {
             if (nodes is null) throw new ArgumentNullException(nameof(nodes));
 
@@ -18,16 +23,7 @@ namespace Egil.AngleSharp.Diffing
             yield break;
         }
 
-        public static IComparisonSource<INode> ToComparisonSource(this INode node, int index, ComparisonSourceType sourceType, string path = "")
-        {
-            switch (node)
-            {
-                case IElement elm: return new ComparisonSource<IElement>(elm, index, path, sourceType);
-                case IComment comment: return new ComparisonSource<IComment>(comment, index, path, sourceType);
-                case IText text: return new ComparisonSource<IText>(text, index, path, sourceType);
-                default: return new ComparisonSource<INode>(node, index, path, sourceType);
-            }
-        }
+        public static ComparisonSource ToComparisonSource(this INode node, int index, ComparisonSourceType sourceType, string path = "") => new ComparisonSource(node, index, path, sourceType);
 
         public static bool IsEmptyOrEquals(this IAttr attr, string testValue, StringComparison comparison = StringComparison.OrdinalIgnoreCase)
         {

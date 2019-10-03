@@ -1,0 +1,203 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using AngleSharp;
+using AngleSharp.Dom;
+using AngleSharp.Dom.Events;
+using Egil.AngleSharp.Diffing.Extensions;
+
+namespace Egil.AngleSharp.Diffing.Core
+{
+
+    public class HtmlDifferenceEngine
+    {
+        private readonly IFilterStrategy _filterStrategy;
+        private readonly IMatcherStrategy _matcherStrategy;
+        private readonly ICompareStrategy _compareStrategy;
+
+        public HtmlDifferenceEngine(IFilterStrategy filterStrategy, IMatcherStrategy matcherStrategy, ICompareStrategy compareStrategy)
+        {
+            _filterStrategy = filterStrategy ?? throw new ArgumentNullException(nameof(filterStrategy));
+            _matcherStrategy = matcherStrategy ?? throw new ArgumentNullException(nameof(matcherStrategy));
+            _compareStrategy = compareStrategy ?? throw new ArgumentNullException(nameof(compareStrategy));
+        }
+
+        public IList<IDiff> Compare(INodeList controlNodes, INodeList testNodes)
+        {
+            if (controlNodes is null) throw new ArgumentNullException(nameof(controlNodes));
+            if (testNodes is null) throw new ArgumentNullException(nameof(testNodes));
+
+            var controlSources = controlNodes.ToSourceCollection(ComparisonSourceType.Control);
+            var testSources = testNodes.ToSourceCollection(ComparisonSourceType.Test);
+
+            var context = CreateDiffContext(controlNodes, testNodes);
+
+            var diffs = CompareNodeLists(context, controlSources, testSources);
+            var missing = context.MissingSources.Select(source => new MissingNodeDiff(source));
+            var unexpected = context.UnexpectedSources.Select(source => new UnexpectedNodeDiff(source));
+
+            return diffs.Concat(missing).Concat(unexpected).ToList();
+        }
+
+        private static DiffContext CreateDiffContext(INodeList controlNodes, INodeList testNodes)
+        {
+            IElement? controlRoot = null;
+            IElement? testRoot = null;
+
+            if (controlNodes.Length > 0 && controlNodes[0].GetRoot() is IElement r1) { controlRoot = r1; }
+            if (testNodes.Length > 0 && testNodes[0].GetRoot() is IElement r2) { testRoot = r2; }
+
+            return new DiffContext(controlRoot, testRoot);
+        }
+
+        private IEnumerable<IDiff> CompareNodeLists(DiffContext context, SourceCollection controlSources, SourceCollection testSources)
+        {
+            ApplyNodeFilter(controlSources);
+            ApplyNodeFilter(testSources);
+            var comparisons = MatchNodes(context, controlSources, testSources);
+            var diffs = CompareNodes(context, comparisons);
+
+            return diffs;
+        }
+
+        private void ApplyNodeFilter(SourceCollection sources)
+        {
+            sources.Remove(_filterStrategy.NodeFilter);
+        }
+
+        private IEnumerable<Comparison> MatchNodes(DiffContext context, SourceCollection controls, SourceCollection tests)
+        {
+            foreach (var comparison in _matcherStrategy.MatchNodes(context, controls, tests))
+            {
+                MarkSelectedSourcesAsMatched(comparison);
+                yield return comparison;
+            }
+
+            UpdateUnmatchedTracking();
+
+            yield break;
+
+            void MarkSelectedSourcesAsMatched(in Comparison comparison)
+            {
+                controls.MarkAsMatched(comparison.Control);
+                tests.MarkAsMatched(comparison.Test);
+                context.MissingSources.Remove(comparison.Control);
+                context.UnexpectedSources.Remove(comparison.Test);
+            }
+
+            void UpdateUnmatchedTracking()
+            {
+                context.MissingSources.AddRange(controls.GetUnmatched());
+                context.UnexpectedSources.AddRange(tests.GetUnmatched());
+            }
+        }
+
+        private IEnumerable<IDiff> CompareNodes(DiffContext context, IEnumerable<Comparison> comparisons)
+        {
+            return comparisons.SelectMany(comparison => CompareNode(context, comparison));
+        }
+
+        private IEnumerable<IDiff> CompareNode(DiffContext context, in Comparison comparison)
+        {
+            if (comparison.Control.Node is IElement)
+            {
+                return CompareElement(context, comparison);
+            }
+
+            if (_compareStrategy.Compare(comparison) == CompareResult.Different)
+            {
+                IDiff diff = new Diff(comparison);
+                return new[] { diff };
+            }
+
+            return Array.Empty<IDiff>();
+        }
+
+        private IEnumerable<IDiff> CompareElement(DiffContext context, in Comparison comparison)
+        {
+            var result = new List<IDiff>();
+
+            var compareRes = _compareStrategy.Compare(comparison);
+            if (compareRes == CompareResult.Different || compareRes == CompareResult.DifferentAndBreak)
+            {
+                result.Add(new Diff(comparison));
+            }
+
+            if (compareRes == CompareResult.Same || compareRes == CompareResult.Different)
+            {
+                result.AddRange(CompareElementAttributes(context, comparison));
+                result.AddRange(CompareChildNodes(context, comparison));
+            }
+
+            return result;
+        }
+
+        private IEnumerable<IDiff> CompareElementAttributes(DiffContext context, in Comparison comparison)
+        {
+            if (!comparison.Control.Node.HasAttributes() && !comparison.Test.Node.HasAttributes()) return Array.Empty<IDiff>();
+
+            var controlSrc = comparison.Control;
+            var testSrc = comparison.Test;
+
+            var controlAttrs = CreateFilteredAttributeComparisonSourceList(controlSrc);
+            var testAttrs = CreateFilteredAttributeComparisonSourceList(testSrc);
+            var attrComparisons = _matcherStrategy.MatchAttributes(controlAttrs, testAttrs).ToArray();
+
+            var diffs = CompareAttributes(attrComparisons);
+            var unmatchedDiffs = UnmatchedAttributesToDiff(controlAttrs, testAttrs, attrComparisons);
+
+            return diffs.Concat(unmatchedDiffs);
+        }
+
+        private IEnumerable<IDiff> CompareChildNodes(DiffContext context, in Comparison comparison)
+        {
+            if (!comparison.Control.Node.HasChildNodes && !comparison.Test.Node.HasChildNodes)
+                return Array.Empty<IDiff>();
+
+            var ctrlChildNodes = comparison.Control.Node.ChildNodes;
+            var testChildNodes = comparison.Test.Node.ChildNodes;
+            var ctrlPath = comparison.Control.Path;
+            var testPath = comparison.Test.Path;
+
+            return CompareNodeLists(
+                context,
+                ctrlChildNodes.ToSourceCollection(ComparisonSourceType.Control, ctrlPath),
+                testChildNodes.ToSourceCollection(ComparisonSourceType.Test, testPath)
+            );
+        }
+
+        private IEnumerable<IDiff> CompareAttributes(IEnumerable<AttributeComparison> comparisons)
+        {
+            return comparisons.Where(comparison =>
+            {
+                var compareRes = _compareStrategy.Compare(comparison);
+                return compareRes == CompareResult.Different || compareRes == CompareResult.DifferentAndBreak;
+            }).Select<AttributeComparison, IDiff>(comparison => new AttrDiff(comparison));
+        }
+
+        private AttributeComparisonSource[] CreateFilteredAttributeComparisonSourceList(in ComparisonSource elementComparisonSource)
+        {
+            var source = elementComparisonSource;
+            var attributes = ((IElement)source.Node).Attributes;
+
+            return attributes
+                .Select(attr => new AttributeComparisonSource(attr, source))
+                .Where(source => _filterStrategy.AttributeFilter(source))
+                .ToArray();
+        }
+
+        private static IEnumerable<IDiff> UnmatchedAttributesToDiff(IEnumerable<AttributeComparisonSource> controlsAttr, IEnumerable<AttributeComparisonSource> testsAttr, IEnumerable<AttributeComparison> comparisons)
+        {
+            // TODO: Since we know indexes and always increasing order of those,
+            //       something more intelligent can be done here than 
+            //       O(n^2) .Any(..) searches through comparisons.
+            var missing = controlsAttr.Where(x => !comparisons.Any(c => c.Control == x))
+                .Select<AttributeComparisonSource, IDiff>(source => new MissingAttrDiff(source));
+            var unexpected = testsAttr.Where(x => !comparisons.Any(c => c.Test == x))
+                .Select<AttributeComparisonSource, IDiff>(source => new UnexpectedAttrDiff(source));
+            return missing.Concat(unexpected);
+        }
+    }
+}

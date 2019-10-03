@@ -1,7 +1,7 @@
 ﻿using AngleSharp;
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
-using Egil.AngleSharp.Diffing.Comparisons;
+using Egil.AngleSharp.Diffing.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Egil.AngleSharp.Diffing
 {
-    public class DiffBuilder : IDiffBuilder
+    public class DiffBuilder
     {
         private string _control = string.Empty;
         private string _test = string.Empty;
@@ -35,7 +35,7 @@ namespace Egil.AngleSharp.Diffing
             return new DiffBuilder(control);
         }
 
-        public DiffBuilder WithFilter(Func<IComparisonSource<IElement>, bool> nodeFilter)
+        public DiffBuilder WithFilter(Func<ComparisonSource, bool> nodeFilter)
         {
             return this;
         }
