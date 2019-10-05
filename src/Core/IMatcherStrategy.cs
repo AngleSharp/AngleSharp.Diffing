@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using AngleSharp.Dom;
 
 namespace Egil.AngleSharp.Diffing.Core
 {
@@ -23,6 +22,6 @@ namespace Egil.AngleSharp.Diffing.Core
         /// depending on whether they are control or test attributes.
         /// </summary>
         /// <returns></returns>
-        IEnumerable<AttributeComparison> MatchAttributes(IReadOnlyList<AttributeComparisonSource> controlAttributes, IReadOnlyList<AttributeComparisonSource> testAttributes);
+        IEnumerable<AttributeComparison> MatchAttributes(DiffContext context, SourceMap controlAttrSources, SourceMap testAttrSources);
     }
 }

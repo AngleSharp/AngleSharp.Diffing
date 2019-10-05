@@ -1,5 +1,4 @@
 ﻿using System;
-using AngleSharp.Dom;
 
 namespace Egil.AngleSharp.Diffing.Core
 {

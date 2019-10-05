@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using AngleSharp.Dom;
 using Shouldly;
 using Xunit;
@@ -365,7 +364,7 @@ namespace Egil.AngleSharp.Diffing.Core
                 nodeMatcher: OneToOneNodeListMatcher,
                 nodeFilter: NoneNodeFilter,
                 nodeComparer: c => c.Control.Node.NodeName == "P" ? CompareResult.SameAndBreak : throw new Exception("NODE COMPARER SHOULD NOT BE CALLED ON CHILD NODES"),
-                attrMatcher: (x, y) => throw new Exception("ATTR MATCHER SHOULD NOT BE CALLED"),
+                attrMatcher: (c, x, y) => throw new Exception("ATTR MATCHER SHOULD NOT BE CALLED"),
                 attrFilter: _ => throw new Exception("ATTR FILTER SHOULD NOT BE CALLED"),
                 attrComparer: _ => throw new Exception("ATTR COMPARER SHOULD NOT BE CALLED"));
 
@@ -381,7 +380,7 @@ namespace Egil.AngleSharp.Diffing.Core
                 nodeMatcher: OneToOneNodeListMatcher,
                 nodeFilter: NoneNodeFilter,
                 nodeComparer: c => c.Control.Node.NodeName == "P" ? CompareResult.DifferentAndBreak : throw new Exception("NODE COMPARER SHOULD NOT BE CALLED ON CHILD NODES"),
-                attrMatcher: (x, y) => throw new Exception("ATTR MATCHER SHOULD NOT BE CALLED"),
+                attrMatcher: (c, x, y) => throw new Exception("ATTR MATCHER SHOULD NOT BE CALLED"),
                 attrFilter: _ => throw new Exception("ATTR FILTER SHOULD NOT BE CALLED"),
                 attrComparer: _ => throw new Exception("ATTR COMPARER SHOULD NOT BE CALLED"));
 
@@ -429,28 +428,24 @@ namespace Egil.AngleSharp.Diffing.Core
 
         #region AttributeMatchers
         private static IReadOnlyList<AttributeComparison> NoneAttributeMatcher(
-            IReadOnlyList<AttributeComparisonSource> controlAttributes,
-            IReadOnlyList<AttributeComparisonSource> testAttributes) => Array.Empty<AttributeComparison>();
+            DiffContext context,
+            SourceMap controlAttributes,
+            SourceMap testAttributes) => Array.Empty<AttributeComparison>();
 
-        private static Func<IReadOnlyList<AttributeComparisonSource>, IReadOnlyList<AttributeComparisonSource>, IEnumerable<AttributeComparison>> SpecificAttributeMatcher(string matchAttrName)
+        private static Func<DiffContext, SourceMap, SourceMap, IEnumerable<AttributeComparison>> SpecificAttributeMatcher(string matchAttrName)
         {
-            return (ctrlAttrs, testAttrs) => new List<AttributeComparison>
+            return (ctx, ctrlAttrs, testAttrs) => new List<AttributeComparison>
             {
-                new AttributeComparison(
-                    ctrlAttrs.Single(x => x.Attribute.Name == matchAttrName),
-                    testAttrs.Single(x => x.Attribute.Name == matchAttrName)
-                )
+                new AttributeComparison(ctrlAttrs[matchAttrName], testAttrs[matchAttrName] )
             };
         }
 
-        private static IEnumerable<AttributeComparison> AttributeNameMatcher(
-            IReadOnlyList<AttributeComparisonSource> controlAttributes,
-            IReadOnlyList<AttributeComparisonSource> testAttributes)
+        private static IEnumerable<AttributeComparison> AttributeNameMatcher(DiffContext context, SourceMap controlAttrs, SourceMap testAttrs)
         {
-            foreach (var ctrlAttrSrc in controlAttributes)
+            foreach (var ctrlAttrSrc in controlAttrs)
             {
-                var testAttrSrc = testAttributes.SingleOrDefault(x => x.Attribute.Name == ctrlAttrSrc.Attribute.Name);
-                if (testAttrSrc is { }) yield return new AttributeComparison(ctrlAttrSrc, testAttrSrc);
+                if (testAttrs.Contains(ctrlAttrSrc.Attribute.Name))
+                    yield return new AttributeComparison(ctrlAttrSrc, testAttrs[ctrlAttrSrc.Attribute.Name]);
             }
         }
 

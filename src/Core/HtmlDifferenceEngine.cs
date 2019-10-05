@@ -1,16 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using AngleSharp;
 using AngleSharp.Dom;
-using AngleSharp.Dom.Events;
 using Egil.AngleSharp.Diffing.Extensions;
 
 namespace Egil.AngleSharp.Diffing.Core
 {
-
     public class HtmlDifferenceEngine
     {
         private readonly IFilterStrategy _filterStrategy;
@@ -35,10 +30,9 @@ namespace Egil.AngleSharp.Diffing.Core
             var context = CreateDiffContext(controlNodes, testNodes);
 
             var diffs = CompareNodeLists(context, controlSources, testSources);
-            var missing = context.MissingSources.Select(source => new MissingNodeDiff(source));
-            var unexpected = context.UnexpectedSources.Select(source => new UnexpectedNodeDiff(source));
+            var unmatchedDiffs = context.GetDiffsFromUnmatched();
 
-            return diffs.Concat(missing).Concat(unexpected).ToList();
+            return diffs.Concat(unmatchedDiffs).ToList();
         }
 
         private static DiffContext CreateDiffContext(INodeList controlNodes, INodeList testNodes)
@@ -106,7 +100,8 @@ namespace Egil.AngleSharp.Diffing.Core
                 return CompareElement(context, comparison);
             }
 
-            if (_compareStrategy.Compare(comparison) == CompareResult.Different)
+            var compareRes = _compareStrategy.Compare(comparison);
+            if (compareRes == CompareResult.Different || compareRes == CompareResult.DifferentAndBreak)
             {
                 IDiff diff = new Diff(comparison);
                 return new[] { diff };
@@ -138,17 +133,47 @@ namespace Egil.AngleSharp.Diffing.Core
         {
             if (!comparison.Control.Node.HasAttributes() && !comparison.Test.Node.HasAttributes()) return Array.Empty<IDiff>();
 
-            var controlSrc = comparison.Control;
-            var testSrc = comparison.Test;
+            var controlAttrs = new SourceMap(comparison.Control);
+            var testAttrs = new SourceMap(comparison.Test);
 
-            var controlAttrs = CreateFilteredAttributeComparisonSourceList(controlSrc);
-            var testAttrs = CreateFilteredAttributeComparisonSourceList(testSrc);
-            var attrComparisons = _matcherStrategy.MatchAttributes(controlAttrs, testAttrs).ToArray();
+            ApplyFilterAttributes(controlAttrs);
+            ApplyFilterAttributes(testAttrs);
 
-            var diffs = CompareAttributes(attrComparisons);
-            var unmatchedDiffs = UnmatchedAttributesToDiff(controlAttrs, testAttrs, attrComparisons);
+            var attrComparisons = MatchAttributes(context, controlAttrs, testAttrs);
 
-            return diffs.Concat(unmatchedDiffs);
+            return CompareAttributes(attrComparisons);
+        }
+
+        private void ApplyFilterAttributes(SourceMap controlAttrs)
+        {
+            controlAttrs.Remove(_filterStrategy.AttributeFilter);
+        }
+
+        private IEnumerable<AttributeComparison> MatchAttributes(DiffContext context, SourceMap controls, SourceMap tests)
+        {
+            foreach (var comparison in _matcherStrategy.MatchAttributes(context, controls, tests))
+            {
+                MarkSelectedSourcesAsMatched(comparison);
+                yield return comparison;
+            }
+
+            UpdateUnmatchedTracking();
+
+            yield break;
+
+            void MarkSelectedSourcesAsMatched(in AttributeComparison comparison)
+            {
+                controls.MarkAsMatched(comparison.Control);
+                tests.MarkAsMatched(comparison.Test);
+                context.MissingAttributeSources.Remove(comparison.Control);
+                context.UnexpectedAttributeSources.Remove(comparison.Test);
+            }
+
+            void UpdateUnmatchedTracking()
+            {
+                context.MissingAttributeSources.AddRange(controls.GetUnmatched());
+                context.UnexpectedAttributeSources.AddRange(tests.GetUnmatched());
+            }
         }
 
         private IEnumerable<IDiff> CompareChildNodes(DiffContext context, in Comparison comparison)
@@ -170,34 +195,12 @@ namespace Egil.AngleSharp.Diffing.Core
 
         private IEnumerable<IDiff> CompareAttributes(IEnumerable<AttributeComparison> comparisons)
         {
-            return comparisons.Where(comparison =>
+            foreach (var comparison in comparisons)
             {
                 var compareRes = _compareStrategy.Compare(comparison);
-                return compareRes == CompareResult.Different || compareRes == CompareResult.DifferentAndBreak;
-            }).Select<AttributeComparison, IDiff>(comparison => new AttrDiff(comparison));
-        }
-
-        private AttributeComparisonSource[] CreateFilteredAttributeComparisonSourceList(in ComparisonSource elementComparisonSource)
-        {
-            var source = elementComparisonSource;
-            var attributes = ((IElement)source.Node).Attributes;
-
-            return attributes
-                .Select(attr => new AttributeComparisonSource(attr, source))
-                .Where(source => _filterStrategy.AttributeFilter(source))
-                .ToArray();
-        }
-
-        private static IEnumerable<IDiff> UnmatchedAttributesToDiff(IEnumerable<AttributeComparisonSource> controlsAttr, IEnumerable<AttributeComparisonSource> testsAttr, IEnumerable<AttributeComparison> comparisons)
-        {
-            // TODO: Since we know indexes and always increasing order of those,
-            //       something more intelligent can be done here than 
-            //       O(n^2) .Any(..) searches through comparisons.
-            var missing = controlsAttr.Where(x => !comparisons.Any(c => c.Control == x))
-                .Select<AttributeComparisonSource, IDiff>(source => new MissingAttrDiff(source));
-            var unexpected = testsAttr.Where(x => !comparisons.Any(c => c.Test == x))
-                .Select<AttributeComparisonSource, IDiff>(source => new UnexpectedAttrDiff(source));
-            return missing.Concat(unexpected);
+                if (compareRes == CompareResult.Different || compareRes == CompareResult.DifferentAndBreak)
+                    yield return new AttrDiff(comparison);
+            }
         }
     }
 }

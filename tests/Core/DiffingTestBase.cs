@@ -1,11 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using AngleSharp;
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
-using Shouldly;
-using Xunit;
 
 namespace Egil.AngleSharp.Diffing.Core
 {
@@ -47,7 +44,7 @@ namespace Egil.AngleSharp.Diffing.Core
 
         protected static HtmlDifferenceEngine CreateHtmlDiffEngine(
                 Func<DiffContext, SourceCollection, SourceCollection, IEnumerable<Comparison>>? nodeMatcher = null,
-                Func<IReadOnlyList<AttributeComparisonSource>, IReadOnlyList<AttributeComparisonSource>, IEnumerable<AttributeComparison>>? attrMatcher = null,
+                Func<DiffContext, SourceMap, SourceMap, IEnumerable<AttributeComparison>>? attrMatcher = null,
                 Func<ComparisonSource, bool>? nodeFilter = null,
                 Func<AttributeComparisonSource, bool>? attrFilter = null,
                 Func<Comparison, CompareResult>? nodeComparer = null,
@@ -64,11 +61,11 @@ namespace Egil.AngleSharp.Diffing.Core
         class MockMatcherStrategy : IMatcherStrategy
         {
             private readonly Func<DiffContext, SourceCollection, SourceCollection, IEnumerable<Comparison>>? _nodeMatcher;
-            private readonly Func<IReadOnlyList<AttributeComparisonSource>, IReadOnlyList<AttributeComparisonSource>, IEnumerable<AttributeComparison>>? _attrMatcher;
+            private readonly Func<DiffContext, SourceMap, SourceMap, IEnumerable<AttributeComparison>>? _attrMatcher;
 
             public MockMatcherStrategy(
                 Func<DiffContext, SourceCollection, SourceCollection, IEnumerable<Comparison>>? nodeMatcher = null,
-                Func<IReadOnlyList<AttributeComparisonSource>, IReadOnlyList<AttributeComparisonSource>, IEnumerable<AttributeComparison>>? attrMatcher = null)
+                Func<DiffContext, SourceMap, SourceMap, IEnumerable<AttributeComparison>>? attrMatcher = null)
             {
                 _nodeMatcher = nodeMatcher;
                 _attrMatcher = attrMatcher;
@@ -80,8 +77,9 @@ namespace Egil.AngleSharp.Diffing.Core
                 SourceCollection testNodes) => _nodeMatcher!(context, controlNodes, testNodes);
 
             public IEnumerable<AttributeComparison> MatchAttributes(
-                IReadOnlyList<AttributeComparisonSource> controlAttributes,
-                IReadOnlyList<AttributeComparisonSource> testAttributes) => _attrMatcher!(controlAttributes, testAttributes);
+                DiffContext context,
+                SourceMap controlAttributes,
+                SourceMap testAttributes) => _attrMatcher!(context, controlAttributes, testAttributes);
         }
 
         class MockFilterStrategy : IFilterStrategy

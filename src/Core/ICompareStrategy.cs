@@ -1,6 +1,4 @@
-﻿using AngleSharp.Dom;
-
-namespace Egil.AngleSharp.Diffing.Core
+﻿namespace Egil.AngleSharp.Diffing.Core
 {
     /// <summary>
     /// The compare strategy used by the <see cref="HtmlDifferenceEngine"/> 

@@ -1,6 +1,4 @@
-﻿using AngleSharp.Dom;
-
-namespace Egil.AngleSharp.Diffing.Core
+﻿namespace Egil.AngleSharp.Diffing.Core
 {
     /// <summary>
     /// The filter strategy used by the <see cref="HtmlDifferenceEngine"/> 
@@ -21,5 +19,5 @@ namespace Egil.AngleSharp.Diffing.Core
         /// <param name="comparisonSource">A comparison source for the attribute</param>
         /// <returns>true if the attribute should be part of the comparison, false if the attribute should be filtered out.</returns>
         bool AttributeFilter(in AttributeComparisonSource attributeComparisonSource);
-    }    
+    }
 }

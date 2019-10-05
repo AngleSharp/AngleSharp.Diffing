@@ -1,7 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-
-namespace Egil.AngleSharp.Diffing.Core
+﻿namespace Egil.AngleSharp.Diffing.Core
 {
     public class AttrDiff : DiffBase<AttributeComparisonSource>
     {

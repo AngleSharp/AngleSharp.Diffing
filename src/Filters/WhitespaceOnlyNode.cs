@@ -16,7 +16,7 @@
 //            if(comparisonSource is null) throw new ArgumentNullException(nameof(comparisonSource));
 
 //            var result = currentDecision;
-            
+
 //            if (result)
 //            {
 //                result = !string.IsNullOrWhiteSpace(comparisonSource.Node.Data);

@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Shouldly;
 using Xunit;
 
@@ -37,7 +34,7 @@ namespace Egil.AngleSharp.Diffing.Core
         [Fact(DisplayName = "When a source is marked as matched, it isnt included in output of GetUnmatched")]
         public void Test2()
         {
-            var sut = ToNodeList("<p></p><span></span>").ToSourceCollection(ComparisonSourceType.Control);            
+            var sut = ToNodeList("<p></p><span></span>").ToSourceCollection(ComparisonSourceType.Control);
             var first = sut.First();
             var last = sut.Last();
 
@@ -75,7 +72,7 @@ namespace Egil.AngleSharp.Diffing.Core
 
             sut.Remove((in ComparisonSource x) => x != first);
 
-            sut.Count.ShouldBe(1);            
+            sut.Count.ShouldBe(1);
             sut.First().ShouldBe(last);
         }
 

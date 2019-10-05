@@ -1,7 +1,7 @@
 ﻿using System;
-using AngleSharp.Dom;
-using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using AngleSharp.Dom;
 
 namespace Egil.AngleSharp.Diffing.Core
 {

@@ -1,7 +1,6 @@
-﻿using AngleSharp.Dom;
-using Egil.AngleSharp.Diffing.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Egil.AngleSharp.Diffing.Core;
 
 namespace Egil.AngleSharp.Diffing
 {

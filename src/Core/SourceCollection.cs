@@ -2,9 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AngleSharp.Dom;
 
 namespace Egil.AngleSharp.Diffing.Core
 {
@@ -36,17 +33,35 @@ namespace Egil.AngleSharp.Diffing.Core
             EnsureSourcesAreInCorrectOrder();
         }
 
-        private void EnsureSourcesAreInCorrectOrder()
+        public IEnumerable<ComparisonSource> GetUnmatched()
         {
             for (int i = 0; i < _sources.Length; i++)
             {
-                while (_sources[i].Index != i)
+                if (_status[_sources[i].Index] == SOURCE_UNMATCHED)
                 {
-                    var tmp = _sources[i];
-                    _sources[i] = _sources[tmp.Index];
-                    _sources[tmp.Index] = tmp;
+                    yield return _sources[i];
                 }
             }
+            yield break;
+        }
+
+        public IEnumerator<ComparisonSource> GetEnumerator()
+        {
+            for (int i = 0; i < _sources.Length; i++)
+            {
+                yield return _sources[i];
+            }
+            yield break;
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        internal void MarkAsMatched(in ComparisonSource source)
+        {
+            if (_status[source.Index] == SOURCE_REMOVED)
+                throw new InvalidOperationException("A removed source cannot be marked as matched. The source is not supposed to be part of the comparison.");
+
+            _status[source.Index]++;
         }
 
         internal void Remove(SourceCollectionRemovePredicate predicate)
@@ -74,35 +89,17 @@ namespace Egil.AngleSharp.Diffing.Core
             }
         }
 
-        internal void MarkAsMatched(in ComparisonSource source)
-        {
-            if (_status[source.Index] == SOURCE_REMOVED)
-                throw new InvalidOperationException("A removed source cannot be marked as matched. The source is not supposed to be part of the comparison.");
-
-            _status[source.Index]++;
-        }
-
-        public IEnumerable<ComparisonSource> GetUnmatched()
+        private void EnsureSourcesAreInCorrectOrder()
         {
             for (int i = 0; i < _sources.Length; i++)
             {
-                if (_status[_sources[i].Index] == SOURCE_UNMATCHED)
+                while (_sources[i].Index != i)
                 {
-                    yield return _sources[i];
+                    var tmp = _sources[i];
+                    _sources[i] = _sources[tmp.Index];
+                    _sources[tmp.Index] = tmp;
                 }
             }
-            yield break;
         }
-
-        public IEnumerator<ComparisonSource> GetEnumerator()
-        {
-            for (int i = 0; i < _sources.Length; i++)
-            {
-                yield return _sources[i];
-            }
-            yield break;
-        }
-
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }
