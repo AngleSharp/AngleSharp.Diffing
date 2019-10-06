@@ -71,12 +71,12 @@ namespace Egil.AngleSharp.Diffing.Core
                 _attrMatcher = attrMatcher;
             }
 
-            public IEnumerable<Comparison> MatchNodes(
+            public IEnumerable<Comparison> Match(
                 DiffContext context,
                 SourceCollection controlNodes,
                 SourceCollection testNodes) => _nodeMatcher!(context, controlNodes, testNodes);
 
-            public IEnumerable<AttributeComparison> MatchAttributes(
+            public IEnumerable<AttributeComparison> Match(
                 DiffContext context,
                 SourceMap controlAttributes,
                 SourceMap testAttributes) => _attrMatcher!(context, controlAttributes, testAttributes);
@@ -93,10 +93,10 @@ namespace Egil.AngleSharp.Diffing.Core
                 _attrFilter = attrFilter;
             }
 
-            public bool AttributeFilter(in AttributeComparisonSource attributeComparisonSource)
+            public bool Filter(in AttributeComparisonSource attributeComparisonSource)
                 => _attrFilter!(attributeComparisonSource);
 
-            public bool NodeFilter(in ComparisonSource comparisonSource)
+            public bool Filter(in ComparisonSource comparisonSource)
                 => _nodeFilter!(comparisonSource);
         }
 

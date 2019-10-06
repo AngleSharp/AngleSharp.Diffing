@@ -15,7 +15,7 @@ var diffs = DiffBuilder
 
 #### Built-in filters: 
 - **`RemoveCommentNodeFilter`**: remove all comment nodes.
-- whitespace only text nodes
+- ** whitespace only text nodes
 
 Matchers:
 - searching matcher, that will match nodes of the same type, and, optionally, element with the same element name.

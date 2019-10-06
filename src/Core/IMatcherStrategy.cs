@@ -14,7 +14,7 @@ namespace Egil.AngleSharp.Diffing.Core
         /// depending on whether they are control or test nodes.
         /// </summary>
         /// <returns></returns>
-        IEnumerable<Comparison> MatchNodes(DiffContext context, SourceCollection controlSources, SourceCollection testSources);
+        IEnumerable<Comparison> Match(DiffContext context, SourceCollection controlSources, SourceCollection testSources);
 
         /// <summary>
         /// Matches up the control attributes with test attributes in the two input lists. The matched control and test attributes will be compared to each other.
@@ -22,6 +22,6 @@ namespace Egil.AngleSharp.Diffing.Core
         /// depending on whether they are control or test attributes.
         /// </summary>
         /// <returns></returns>
-        IEnumerable<AttributeComparison> MatchAttributes(DiffContext context, SourceMap controlAttrSources, SourceMap testAttrSources);
+        IEnumerable<AttributeComparison> Match(DiffContext context, SourceMap controlAttrSources, SourceMap testAttrSources);
     }
 }

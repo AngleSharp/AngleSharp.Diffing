@@ -58,12 +58,12 @@ namespace Egil.AngleSharp.Diffing.Core
 
         private void ApplyNodeFilter(SourceCollection sources)
         {
-            sources.Remove(_filterStrategy.NodeFilter);
+            sources.Remove(_filterStrategy.Filter);
         }
 
         private IEnumerable<Comparison> MatchNodes(DiffContext context, SourceCollection controls, SourceCollection tests)
         {
-            foreach (var comparison in _matcherStrategy.MatchNodes(context, controls, tests))
+            foreach (var comparison in _matcherStrategy.Match(context, controls, tests))
             {
                 MarkSelectedSourcesAsMatched(comparison);
                 yield return comparison;
@@ -146,12 +146,12 @@ namespace Egil.AngleSharp.Diffing.Core
 
         private void ApplyFilterAttributes(SourceMap controlAttrs)
         {
-            controlAttrs.Remove(_filterStrategy.AttributeFilter);
+            controlAttrs.Remove(_filterStrategy.Filter);
         }
 
         private IEnumerable<AttributeComparison> MatchAttributes(DiffContext context, SourceMap controls, SourceMap tests)
         {
-            foreach (var comparison in _matcherStrategy.MatchAttributes(context, controls, tests))
+            foreach (var comparison in _matcherStrategy.Match(context, controls, tests))
             {
                 MarkSelectedSourcesAsMatched(comparison);
                 yield return comparison;
