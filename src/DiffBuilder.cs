@@ -28,8 +28,13 @@ namespace Egil.AngleSharp.Diffing
         {
             return new DiffBuilder(control);
         }
+        
+        public DiffBuilder WithFilter(FilterStrategy<ComparisonSource> filterStrategy)
+        {
+            return this;
+        }
 
-        public DiffBuilder WithFilter(Func<ComparisonSource, bool> nodeFilter)
+        public DiffBuilder WithFilter(FilterStrategy<AttributeComparisonSource> filterStrategy)
         {
             return this;
         }

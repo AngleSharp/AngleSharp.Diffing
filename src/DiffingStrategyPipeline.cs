@@ -25,13 +25,11 @@ namespace Egil.AngleSharp.Diffing
 
         public IEnumerable<Comparison> Match(DiffContext context, SourceCollection controlSources, SourceCollection testSources)
             => Match(context, controlSources, testSources, _nodeMatchers);
-
         public IEnumerable<AttributeComparison> Match(DiffContext context, SourceMap controlAttrSources, SourceMap testAttrSources)
             => Match(context, controlAttrSources, testAttrSources, _attrsMatchers);
 
         public CompareResult Compare(in Comparison comparison) 
             => Compare(comparison, _nodeComparers, CompareResult.DifferentAndBreak);
-
         public CompareResult Compare(in AttributeComparison comparison)
             => Compare(comparison, _attrComparers, CompareResult.Different);
 
