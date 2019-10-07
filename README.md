@@ -1,5 +1,5 @@
 # AngleSharp Diffing - A diff/compare library for AngleSharp
-![Build and test status](https://github.com/egil/AngleSharp.Diffing/workflows/CI/badge.svg)
+[![Build and test status](https://github.com/egil/AngleSharp.Diffing/workflows/CI/badge.svg)](https://github.com/egil/AngleSharp.Diffing/actions?workflow=CI)
 
 This library makes it possible to compare a AngleSharp _control_ `INodeList` and a _test_ `INodeList` and get a list of `IDiff` differences between them.
 
