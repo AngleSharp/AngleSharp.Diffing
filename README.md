@@ -30,7 +30,7 @@ Using the `UseDefaultOptions()` method is equivalent to setting the following op
 var diffs = DiffBuilder
     .Compare(controlHtml)
     .WithTest(testHtml)
-    .RemoveComments()
+    .IgnoreComments()
     .Whitespace(WhitespaceOption.Normalize)
     .IgnoreDiffAttributes()
     .Build();
@@ -45,18 +45,18 @@ The library comes with a bunch of options (internally referred to as strategies)
 
 The following section document the current built-in strategies that are available. A later second will describe how to built your own strategies, to get very tight control of the diffing process.
 
-### Remove comments
-Enabling this strategy will remove all comment nodes from the comparison. Activate by calling the `RemoveComments()` method on a `DiffBuilder` instance, e.g.:
+### Ignore comments
+Enabling this strategy will ignore all comment nodes during comparison. Activate by calling the `IgnoreComments()` method on a `DiffBuilder` instance, e.g.:
 
 ```csharp
 var diffs = DiffBuilder
     .Compare(controlHtml)
     .WithTest(testHtml)
-    .RemoveComments()
+    .IgnoreComments()
     .Build();
 ```
 
-_NOTE: Currently, the remove comment strategy does NOT remove comments from CSS or JavaScript embedded in `<style>` or `<script>` tags.__
+_**NOTE**: Currently, the ignore comment strategy does NOT remove comments from CSS or JavaScript embedded in `<style>` or `<script>` tags._
 
 ### Whitespace handling
 Whitespace can be a source of false-positives when comparing two HTML fragments. Thus, the whitespace handling strategy offer different ways to deal with it during a comparison.

@@ -45,8 +45,8 @@ namespace Egil.AngleSharp.Diffing.Core
         protected static HtmlDifferenceEngine CreateHtmlDiffEngine(
                 Func<DiffContext, SourceCollection, SourceCollection, IEnumerable<Comparison>>? nodeMatcher = null,
                 Func<DiffContext, SourceMap, SourceMap, IEnumerable<AttributeComparison>>? attrMatcher = null,
-                Func<ComparisonSource, bool>? nodeFilter = null,
-                Func<AttributeComparisonSource, bool>? attrFilter = null,
+                Func<ComparisonSource, FilterDecision>? nodeFilter = null,
+                Func<AttributeComparisonSource, FilterDecision>? attrFilter = null,
                 Func<Comparison, CompareResult>? nodeComparer = null,
                 Func<AttributeComparison, CompareResult>? attrComparer = null
             )
@@ -84,19 +84,19 @@ namespace Egil.AngleSharp.Diffing.Core
 
         class MockFilterStrategy : IFilterStrategy
         {
-            private readonly Func<ComparisonSource, bool>? _nodeFilter;
-            private readonly Func<AttributeComparisonSource, bool>? _attrFilter;
+            private readonly Func<ComparisonSource, FilterDecision>? _nodeFilter;
+            private readonly Func<AttributeComparisonSource, FilterDecision>? _attrFilter;
 
-            public MockFilterStrategy(Func<ComparisonSource, bool>? nodeFilter = null, Func<AttributeComparisonSource, bool>? attrFilter = null)
+            public MockFilterStrategy(Func<ComparisonSource, FilterDecision>? nodeFilter = null, Func<AttributeComparisonSource, FilterDecision>? attrFilter = null)
             {
                 _nodeFilter = nodeFilter;
                 _attrFilter = attrFilter;
             }
 
-            public bool Filter(in AttributeComparisonSource attributeComparisonSource)
+            public FilterDecision Filter(in AttributeComparisonSource attributeComparisonSource)
                 => _attrFilter!(attributeComparisonSource);
 
-            public bool Filter(in ComparisonSource comparisonSource)
+            public FilterDecision Filter(in ComparisonSource comparisonSource)
                 => _nodeFilter!(comparisonSource);
         }
 

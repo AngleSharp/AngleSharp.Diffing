@@ -11,12 +11,12 @@ namespace Egil.AngleSharp.Diffing.Strategies
     {
         private const string DiffAttributePrefix = "diff:";
 
-        public static bool Filter(in AttributeComparisonSource source, bool currentDecision)
+        public static FilterDecision Filter(in AttributeComparisonSource source, FilterDecision currentDecision)
         {
-            if (!currentDecision) return currentDecision;
+            if (currentDecision.IsExclude()) return currentDecision;
 
             if (source.Attribute.Name.StartsWith(DiffAttributePrefix, StringComparison.OrdinalIgnoreCase))
-                return false;
+                return FilterDecision.Exclude;
 
             return currentDecision;
         }

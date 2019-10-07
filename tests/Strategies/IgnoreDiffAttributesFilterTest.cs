@@ -21,7 +21,7 @@ namespace Egil.AngleSharp.Diffing.Strategies
             var attr = ((IElement)elmSource.Node).Attributes[diffAttrName];
             var source = new AttributeComparisonSource(attr, elmSource);
 
-            IgnoreDiffAttributesFilter.Filter(source, true).ShouldBeFalse();
+            IgnoreDiffAttributesFilter.Filter(source, FilterDecision.Keep).ShouldBe(FilterDecision.Exclude);
         }
 
         [Theory(DisplayName = "When an attribute does not starts with 'diff:' its current decision is used")]
@@ -34,7 +34,7 @@ namespace Egil.AngleSharp.Diffing.Strategies
             var attr = ((IElement)elmSource.Node).Attributes[diffAttrName];
             var source = new AttributeComparisonSource(attr, elmSource);
 
-            IgnoreDiffAttributesFilter.Filter(source, true).ShouldBeTrue();
+            IgnoreDiffAttributesFilter.Filter(source, FilterDecision.Keep).ShouldBe(FilterDecision.Keep);
         }
     }
 }

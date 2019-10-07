@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Egil.AngleSharp.Diffing.Core
 {
-    public delegate bool SourceCollectionRemovePredicate(in ComparisonSource source);
+    public delegate FilterDecision SourceCollectionRemovePredicate(in ComparisonSource source);
 
     public class SourceCollection : IEnumerable<ComparisonSource>
     {
@@ -69,7 +69,7 @@ namespace Egil.AngleSharp.Diffing.Core
             for (int i = 0; i < _sources.Length; i++)
             {
                 var source = _sources[i];
-                if (!predicate(source))
+                if (predicate(source) == FilterDecision.Exclude)
                 {
                     _status[source.Index] = SOURCE_REMOVED;
                     Count--;

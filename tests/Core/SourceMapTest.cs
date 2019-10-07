@@ -65,7 +65,7 @@ namespace Egil.AngleSharp.Diffing.Core
             var elementSource = CreateSource(@"<p foo=""bar"" baz=""foo""></p>");
             var sut = new SourceMap(elementSource);
 
-            sut.Remove((in AttributeComparisonSource cs) => cs.Attribute.Name != "foo");
+            sut.Remove((in AttributeComparisonSource cs) => cs.Attribute.Name == "foo" ? FilterDecision.Exclude : FilterDecision.Keep);
 
             sut.Count.ShouldBe(1);
             sut.Contains("foo").ShouldBeFalse();

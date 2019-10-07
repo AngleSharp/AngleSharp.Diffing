@@ -6,7 +6,7 @@ using AngleSharp.Dom;
 
 namespace Egil.AngleSharp.Diffing.Core
 {
-    public delegate bool SourceMapRemovePredicate(in AttributeComparisonSource source);
+    public delegate FilterDecision SourceMapRemovePredicate(in AttributeComparisonSource source);
 
     [SuppressMessage("Naming", "CA1710:Identifiers should have correct suffix")]
     public class SourceMap : IEnumerable<AttributeComparisonSource>
@@ -63,7 +63,7 @@ namespace Egil.AngleSharp.Diffing.Core
             var removeQueue = new Queue<string>(Count);
             foreach (var source in _sources.Values)
             {
-                if (!predicate(source)) removeQueue.Enqueue(source.Attribute.Name);
+                if (predicate(source) == FilterDecision.Exclude) removeQueue.Enqueue(source.Attribute.Name);
             }
             foreach (var name in removeQueue)
             {

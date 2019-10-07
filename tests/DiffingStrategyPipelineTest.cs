@@ -12,26 +12,32 @@ namespace Egil.AngleSharp.Diffing
 {
     public class DiffingStrategyPipelineTest : DiffingTestBase
     {
+        private FilterDecision NegateDecision(FilterDecision decision) => decision switch
+        {
+            FilterDecision.Keep => FilterDecision.Exclude,
+            FilterDecision.Exclude => FilterDecision.Keep
+        };
+
         [Fact(DisplayName = "Wen zero filter strategies have been added, true is returned")]
         public void Test1()
         {
             var sut = new DiffingStrategyPipeline();
 
-            sut.Filter(new ComparisonSource()).ShouldBeTrue();
-            sut.Filter(new AttributeComparisonSource()).ShouldBeTrue();
+            sut.Filter(new ComparisonSource()).ShouldBe(FilterDecision.Keep);
+            sut.Filter(new AttributeComparisonSource()).ShouldBe(FilterDecision.Keep);
         }
 
         [Theory(DisplayName = "When one or more filter strategy is added, the last decides the outcome")]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void Test5(bool expected)
+        [InlineData(FilterDecision.Keep)]
+        [InlineData(FilterDecision.Exclude)]
+        public void Test5(FilterDecision expected)
         {
             var sut = new DiffingStrategyPipeline();
 
-            sut.AddFilter((in ComparisonSource s, bool currentDecision) => !expected);
-            sut.AddFilter((in ComparisonSource s, bool currentDecision) => expected);
-            sut.AddFilter((in AttributeComparisonSource s, bool currentDecision) => !expected);
-            sut.AddFilter((in AttributeComparisonSource s, bool currentDecision) => expected);
+            sut.AddFilter((in ComparisonSource s, FilterDecision currentDecision) => NegateDecision(expected));
+            sut.AddFilter((in ComparisonSource s, FilterDecision currentDecision) => expected);
+            sut.AddFilter((in AttributeComparisonSource s, FilterDecision currentDecision) => NegateDecision(expected));
+            sut.AddFilter((in AttributeComparisonSource s, FilterDecision currentDecision) => expected);
 
             sut.Filter(new ComparisonSource()).ShouldBe(expected);
             sut.Filter(new AttributeComparisonSource()).ShouldBe(expected);

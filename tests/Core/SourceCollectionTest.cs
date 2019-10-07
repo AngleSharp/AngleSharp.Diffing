@@ -70,7 +70,7 @@ namespace Egil.AngleSharp.Diffing.Core
             var first = sut.First();
             var last = sut.Last();
 
-            sut.Remove((in ComparisonSource x) => x != first);
+            sut.Remove((in ComparisonSource x) => x == first ? FilterDecision.Exclude : FilterDecision.Keep);
 
             sut.Count.ShouldBe(1);
             sut.First().ShouldBe(last);
@@ -81,7 +81,7 @@ namespace Egil.AngleSharp.Diffing.Core
         {
             var sut = ToNodeList("<p></p><span></span>").ToSourceCollection(ComparisonSourceType.Control);
             var last = sut.Last();
-            sut.Remove((in ComparisonSource x) => x != last);
+            sut.Remove((in ComparisonSource x) => x == last ? FilterDecision.Exclude : FilterDecision.Keep);
 
             Should.Throw<InvalidOperationException>(() => sut.MarkAsMatched(last));
         }

@@ -7,7 +7,8 @@ using Egil.AngleSharp.Diffing.Core;
 
 namespace Egil.AngleSharp.Diffing
 {
-    public delegate bool FilterStrategy<TSource>(in TSource source, bool currentDecision);
+
+    public delegate FilterDecision FilterStrategy<TSource>(in TSource source, FilterDecision currentDecision);
     public delegate IEnumerable<TComparison> MatchStrategy<in TSources, out TComparison>(DiffContext context, TSources controlSources, TSources testSources);
     public delegate CompareResult CompareStrategy<TComparison>(in TComparison comparison, CompareResult currentDecision);
 
@@ -20,8 +21,8 @@ namespace Egil.AngleSharp.Diffing
         private readonly List<CompareStrategy<Comparison>> _nodeComparers = new List<CompareStrategy<Comparison>>();
         private readonly List<CompareStrategy<AttributeComparison>> _attrComparers = new List<CompareStrategy<AttributeComparison>>();
 
-        public bool Filter(in ComparisonSource comparisonSource) => Filter(comparisonSource, _nodeFilters);
-        public bool Filter(in AttributeComparisonSource attributeComparisonSource) => Filter(attributeComparisonSource, _attrsFilters);
+        public FilterDecision Filter(in ComparisonSource comparisonSource) => Filter(comparisonSource, _nodeFilters);
+        public FilterDecision Filter(in AttributeComparisonSource attributeComparisonSource) => Filter(attributeComparisonSource, _attrsFilters);
 
         public IEnumerable<Comparison> Match(DiffContext context, SourceCollection controlSources, SourceCollection testSources)
             => Match(context, controlSources, testSources, _nodeMatchers);
@@ -42,9 +43,9 @@ namespace Egil.AngleSharp.Diffing
         public void AddComparer(CompareStrategy<Comparison> compareStrategy) => _nodeComparers.Add(compareStrategy);
         public void AddComparer(CompareStrategy<AttributeComparison> compareStrategy) => _attrComparers.Add(compareStrategy);
 
-        private bool Filter<T>(in T source, List<FilterStrategy<T>> filterStrategies)
+        private FilterDecision Filter<T>(in T source, List<FilterStrategy<T>> filterStrategies)
         {
-            var result = true;
+            var result = FilterDecision.Keep;
             for (int i = 0; i < filterStrategies.Count; i++)
             {
                 result = filterStrategies[i](source, result);

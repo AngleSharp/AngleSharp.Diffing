@@ -393,8 +393,8 @@ namespace Egil.AngleSharp.Diffing.Core
         // TODO: Detection of unmatched/unexpeced nodes should be moved to 
 
         #region NodeFilters
-        private static bool NoneNodeFilter(ComparisonSource source) => true;
-        private static bool RemoveCommentNodeFilter(ComparisonSource source) => source.Node.NodeType != NodeType.Comment;
+        private static FilterDecision NoneNodeFilter(ComparisonSource source) => FilterDecision.Keep;
+        private static FilterDecision RemoveCommentNodeFilter(ComparisonSource source) => source.Node.NodeType == NodeType.Comment ? FilterDecision.Exclude : FilterDecision.Keep;
         #endregion
 
         #region NodeMatchers
@@ -453,10 +453,10 @@ namespace Egil.AngleSharp.Diffing.Core
 
         #region AttributeFilters 
 
-        private static bool NoneAttrFilter(AttributeComparisonSource source) => true;
+        private static FilterDecision NoneAttrFilter(AttributeComparisonSource source) => FilterDecision.Keep;
 
-        private static Func<AttributeComparisonSource, bool> SpecificAttrFilter(string attrName) =>
-            source => source.Attribute.Name != attrName;
+        private static Func<AttributeComparisonSource, FilterDecision> SpecificAttrFilter(string attrName) =>
+            source => source.Attribute.Name == attrName ? FilterDecision.Exclude : FilterDecision.Keep;
 
         #endregion
 
