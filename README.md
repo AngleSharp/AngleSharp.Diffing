@@ -1,4 +1,6 @@
 # AngleSharp Diffing - A diff/compare library for AngleSharp
+![Build and test status](https://github.com/egil/AngleSharp.Diffing/workflows/CI/badge.svg)
+
 This library makes it possible to compare a AngleSharp _control_ `INodeList` and a _test_ `INodeList` and get a list of `IDiff` differences between them.
 
 The _control_ nodes represents the expected HTML tree, i.e. how the nodes are expected to look, and the _test_ nodes represents the nodes that should be compared to the _control_ nodes.
@@ -8,8 +10,6 @@ The _control_ nodes represents the expected HTML tree, i.e. how the nodes are ex
 - `Diff`/`AttrDiff`: Represents a difference between a control and test node or a control and test attribute.
 - `MissingDiff`/`MissingAttrDiff`: Represents a difference where a control node or control attribute was expected to exist, but was not found in the test nodes tree.
 - `UnexpectedDiff`/`UnexpectedAttrDiff`: Represents a difference where a test node or test attribute was unexpectedly found in the test nodes tree, but did not have a match in the control nodes tree.
-
-![Build and test status](https://github.com/egil/AngleSharp.Diffing/workflows/CI/badge.svg)
 
 ## Usage
 To find the differences between a control HTML fragment and a test HTML fragment, using the default options, the easiest way is to use the `DiffBuilder` class, like so:
