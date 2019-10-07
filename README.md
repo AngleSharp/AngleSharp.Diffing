@@ -38,6 +38,8 @@ var diffs = DiffBuilder
     .Build();
 ``` 
 
+See more about what each option does in the following sections.
+
 ## Diffing options/strategies: 
 The library comes with a bunch of options (internally referred to as strategies), for the following three main steps in the diffing process:
 
@@ -45,7 +47,7 @@ The library comes with a bunch of options (internally referred to as strategies)
 2. Matching up nodes and attributes for comparison
 3. Comparing matched up nodes and attributes
 
-The following section document the current built-in strategies that are available. A later second will describe how to built your own strategies, to get very tight control of the diffing process.
+The following section documents the current built-in strategies that are available. A later second will describe how to built your own strategies, to get very tight control of the diffing process.
 
 ### Remove comments
 Enabling this strategy will remove all comment nodes from the comparison. Activate by calling the `RemoveComments()` method on a `DiffBuilder` instance, e.g.:
@@ -58,7 +60,7 @@ var diffs = DiffBuilder
     .Build();
 ```
 
-_NOTE: Currently, the remove comment strategy does NOT remove comments from CSS or JavaScript embedded in `<style>` or `<script>` tags.__
+_NOTE: Currently, the remove comment strategy does NOT remove comments from CSS or JavaScript embedded in `<style>` or `<script>` tags._
 
 ### Whitespace handling
 Whitespace can be a source of false-positives when comparing two HTML fragments. Thus, the whitespace handling strategy offer different ways to deal with it during a comparison.

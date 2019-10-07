@@ -389,9 +389,6 @@ namespace Egil.AngleSharp.Diffing.Core
             results[0].Target.ShouldBe(DiffTarget.Element);
         }
 
-        // TODO: ComparisonContext provides access to the root element for control and test nodes during the entire comparison phase
-        // TODO: Detection of unmatched/unexpeced nodes should be moved to 
-
         #region NodeFilters
         private static bool NoneNodeFilter(ComparisonSource source) => true;
         private static bool RemoveCommentNodeFilter(ComparisonSource source) => source.Node.NodeType != NodeType.Comment;
