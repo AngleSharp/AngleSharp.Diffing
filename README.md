@@ -95,9 +95,9 @@ To configure/override whitespace rules on a specific subtree in the comparison, 
 <pre diff:whitespace="RemoveWhitespaceNodes">...</pre>
 ```
 
-**Special case for `<style>`-tags:** Even if the whitespace option is `Normalize`, whitespace inside quotes (`"` and `'` style quotes) is preserved as is. For example, the text inside the `content` style information in the following CSS will not be normalized: `p::after { content: " -.- "; }`.
+**Special case for `<style>`-tags:** It is on the TODO list to handle string in CSS more intelligently: Even if the whitespace option is `Normalize`, whitespace inside quotes (`"` and `'` style quotes) is preserved as is. For example, the text inside the `content` style information in the following CSS will not be normalized: `p::after { content: " -.- "; }`.
 
-**Special case for `<script>`-tags:**  It is on the issues list to deal with whitespace properly inside `<script>`-tags.
+**Special case for `<script>`-tags:**  It is on the TODO list to deal with whitespace properly inside `<script>`-tags.
 
 ### Ignore attribute
 If the `diff:ignore="true"` attribute is used on a control element  (`="true"` implicit/optional), all their attributes and child nodes are skipped/ignored during comparison, including those of the test element, the control element is matched with.
