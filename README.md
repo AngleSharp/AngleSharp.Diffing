@@ -9,6 +9,8 @@ The _control_ nodes represents the expected HTML tree, i.e. how the nodes are ex
 - `MissingDiff`/`MissingAttrDiff`: Represents a difference where a control node or control attribute was expected to exist, but was not found in the test nodes tree.
 - `UnexpectedDiff`/`UnexpectedAttrDiff`: Represents a difference where a test node or test attribute was unexpectedly found in the test nodes tree, but did not have a match in the control nodes tree.
 
+![Build and test status](https://github.com/egil/AngleSharp.Diffing/workflows/CI/badge.svg)
+
 ## Usage
 To find the differences between a control HTML fragment and a test HTML fragment, using the default options, the easiest way is to use the `DiffBuilder` class, like so:
 
@@ -159,7 +161,7 @@ The `HtmlDifferenceEngine` class depends on three _strategies_, the `IFilterStra
 
 It starts with a call to the `Compare(INodeList controlNodes, INodeList testNodes)` and recursively calls itself when nodes have child nodes.
 
-![img](docs/HtmlDifferenceEngineFlow.svg)
+![Activity diagram that shows the comparing processing in HtmlDifferenceEngine](docs/HtmlDifferenceEngineFlow.svg)
 
 The library comes with a bunch of different filters, matchers, and conparers, that you can configure and mix and match with your own, to get the exact diffing experience you want. See the Usage section above for details.
 
