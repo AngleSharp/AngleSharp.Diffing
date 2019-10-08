@@ -1,4 +1,5 @@
-﻿using Shouldly;
+﻿using Egil.AngleSharp.Diffing.Core;
+using Shouldly;
 using Xunit;
 
 namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
@@ -48,7 +49,38 @@ namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
             sut.Filter(source, FilterDecision.Exclude).ShouldBe(FilterDecision.Exclude);
         }
 
-        // When a parent node has overridden the global whitespace option, that overridden option is used
+        [Fact(DisplayName = "If parent node is <pre> element, the implicit option is Preserved")]
+        public void Test5()
+        {
+            var sut = new TextNodeFilter(WhitespaceOption.Normalize);
+            var pre = ToComparisonSource("<pre> \n\t </pre>");
+            var source = new ComparisonSource(pre.Node.FirstChild, 0, pre.Path, ComparisonSourceType.Control);
+
+            sut.Filter(source, FilterDecision.Keep).ShouldBe(FilterDecision.Keep);
+        }
+
+        [Fact(DisplayName = "If parent node is <pre> element with a diff:whitespace, the option is take from the attribute")]
+        public void Test5_1()
+        {
+            var sut = new TextNodeFilter(WhitespaceOption.Normalize);
+            var pre = ToComparisonSource("<pre diff:whitespace=\"RemoveWhitespaceNodes\"> \n\t </pre>");
+            var source = new ComparisonSource(pre.Node.FirstChild, 0, pre.Path, ComparisonSourceType.Control);
+
+            sut.Filter(source, FilterDecision.Keep).ShouldBe(FilterDecision.Exclude);
+        }
+
+        [Theory(DisplayName = "When a parent node has overridden the global whitespace option, that overridden option is used")]
+        [InlineData(@"<header><h1><em diff:whitespace=""preserve"">  </em></h1></header>")]
+        [InlineData(@"<header><h1 diff:whitespace=""preserve""><em>  </em></h1></header>")]
+        [InlineData(@"<header diff:whitespace=""preserve""><h1><em>  </em></h1></header>")]
+        public void Tes76(string html)
+        {
+            var sut = new TextNodeFilter(WhitespaceOption.Normalize);
+            var root = ToNode(html);
+            var source = new ComparisonSource(root.FirstChild.FirstChild.FirstChild, 0, "dummypath", ComparisonSourceType.Control);
+
+            sut.Filter(source, FilterDecision.Keep).ShouldBe(FilterDecision.Keep);
+        }
     }
 }
 
