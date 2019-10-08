@@ -6,20 +6,13 @@ using System.Threading.Tasks;
 using AngleSharp.Dom;
 using Egil.AngleSharp.Diffing.Core;
 
-namespace Egil.AngleSharp.Diffing.Strategies
+namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
 {
-    public enum WhitespaceOption
-    {
-        Preserve = 0,
-        RemoveWhitespaceNodes,
-        Normalize
-    }
-
-    public class WhitespaceStrategy
+    public class TextNodeFilter
     {
         public WhitespaceOption Option { get; }
 
-        public WhitespaceStrategy(WhitespaceOption option)
+        public TextNodeFilter(WhitespaceOption option)
         {
             Option = option;
         }

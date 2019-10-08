@@ -133,11 +133,15 @@ var diffs = DiffBuilder
 #### CSS selector-cross tree matcher (node, attr)
 
 ### Compare options
-
-#### Name/Type matcher (node, attr)
-#### Content matcher (text, attr)
-#### Content regex matcher (text, attr)
-#### IgnoreCase content matcher (text, attr)
+#### Name/Type comparer (node, attr)
+#### Content comparer (text, attr)
+#### Content regex comparer (text, attr)
+#### IgnoreCase content comparer (text, attr)
+#### Class attribute comparer (attr)
+#### Boolean-attribute comparer (attr)
+See rules at https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#boolean-attributes
+https://www.w3.org/TR/html52/infrastructure.html#sec-boolean-attributes
+https://gist.github.com/ArjanSchouten/0b8574a6ad7f5065a5e7
 
 ### Ignoring special `diff:` attributes
 Any attributes that starts with `diff:` are automatically filtered out before matching/comparing happens. E.g. `diff:whitespace="..."` does not show up as a missing diff when added to an control element.

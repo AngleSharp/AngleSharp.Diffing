@@ -19,4 +19,13 @@
         /// </summary>
         DifferentAndBreak
     }
+
+    public static class CompareResultExtensions
+    {
+        public static bool IsSame(this CompareResult compareResult) => compareResult == CompareResult.Same;
+        public static bool IsSameAndBreak(this CompareResult compareResult) => compareResult == CompareResult.SameAndBreak;
+        public static bool IsDifferent(this CompareResult compareResult) => compareResult == CompareResult.Different;
+        public static bool IsDifferentAndBreak(this CompareResult compareResult) => compareResult == CompareResult.DifferentAndBreak;
+    }
 }
+

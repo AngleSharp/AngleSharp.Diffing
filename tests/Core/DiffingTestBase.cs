@@ -37,9 +37,9 @@ namespace Egil.AngleSharp.Diffing.Core
             return fragment[0];
         }
 
-        protected ComparisonSource ToComparisonSource(string html)
+        protected ComparisonSource ToComparisonSource(string html, ComparisonSourceType sourceType = ComparisonSourceType.Control)
         {
-            return ToNode(html).ToComparisonSource(0, ComparisonSourceType.Control);
+            return ToNode(html).ToComparisonSource(0, sourceType);
         }
 
         protected static HtmlDifferenceEngine CreateHtmlDiffEngine(
