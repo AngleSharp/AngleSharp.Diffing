@@ -1,4 +1,6 @@
 ﻿using System;
+using AngleSharp.Dom;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Egil.AngleSharp.Diffing.Core
 {
@@ -16,6 +18,24 @@ namespace Egil.AngleSharp.Diffing.Core
         {
             Control = control;
             Test = test;
+        }
+
+        public bool AreNodeTypesEqual() => Control.Node.NodeType == Test.Node.NodeType && Control.Node.NodeName == Test.Node.NodeName;
+
+        public bool TryGetNodesAsType<TNode>([NotNullWhen(true)]out TNode? controlNode, [NotNullWhen(true)]out TNode? testNode) where TNode : class, INode
+        {
+            if (Control.Node is TNode ctrl && Test.Node is TNode test)
+            {
+                controlNode = ctrl;
+                testNode = test;
+                return true;
+            }
+            else
+            {
+                controlNode = default;
+                testNode = default;
+                return false;
+            }
         }
 
         #region Equals and HashCode

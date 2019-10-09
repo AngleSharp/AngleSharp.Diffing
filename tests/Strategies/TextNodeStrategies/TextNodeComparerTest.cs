@@ -6,6 +6,18 @@ namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
 {
     public class TextNodeComparerTest : TextnodeStrategyTestBase
     {
+        [Fact(DisplayName = "When input node is not a IText node, comparer does not run nor change the current decision")]
+        public void Test2()
+        {
+            var comparison = new Comparison(ToComparisonSource("<p></p>", ComparisonSourceType.Control), ToComparisonSource("<p></p>", ComparisonSourceType.Test));
+            var sut = new TextNodeComparer();
+
+            sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
+            sut.Compare(comparison, CompareResult.DifferentAndBreak).ShouldBe(CompareResult.DifferentAndBreak);
+            sut.Compare(comparison, CompareResult.Same).ShouldBe(CompareResult.Same);
+            sut.Compare(comparison, CompareResult.SameAndBreak).ShouldBe(CompareResult.SameAndBreak);
+        }
+
         [Theory(DisplayName = "When option is Preserve or RemoveWhitespaceNodes, comparer does not run nor change the current decision")]
         [InlineData(WhitespaceOption.Preserve)]
         [InlineData(WhitespaceOption.RemoveWhitespaceNodes)]
@@ -97,7 +109,7 @@ namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
             var sut = new TextNodeComparer(ignoreCase: true);
             var comparison = new Comparison(ToComparisonSource("HELLO WoRlD", ComparisonSourceType.Control),
                                             ToComparisonSource("hello world", ComparisonSourceType.Test));
-            
+
             sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Same);
         }
 
@@ -125,21 +137,74 @@ namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
             sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Same);
         }
 
-        [Fact(DisplayName = "When IgnoreCase='true' inline attribute is present in a parent element, a string ordinal ignore case comparison is performed")]
-        public void Test007()
+        [Theory(DisplayName = "When IgnoreCase='true' inline attribute is present in a parent element, a string ordinal ignore case comparison is performed")]
+        [InlineData(@"<header><h1><em diff:ignoreCase=""true"">HELLO WoRlD</em></h1></header>")]
+        [InlineData(@"<header><h1  diff:ignoreCase=""True""><em>HELLO WoRlD</em></h1></header>")]
+        [InlineData(@"<header diff:ignoreCase=""TRUE""><h1><em>HELLO WoRlD</em></h1></header>")]
+        public void Test008(string controlHtml)
         {
-            var sut = new TextNodeComparer(ignoreCase: false);            
-            var pre = ToComparisonSource("<h1 diff:ignoreCase=\"True\">HELLO WoRlD</pre>");
-            var controlSource = new ComparisonSource(pre.Node.FirstChild, 0, pre.Path, ComparisonSourceType.Control);
+            var sut = new TextNodeComparer(ignoreCase: false);
+            var rootSource = ToComparisonSource(controlHtml);
+            var controlSource = new ComparisonSource(rootSource.Node.FirstChild.FirstChild.FirstChild, 0, rootSource.Path, ComparisonSourceType.Control);
             var testSource = ToComparisonSource("hello world", ComparisonSourceType.Test);
             var comparison = new Comparison(controlSource, testSource);
-
 
             sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Same);
         }
 
+        [Theory(DisplayName = "When IgnoreCase='false' inline attribute is present in a parent element, a string ordinal case comparison is performed")]
+        [InlineData(@"<header><h1><em diff:ignoreCase=""false"">HELLO WoRlD</em></h1></header>")]
+        [InlineData(@"<header><h1  diff:ignoreCase=""False""><em>HELLO WoRlD</em></h1></header>")]
+        [InlineData(@"<header diff:ignoreCase=""FALSE""><h1><em>HELLO WoRlD</em></h1></header>")]
+        public void Test009(string controlHtml)
+        {
+            var sut = new TextNodeComparer(ignoreCase: true);
+            var rootSource = ToComparisonSource(controlHtml);
+            var controlSource = new ComparisonSource(rootSource.Node.FirstChild.FirstChild.FirstChild, 0, rootSource.Path, ComparisonSourceType.Control);
+            var testSource = ToComparisonSource("hello world", ComparisonSourceType.Test);
+            var comparison = new Comparison(controlSource, testSource);
 
-        // When diff:regex attribute is found on the containing element, the control text is expected to a regex and that used when comparing to the test text node.
+            sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
+        }
+
+        [Theory(DisplayName = "When diff:regex attribute is found on the immediate parent element, the control text is expected to a regex and that used when comparing to the test text node.")]
+        [InlineData(@"<p diff:regex>\d{4}</p>")]
+        [InlineData(@"<p diff:regex=""true"">\d{4}</p>")]
+        public void Test010(string controlHtml)
+        {
+            var sut = new TextNodeComparer();
+            var paragraphSource = ToComparisonSource(controlHtml);
+            var controlSource = new ComparisonSource(paragraphSource.Node.FirstChild, 0, paragraphSource.Path, ComparisonSourceType.Control);
+            var testSource = ToComparisonSource("1234", ComparisonSourceType.Test);
+            var comparison = new Comparison(controlSource, testSource);
+
+            sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Same);
+        }
+
+        [Fact(DisplayName = "When diff:regex attribute is found on the immediate parent element and ignoreCase is true, the regex compare is done as case insensitive.")]
+        public void Test011()
+        {
+            var sut = new TextNodeComparer(ignoreCase: true);
+            var paragraphSource = ToComparisonSource(@"<p diff:regex>FOO\d{4}</p>");
+            var controlSource = new ComparisonSource(paragraphSource.Node.FirstChild, 0, paragraphSource.Path, ComparisonSourceType.Control);
+            var testSource = ToComparisonSource("foo1234", ComparisonSourceType.Test);
+            var comparison = new Comparison(controlSource, testSource);
+
+            sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Same);
+        }
+
+        [Theory(DisplayName = "When diff:regex='false' attribute is found on the immediate parent element, a string ordinal case comparison is performed.")]
+        [InlineData(@"<p diff:regex=""false"">1234</p>")]
+        public void Test012(string controlHtml)
+        {
+            var sut = new TextNodeComparer();
+            var paragraphSource = ToComparisonSource(controlHtml);
+            var controlSource = new ComparisonSource(paragraphSource.Node.FirstChild, 0, paragraphSource.Path, ComparisonSourceType.Control);
+            var testSource = ToComparisonSource("1234", ComparisonSourceType.Test);
+            var comparison = new Comparison(controlSource, testSource);
+
+            sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Same);
+        }
     }
 }
 

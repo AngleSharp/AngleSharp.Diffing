@@ -26,6 +26,7 @@
         public static bool IsSameAndBreak(this CompareResult compareResult) => compareResult == CompareResult.SameAndBreak;
         public static bool IsDifferent(this CompareResult compareResult) => compareResult == CompareResult.Different;
         public static bool IsDifferentAndBreak(this CompareResult compareResult) => compareResult == CompareResult.DifferentAndBreak;
+        public static bool IsDecisionFinal(this CompareResult compareResult) => !compareResult.IsDifferent();
     }
 }
 
