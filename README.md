@@ -58,14 +58,17 @@ var diffs = DiffBuilder
 
 _**NOTE**: Currently, the ignore comment strategy does NOT remove comments from CSS or JavaScript embedded in `<style>` or `<script>` tags._
 
-### Whitespace handling
+### Text (text nodes) strategies
+The built-in text strategies offer a bunch of ways to control how text (text nodes) is handled during the diffing process.
+
+#### Whitespace handling
 Whitespace can be a source of false-positives when comparing two HTML fragments. Thus, the whitespace handling strategy offer different ways to deal with it during a comparison.
 
-- `Preserve`: Does not change or filter out any whitespace in control and test HTML. Default, same as not specifying any options.
+- `Preserve` (default): Does not change or filter out any whitespace in text nodes the control and test HTML.
 - `RemoveWhitespaceNodes`: Using this option filters out all text nodes that only consist of whitespace characters.
-- `Normalize`: Using this option will _trim_ all text nodes and replace two or more whitespace characters with a single space character.
+- `Normalize`: Using this option will _trim_ all text nodes and replace two or more whitespace characters with a single space character. This option implicitly includes the `RemoveWhitespaceNodes` option.
 
-These options can be set either _globally_ for the entire comparison, or on a _specific subtrees in the comparison_. 
+These options can be set either _globally_ for the entire comparison, or inline on a _specific subtrees in the comparison_. 
 
 To set a global default, call the method `Whitespace(WhitespaceOption)` on a `DiffBuilder` instance, e.g.:
 
@@ -77,15 +80,15 @@ var diffs = DiffBuilder
     .Build();
 ```
 
-To configure/override whitespace rules on a specific subtree in the comparison, use the `diff:whitespace="WhitespaceOption"` on a control node, and it and all nodes below it will use that whitespace option, unless it is overridden on a child node. In the example below, all whitespace inside the `<h1>` element is preserved:
+To configure/override whitespace rules on a specific subtree in the comparison, use the `diff:whitespace="WhitespaceOption"` inline on a control element, and it and all text nodes below it will use that whitespace option, unless it is overridden on a child element. In the example below, all whitespace inside the `<h1>` element is preserved:
 
 ```html
 <header>
-    <h1 diff:whitespace="Preserve">Hello   <em> woooorld</em></h1>
+    <h1 diff:whitespace="preserve">Hello   <em> woooorld</em></h1>
 </header>
 ```
 
-**Special case for `<pre>`-tags:** The content of `<pre />` tags will always be treated as the `Preserve` option, even if whitespace strategy is globally set to `RemoveWhitespaceNodes` or `Normalize`. To override this, add a local `diff:whitespace" attribute to the tag, e.g.:
+**Special case for `<pre>` elements:** The content of `<pre>` elements will always be treated as the `Preserve` option, even if whitespace option is globally set to `RemoveWhitespaceNodes` or `Normalize`. To override this, add a inline `diff:whitespace` attribute to the `<pre>`-tag, e.g.:
 
 ```html
 <pre diff:whitespace="RemoveWhitespaceNodes">...</pre>
@@ -94,6 +97,38 @@ To configure/override whitespace rules on a specific subtree in the comparison, 
 **Special case for `<style>`-tags:** Even if the whitespace option is `Normalize`, whitespace inside quotes (`"` and `'` style quotes) is preserved as is. For example, the text inside the `content` style information in the following CSS will not be normalized: `p::after { content: " -.- "; }`.
 
 **Special case for `<script>`-tags:**  It is on the issues list to deal with whitespace properly inside `<script>`-tags.
+
+#### Perform case-_insensitve_ text comparison
+To compare the text in two text nodes to eachother using a case-insensitive comparison, call the `IgnoreCase()` method on a `DiffBuilder` instance, e.g.:
+
+```csharp
+var diffs = DiffBuilder
+    .Compare(controlHtml)
+    .WithTest(testHtml)
+    .IgnoreCase()
+    .Build();
+```
+
+To configure/override ignore case rules on a specific subtree in the comparison, use the `diff:ignoreCase="true|false"` inline on a control element, and it and all text nodes below it will use that ignore case setting, unless it is overridden on a child element. In the example below, ignore case is set active for all text inside the `<h1>` element:
+
+```html
+<header>
+    <h1 diff:ignoreCase="true">Hello   <em> woooorld</em></h1>
+</header>
+```
+
+Note, as with all HTML5 boolean attributes, the `="true"` or `="false"` parts are optional.
+
+#### Use regular expression when comparing text
+By using the inline attribute `diff:regex` on the element containing the text node being compared, the comparer will consider the control text to be a regular expression, and will use that to test whether the test text node is as expected. This can be combined with the inline `diff:ignoreCase` attribute, to make the regular expression case-insensitive. E.g.:
+
+```html
+<header>
+    <h1 diff:regex diff:ignoreCase>Hello World \d{4}</h1>
+</header>
+```
+
+The above  control text would use case-insensitive regular expression to match against a test text string (e.g. "HELLO WORLD 2020").
 
 ### Ignore attribute
 If the `diff:ignore="true"` attribute is used on a control element  (`="true"` implicit/optional), all their attributes and child nodes are skipped/ignored during comparison, including those of the test element, the control element is matched with.

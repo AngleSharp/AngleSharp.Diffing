@@ -60,7 +60,7 @@ namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
         }
 
         [Fact(DisplayName = "If parent node is <pre> element with a diff:whitespace, the option is take from the attribute")]
-        public void Test5_1()
+        public void Test51()
         {
             var sut = new TextNodeFilter(WhitespaceOption.Normalize);
             var pre = ToComparisonSource("<pre diff:whitespace=\"RemoveWhitespaceNodes\"> \n\t </pre>");

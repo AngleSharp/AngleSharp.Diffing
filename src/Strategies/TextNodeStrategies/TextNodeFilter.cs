@@ -24,10 +24,10 @@ namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
         public FilterDecision Filter(in ComparisonSource source, FilterDecision currentDecision)
         {
             if (currentDecision.IsExclude()) return currentDecision;
-            return source.Node is IText textNode ? Filter(source, textNode) : currentDecision;
+            return source.Node is IText textNode ? Filter(textNode) : currentDecision;
         }
 
-        private FilterDecision Filter(in ComparisonSource source, IText textNode)
+        private FilterDecision Filter(IText textNode)
         {
             var option = GetWhitespaceOption(textNode);
             return option != WhitespaceOption.Preserve && string.IsNullOrWhiteSpace(textNode.Data)

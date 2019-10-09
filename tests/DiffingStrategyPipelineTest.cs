@@ -15,7 +15,8 @@ namespace Egil.AngleSharp.Diffing
         private FilterDecision NegateDecision(FilterDecision decision) => decision switch
         {
             FilterDecision.Keep => FilterDecision.Exclude,
-            FilterDecision.Exclude => FilterDecision.Keep
+            FilterDecision.Exclude => FilterDecision.Keep,
+            _ => throw new InvalidOperationException()
         };
 
         [Fact(DisplayName = "Wen zero filter strategies have been added, true is returned")]
@@ -116,5 +117,6 @@ namespace Egil.AngleSharp.Diffing
             sut.Compare(new AttributeComparison()).ShouldBe(final);
         }
 
+        // if compare returns andStop, dont call any more comparers?
     }
 }

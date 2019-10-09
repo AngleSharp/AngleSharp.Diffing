@@ -7,16 +7,17 @@ namespace Egil.AngleSharp.Diffing.Extensions
     public static class ElementExtensions
     {
         public static bool TryGetAttrValue(this IElement element, string attributeName, out bool result)
-            => TryGetAttrValue(element, attributeName, x => string.IsNullOrWhiteSpace(x) || bool.Parse(x), out result);
+        {
+            return TryGetAttrValue(element, attributeName, ParseBoolAttribute, out result);
+
+            static bool ParseBoolAttribute(string boolValue) => string.IsNullOrWhiteSpace(boolValue) || bool.Parse(boolValue);
+        }
 
         public static bool TryGetAttrValue<T>(this IElement element, string attributeName, out T result) where T : System.Enum
         {
             return TryGetAttrValue(element, attributeName, ParseEnum, out result);
 
-            static T ParseEnum(string enumValue)
-            {
-                return (T)Enum.Parse(typeof(T), enumValue, true);
-            }
+            static T ParseEnum(string enumValue) => (T)Enum.Parse(typeof(T), enumValue, true);
         }
 
         public static bool TryGetAttrValue<T>(this IElement element, string attributeName, Func<string, T> resultFunc, [NotNullWhen(true)] out T result)
@@ -24,13 +25,18 @@ namespace Egil.AngleSharp.Diffing.Extensions
             if (element is null) throw new ArgumentNullException(nameof(element));
             if (resultFunc is null) throw new ArgumentNullException(nameof(resultFunc));
 
-            result = default;
             if (element.Attributes[attributeName] is IAttr optAttr)
             {
                 result = resultFunc(optAttr.Value);
                 return true;
             }
-            return false;
+            else
+            {
+                #pragma warning disable CS8653 // A default expression introduces a null value for a type parameter.
+                result = default;
+                #pragma warning restore CS8653 // A default expression introduces a null value for a type parameter.
+                return false;
+            }
         }
 
         public static TEnum GetInlineOptionOrDefault<TEnum>(this IElement startElement, string optionName, TEnum defaultValue)
@@ -41,6 +47,9 @@ namespace Egil.AngleSharp.Diffing.Extensions
 
         public static T GetInlineOptionOrDefault<T>(this IElement startElement, string optionName, Func<string, T> resultFunc, T defaultValue)
         {
+            if (startElement is null) throw new ArgumentNullException(nameof(startElement));
+            if (resultFunc is null) throw new ArgumentNullException(nameof(resultFunc));
+
             var element = startElement;
 
             while (element is { })
