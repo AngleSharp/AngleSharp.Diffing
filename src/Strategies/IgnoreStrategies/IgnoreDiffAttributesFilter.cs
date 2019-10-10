@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Egil.AngleSharp.Diffing.Core;
 
-namespace Egil.AngleSharp.Diffing.Strategies
+namespace Egil.AngleSharp.Diffing.Strategies.IgnoreStrategies
 {
     public static class IgnoreDiffAttributesFilter
     {

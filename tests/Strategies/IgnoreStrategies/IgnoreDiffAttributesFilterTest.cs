@@ -8,7 +8,7 @@ using Egil.AngleSharp.Diffing.Core;
 using Shouldly;
 using Xunit;
 
-namespace Egil.AngleSharp.Diffing.Strategies
+namespace Egil.AngleSharp.Diffing.Strategies.IgnoreStrategies
 {
     public class IgnoreDiffAttributesFilterTest : DiffingTestBase
     {

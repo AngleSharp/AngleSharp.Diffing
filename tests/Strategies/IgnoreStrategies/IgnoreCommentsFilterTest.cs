@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Egil.AngleSharp.Diffing.Strategies
+namespace Egil.AngleSharp.Diffing.Strategies.IgnoreStrategies
 {
     public class IgnoreCommentsFilterTest : DiffingTestBase
     {

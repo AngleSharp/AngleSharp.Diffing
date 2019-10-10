@@ -42,6 +42,29 @@ namespace Egil.AngleSharp.Diffing.Core
             return ToNode(html).ToComparisonSource(0, sourceType);
         }
 
+        protected Comparison ToComparison(string controlHtml, string testHtml)
+        {
+            return new Comparison(
+                ToComparisonSource(controlHtml, ComparisonSourceType.Control),
+                ToComparisonSource(testHtml, ComparisonSourceType.Test)
+                );
+        }
+
+        protected AttributeComparisonSource ToAttributeComparisonSource(string html, string attrName, ComparisonSourceType sourceType = ComparisonSourceType.Control)
+        {
+            var elementSource = ToComparisonSource(html, sourceType);
+            var element = (IElement)elementSource.Node;
+            return new AttributeComparisonSource(element.Attributes[attrName], elementSource);
+        }
+
+        protected AttributeComparison ToAttributeComparison(string controlHtml, string controlAttrName, string testHtml, string testAttrName)
+        {
+            return new AttributeComparison(
+                ToAttributeComparisonSource(controlHtml, controlAttrName, ComparisonSourceType.Control),
+                ToAttributeComparisonSource(testHtml, testAttrName, ComparisonSourceType.Test)
+                );
+        }
+
         protected static HtmlDifferenceEngine CreateHtmlDiffEngine(
                 Func<DiffContext, SourceCollection, SourceCollection, IEnumerable<Comparison>>? nodeMatcher = null,
                 Func<DiffContext, SourceMap, SourceMap, IEnumerable<AttributeComparison>>? attrMatcher = null,
