@@ -17,9 +17,7 @@ namespace Egil.AngleSharp.Diffing.Strategies.IgnoreStrategies
         [InlineData(@"<p diff:ignore=""true"">", "diff:ignore")]
         public void Test1(string elementHtml, string diffAttrName)
         {
-            var elmSource = ToComparisonSource(elementHtml);
-            var attr = ((IElement)elmSource.Node).Attributes[diffAttrName];
-            var source = new AttributeComparisonSource(attr, elmSource);
+            var source = ToAttributeComparisonSource(elementHtml, diffAttrName);
 
             IgnoreDiffAttributesFilter.Filter(source, FilterDecision.Keep).ShouldBe(FilterDecision.Exclude);
         }
@@ -30,9 +28,7 @@ namespace Egil.AngleSharp.Diffing.Strategies.IgnoreStrategies
         [InlineData(@"<p diffx=""foo"">", "diffx")]
         public void Test2(string elementHtml, string diffAttrName)
         {
-            var elmSource = ToComparisonSource(elementHtml);
-            var attr = ((IElement)elmSource.Node).Attributes[diffAttrName];
-            var source = new AttributeComparisonSource(attr, elmSource);
+            var source = ToAttributeComparisonSource(elementHtml, diffAttrName);
 
             IgnoreDiffAttributesFilter.Filter(source, FilterDecision.Keep).ShouldBe(FilterDecision.Keep);
         }

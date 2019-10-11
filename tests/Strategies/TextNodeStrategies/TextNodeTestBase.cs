@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
 {
-    public abstract class TextnodeStrategyTestBase : DiffingTestBase
+    public abstract class TextNodeTestBase : DiffingTestBase
     {
         public static readonly char[] AllWhitespaceCharacters = new[]
 {

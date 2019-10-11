@@ -4,12 +4,12 @@ using Xunit;
 
 namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
 {
-    public class TextNodeComparerTest : TextnodeStrategyTestBase
+    public class TextNodeComparerTest : TextNodeTestBase
     {
         [Fact(DisplayName = "When input node is not a IText node, comparer does not run nor change the current decision")]
         public void Test2()
         {
-            var comparison = new Comparison(ToComparisonSource("<p></p>", ComparisonSourceType.Control), ToComparisonSource("<p></p>", ComparisonSourceType.Test));
+            var comparison = ToComparison("<p></p>", "<p></p>");
             var sut = new TextNodeComparer();
 
             sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
@@ -23,7 +23,7 @@ namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
         [InlineData(WhitespaceOption.RemoveWhitespaceNodes)]
         public void Test5(WhitespaceOption whitespaceOption)
         {
-            var comparison = new Comparison(ToComparisonSource("hello world", ComparisonSourceType.Control), ToComparisonSource("  hello   world  ", ComparisonSourceType.Test));
+            var comparison = ToComparison("hello world", "  hello   world  ");
             var sut = new TextNodeComparer(whitespaceOption);
 
             sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
@@ -37,6 +37,7 @@ namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
         {
             var comparison = new Comparison();
             var sut = new TextNodeComparer(WhitespaceOption.Normalize);
+
             sut.Compare(comparison, CompareResult.Same).ShouldBe(CompareResult.Same);
             sut.Compare(comparison, CompareResult.SameAndBreak).ShouldBe(CompareResult.SameAndBreak);
         }
@@ -48,10 +49,10 @@ namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
             var sut = new TextNodeComparer(WhitespaceOption.Normalize);
             var normalText = "text";
             var whitespaceText = $"{whitespace}text{whitespace}";
-            var c1 = new Comparison(ToComparisonSource(normalText, ComparisonSourceType.Control), ToComparisonSource(normalText, ComparisonSourceType.Test));
-            var c2 = new Comparison(ToComparisonSource(normalText, ComparisonSourceType.Control), ToComparisonSource(whitespaceText, ComparisonSourceType.Test));
-            var c3 = new Comparison(ToComparisonSource(whitespaceText, ComparisonSourceType.Control), ToComparisonSource(normalText, ComparisonSourceType.Test));
-            var c4 = new Comparison(ToComparisonSource(whitespaceText, ComparisonSourceType.Control), ToComparisonSource(whitespaceText, ComparisonSourceType.Test));
+            var c1 = ToComparison(normalText    , normalText);
+            var c2 = ToComparison(normalText    , whitespaceText);
+            var c3 = ToComparison(whitespaceText, normalText);
+            var c4 = ToComparison(whitespaceText, whitespaceText);
 
             sut.Compare(c1, CompareResult.Different).ShouldBe(CompareResult.Same);
             sut.Compare(c2, CompareResult.Different).ShouldBe(CompareResult.Same);
@@ -66,10 +67,10 @@ namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
             var sut = new TextNodeComparer(WhitespaceOption.Normalize);
             var normalText = "hello world";
             var whitespaceText = $"{whitespace}hello{whitespace}{whitespace}world{whitespace}";
-            var c1 = new Comparison(ToComparisonSource(normalText, ComparisonSourceType.Control), ToComparisonSource(normalText, ComparisonSourceType.Test));
-            var c2 = new Comparison(ToComparisonSource(normalText, ComparisonSourceType.Control), ToComparisonSource(whitespaceText, ComparisonSourceType.Test));
-            var c3 = new Comparison(ToComparisonSource(whitespaceText, ComparisonSourceType.Control), ToComparisonSource(normalText, ComparisonSourceType.Test));
-            var c4 = new Comparison(ToComparisonSource(whitespaceText, ComparisonSourceType.Control), ToComparisonSource(whitespaceText, ComparisonSourceType.Test));
+            var c1 = ToComparison(normalText, normalText);
+            var c2 = ToComparison(normalText, whitespaceText);
+            var c3 = ToComparison(whitespaceText, normalText);
+            var c4 = ToComparison(whitespaceText, whitespaceText);
 
             sut.Compare(c1, CompareResult.Different).ShouldBe(CompareResult.Same);
             sut.Compare(c2, CompareResult.Different).ShouldBe(CompareResult.Same);
@@ -97,8 +98,7 @@ namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
         public void Test003(WhitespaceOption whitespaceOption)
         {
             var sut = new TextNodeComparer(whitespaceOption);
-            var comparison = new Comparison(ToComparisonSource("  hello\n\nworld ", ComparisonSourceType.Control),
-                                            ToComparisonSource("  hello\n\nworld ", ComparisonSourceType.Test));
+            var comparison = ToComparison("  hello\n\nworld ", "  hello\n\nworld ");
 
             sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Same);
         }
@@ -107,8 +107,7 @@ namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
         public void Test004()
         {
             var sut = new TextNodeComparer(ignoreCase: true);
-            var comparison = new Comparison(ToComparisonSource("HELLO WoRlD", ComparisonSourceType.Control),
-                                            ToComparisonSource("hello world", ComparisonSourceType.Test));
+            var comparison = ToComparison("HELLO WoRlD", "hello world");
 
             sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Same);
         }

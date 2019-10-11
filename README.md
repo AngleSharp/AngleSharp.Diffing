@@ -130,8 +130,8 @@ By using the inline attribute `diff:regex` on the element containing the text no
 
 The above  control text would use case-insensitive regular expression to match against a test text string (e.g. "HELLO WORLD 2020").
 
-### Ignore attribute
-If the `diff:ignore="true"` attribute is used on a control element  (`="true"` implicit/optional), all their attributes and child nodes are skipped/ignored during comparison, including those of the test element, the control element is matched with.
+### Inline Ignore attribute
+If the inline `diff:ignore="true"` attribute is used on a control element  (`="true"` implicit/optional), all their attributes and child nodes are skipped/ignored during comparison, including those of the test element, the control element is matched with.
 
 In this example, the `<h1>` tag, it's attribute and children are considered the same as the element it is matched with:
 
@@ -155,7 +155,7 @@ Activate this strategy by calling the `EnableIgnoreAttribute()` method on a `Dif
 var diffs = DiffBuilder
     .Compare(controlHtml)
     .WithTest(testHtml)
-    .EnableIgnoreAttribute()
+    .EnableInlineIgnore()
     .Build();
 ```
 
@@ -167,13 +167,15 @@ var diffs = DiffBuilder
 
 #### CSS selector-cross tree matcher (node, attr)
 
-### Compare options
-#### Name/Type comparer (node, attr)
-#### Content comparer (text, attr)
-#### Content regex comparer (text, attr)
-#### IgnoreCase content comparer (text, attr)
+### Attr Compare options
+#### Name comparer (attr)
+#### Content comparer (attr)
+#### Content regex comparer (attr)
+#### IgnoreCase attr comparer (attr)
+#### Regex attr comparer (attr)
 #### Class attribute comparer (attr)
 #### Boolean-attribute comparer (attr)
+
 See rules at https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#boolean-attributes
 https://www.w3.org/TR/html52/infrastructure.html#sec-boolean-attributes
 https://gist.github.com/ArjanSchouten/0b8574a6ad7f5065a5e7

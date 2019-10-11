@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
 {
-    public class TextNodeFilterTest : TextnodeStrategyTestBase
+    public class TextNodeFilterTest : TextNodeTestBase
     {
         [Theory(DisplayName = "When whitespace option is Preserve, the provided decision is not changed by the filter for whitespace only text nodes")]
         [MemberData(nameof(WhitespaceCharStrings))]

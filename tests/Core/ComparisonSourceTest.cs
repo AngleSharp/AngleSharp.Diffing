@@ -13,7 +13,7 @@ namespace Egil.AngleSharp.Diffing.Core
         [Fact(DisplayName = "Two sources are equal if all their properties are equal")]
         public void Test1()
         {
-            var node = ToNode("<br>");
+            var node =  ToNode("<br>");
             var source = new ComparisonSource(node, 1, "path", ComparisonSourceType.Control);
             var otherSource = new ComparisonSource(node, 1, "path", ComparisonSourceType.Control);
 

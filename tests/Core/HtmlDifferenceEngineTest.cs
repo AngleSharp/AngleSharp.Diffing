@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Egil.AngleSharp.Diffing.Core
 {
-    public class HtmlDifferenceEngineTest : DiffingTestBase
+    public class HtmlDifferenceEngineTest : DiffingEngineTestBase
     {
         [Fact(DisplayName = "Unmatched nodes in control/test are returned as missing/unexpected diffs")]
         public void UnmatchedNodesBecomesMissingUnexpectedDiffs()
