@@ -157,10 +157,10 @@ var diffs = DiffBuilder
     .Build();
 ```
 
-### Attr Compare options
+### Attribute Compare options
 The library supports various ways to perform attribute comparison. 
 
-#### Strict name and value comparison
+#### Basic name and value comparison
 The *"name and value comparison"* is the base comparison option, and that will test if both the names and the values of the control and test attributes are equal. E.g.:
 
 - `attr="foo"` is the same as `attr="foo"`
