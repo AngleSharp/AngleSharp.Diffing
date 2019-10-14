@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AngleSharp.Dom;
+using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Egil.AngleSharp.Diffing.Core
 {
@@ -13,6 +15,15 @@ namespace Egil.AngleSharp.Diffing.Core
             Control = control;
             Test = test;
         }
+
+        public bool AttributeNameEquals(string attributeName)
+        {
+            return Control.Attribute.Name.Equals(attributeName, StringComparison.OrdinalIgnoreCase) &&
+                Test.Attribute.Name.Equals(attributeName, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public (IElement ControlElement, IElement TestElement) GetNodesAsElements() 
+            => ((IElement)Control.ElementSource.Node, (IElement)Test.ElementSource.Node);
 
         #region Equals and HashCode
         public bool Equals(AttributeComparison other) => Control == other.Control && Test == other.Test;
