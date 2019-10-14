@@ -94,9 +94,7 @@ To configure/override whitespace rules on a specific subtree in the comparison, 
 <pre diff:whitespace="RemoveWhitespaceNodes">...</pre>
 ```
 
-**Special case for `<style>`-tags:** Even if the whitespace option is `Normalize`, whitespace inside quotes (`"` and `'` style quotes) is preserved as is. For example, the text inside the `content` style information in the following CSS will not be normalized: `p::after { content: " -.- "; }`.
-
-**Special case for `<script>`-tags:**  It is on the issues list to deal with whitespace properly inside `<script>`-tags.
+**NOTE:** It is on the issues list to deal with whitespace properly inside `<style>` and `<script>`-tags, e.g. inside strings.
 
 #### Perform case-_insensitve_ text comparison
 To compare the text in two text nodes to eachother using a case-insensitive comparison, call the `IgnoreCase()` method on a `DiffBuilder` instance, e.g.:
@@ -159,6 +157,71 @@ var diffs = DiffBuilder
     .Build();
 ```
 
+### Attr Compare options
+The library supports various ways to perform attribute comparison. 
+
+#### Strict name and value comparison
+The *"name and value comparison"* is the base comparison option, and that will test if both the names and the values of the control and test attributes are equal. E.g.:
+
+- `attr="foo"` is the same as `attr="foo"`
+- `attr="foo"` is the NOT same as `attr="bar"`
+- `foo="attr"` is the NOT same as `bar="attr"`
+
+This comparison mode is on by default.
+
+#### RegEx attribute value comparer
+It is possible to specify a regular expression in the control attributes value, and add the `:regex` postfix to the *control* attributes name, to have the comparison performed using a Regex match test. E.g. 
+
+- `attr:regex="foo-\d{4}"` is the same as `attr="foo-2019"`
+
+#### Ignore case attribute value comparer
+To get the comparer to perform a case insensitive comparison of the values of the control and test attribute, add the `:ignoreCase` postfix to the *control* attributes name. E.g.
+
+- `attr:ignoreCase="FOO"` is the same as `attr="foo"`
+
+#### Combine ignore case and regex attribute value comparer
+To perform a case insenstive regular expression match, combine `:ignoreCase` and `:regex` as a postfix to the *control* attributes name. The order you combine them does not matter. E.g. 
+
+- `attr:ignoreCase:regex="FOO-\d{4}"` is the same as `attr="foo-2019"`
+- `attr:regex:ignoreCase="FOO-\d{4}"` is the same as `attr="foo-2019"`
+
+#### Class attribute comparer
+The class attribute is special in HTML. It can contain a space separated list of CSS classes, whoes order does not matter. Therefor the library will ignore the order the CSS classes is specified in the class attribute of the control and test elements, and instead just ensure that both have the same CSS classes added to it. E.g.
+
+- `class="foo bar"` is the same as `class="bar foo"`
+
+To enable the special handling of the class attribute, call the `WithClassAttributeComparer()` on a `DiffBuilder` instance, e.g.:
+
+```csharp
+var diffs = DiffBuilder
+    .Compare(controlHtml)
+    .WithTest(testHtml)
+    .WithClassAttributeComparer()
+    .Build();
+```
+
+#### Boolean attributes comparer
+Another special type of attributes are the [boolean attributes](https://www.w3.org/TR/html52/infrastructure.html#sec-boolean-attributes). To make comparing these more forgiving, the boolean attribute comparer will consider two boolean attributes equal, according to these rules:
+
+- In **strict** mode, a boolean attribute's value is considered truthy if the value is missing, empty, or is the name of the attribute.
+- In **loose** mode, a boolean attribute's value is considered truthy if the attribute is present on an element.
+
+For example, in **strict** mode, the following are considered equal:
+
+- `required` is the same as `required=""`
+- `required=""` is the same as `required="required"`
+- `required="required"` is the same as `required="required"`
+
+To enable the special handling of boolean attributes, call the `WithBooleanAttributeComparer(BooleanAttributeComparision.Strict)` or `WithBooleanAttributeComparer(BooleanAttributeComparision.Loose)` on a `DiffBuilder` instance, e.g.:
+
+```csharp
+var diffs = DiffBuilder
+    .Compare(controlHtml)
+    .WithTest(testHtml)
+    .WithBooleanAttributeComparer(BooleanAttributeComparision.Strict)
+    .Build();
+```
+
 ### Matching options
 
 #### One-to-one matcher (node, attr)
@@ -166,19 +229,6 @@ var diffs = DiffBuilder
 #### Forward-searching matcher (node)
 
 #### CSS selector-cross tree matcher (node, attr)
-
-### Attr Compare options
-#### Name comparer (attr)
-#### Content comparer (attr)
-#### Content regex comparer (attr)
-#### IgnoreCase attr comparer (attr)
-#### Regex attr comparer (attr)
-#### Class attribute comparer (attr)
-#### Boolean-attribute comparer (attr)
-
-See rules at https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#boolean-attributes
-https://www.w3.org/TR/html52/infrastructure.html#sec-boolean-attributes
-https://gist.github.com/ArjanSchouten/0b8574a6ad7f5065a5e7
 
 ### Ignoring special `diff:` attributes
 Any attributes that starts with `diff:` are automatically filtered out before matching/comparing happens. E.g. `diff:whitespace="..."` does not show up as a missing diff when added to an control element.
