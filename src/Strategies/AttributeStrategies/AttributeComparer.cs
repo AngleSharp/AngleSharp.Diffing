@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -8,6 +7,7 @@ using Egil.AngleSharp.Diffing.Core;
 
 namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
 {
+
 
     public class AttributeComparer
     {
@@ -21,12 +21,16 @@ namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
             if (currentDecision.IsDecisionFinal()) return currentDecision;
 
             var (ignoreCase, isRegexValueCompare) = GetComparisonModifiers(comparison);
+
             var hasSameName = CompareAttributeNames(comparison, ignoreCase, isRegexValueCompare);
+
+            if(!hasSameName) return CompareResult.Different;
+
             var hasSameValue = isRegexValueCompare
                 ? CompareAttributeValuesByRegex(comparison, ignoreCase)
                 : CompareAttributeValues(comparison, ignoreCase);
 
-            return hasSameName && hasSameValue
+            return hasSameValue
                 ? CompareResult.Same
                 : CompareResult.Different;
         }

@@ -15,21 +15,19 @@ namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
         [InlineData("foo bar baz", "bar  foo  baz  ")]
         public void Test009(string controlClasses, string testClasses)
         {
-            var sut = new ClassAttributeComparer();
             var comparison = ToAttributeComparison($@"<p class=""{controlClasses}"">", "class",
                                                    $@"<p class=""{testClasses}"">", "class");
 
-            sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Same);
+            ClassAttributeComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Same);
         }
 
         [Fact(DisplayName = "When a class attribute is matched up with another attribute, the result is different")]
         public void Test010()
         {
-            var sut = new ClassAttributeComparer();
             var comparison = ToAttributeComparison(@"<p class=""foo"">", "class",
                                                    @"<p bar=""bar"">", "bar");
 
-            sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
+            ClassAttributeComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
         }
 
         [Theory(DisplayName = "When there are different number of classes in the class attributes the result is different")]
@@ -37,11 +35,10 @@ namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
         [InlineData("bar baz", "bar baz foo")]
         public void Test011(string controlClasses, string testClasses)
         {
-            var sut = new ClassAttributeComparer();
             var comparison = ToAttributeComparison($@"<p class=""{controlClasses}"">", "class",
                                                    $@"<p class=""{testClasses}"">", "class");
 
-            sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
+            ClassAttributeComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
         }
 
         [Theory(DisplayName = "When the classes in the class attributes are different the result is different")]
@@ -51,11 +48,10 @@ namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
         [InlineData("foo bar", "baz bar")]
         public void Test012(string controlClasses, string testClasses)
         {
-            var sut = new ClassAttributeComparer();
             var comparison = ToAttributeComparison($@"<p class=""{controlClasses}"">", "class",
                                                    $@"<p class=""{testClasses}"">", "class");
 
-            sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
+            ClassAttributeComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
         }
     }
 }

@@ -1,21 +1,31 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Egil.AngleSharp.Diffing.Core;
 
 namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
 {
-    public class ClassAttributeComparer
+    public static class ClassAttributeComparer
     {
-        public CompareResult Compare(in AttributeComparison comparison, CompareResult currentDecision)
+        private const string CLASS_ATTRIBUTE_NAME = "class";
+
+        public static CompareResult Compare(in AttributeComparison comparison, CompareResult currentDecision)
         {
             if (currentDecision.IsDecisionFinal()) return currentDecision;
-            if (!comparison.AttributeNameEquals("class")) return currentDecision;
+            if (!IsClassAttributes(comparison)) return currentDecision;
 
-            var (ctrlElm, testElm) = comparison.GetNodesAsElements();
-            var sameLength = ctrlElm.ClassList.Length == testElm.ClassList.Length;
-            if (!sameLength) return CompareResult.Different;
+            var (ctrlElm, testElm) = comparison.GetNodesAsElements();            
+            if (ctrlElm.ClassList.Length != testElm.ClassList.Length) return CompareResult.Different;
+
             return ctrlElm.ClassList.All(x => testElm.ClassList.Contains(x))
                 ? CompareResult.Same
                 : CompareResult.Different;
         }
+
+        private static bool IsClassAttributes(in AttributeComparison comparison)
+        {
+            return comparison.Control.Attribute.Name.Equals(CLASS_ATTRIBUTE_NAME, StringComparison.OrdinalIgnoreCase) &&
+                comparison.Test.Attribute.Name.Equals(CLASS_ATTRIBUTE_NAME, StringComparison.OrdinalIgnoreCase);
+        }
+
     }
 }

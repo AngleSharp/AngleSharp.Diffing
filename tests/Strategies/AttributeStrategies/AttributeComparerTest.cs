@@ -12,7 +12,6 @@ namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
 
     public class AttributeComparerTest : DiffingTestBase
     {
-        // Name comparer (attr)
         [Fact(DisplayName = "When compare is called with a current decision of Same or SameAndBreak, the current decision is returned")]
         public void Test001()
         {
@@ -102,18 +101,6 @@ namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
 
             sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Same);
         }
-
-        //[Theory(DisplayName = "When a control attribute is a boolean attribute, its presents represent " +
-        //                      "a truthy value, and its absence a falsy value, independent of the actual value")]
-        //[InlineData(@"<p required>", @"<p required=""required"">")]
-        //public void Test0009(string controlHtml, string testHtml)
-        //{
-        //    var sut = new AttributeComparer();
-        //    var comparison = ToAttributeComparison(controlHtml, "required", testHtml, "required");
-
-        //    sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Same);
-        //}
-
-        // Boolean-attribute comparer (attr)
     }
+
 }
