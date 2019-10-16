@@ -7,8 +7,6 @@ using Egil.AngleSharp.Diffing.Core;
 
 namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
 {
-
-
     public class AttributeComparer
     {
         private const string IGNORE_CASE_POSTFIX = ":ignorecase";
@@ -38,11 +36,11 @@ namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
         private static (bool ignoreCase, bool isRegexCompare) GetComparisonModifiers(in AttributeComparison comparison)
         {
             var ctrlName = comparison.Control.Attribute.Name;
-            if (ctrlName.EndsWith(IGNORE_CASE_REGEX_POSTFIX, StringComparison.OrdinalIgnoreCase) || ctrlName.EndsWith(REGEX_IGNORE_CASE_POSTFIX, StringComparison.OrdinalIgnoreCase))
+            if (ctrlName.EndsWith(IGNORE_CASE_REGEX_POSTFIX, StringComparison.Ordinal) || ctrlName.EndsWith(REGEX_IGNORE_CASE_POSTFIX, StringComparison.Ordinal))
                 return (ignoreCase: true, isRegexCompare: true);
-            else if (ctrlName.EndsWith(IGNORE_CASE_POSTFIX, StringComparison.OrdinalIgnoreCase))
+            else if (ctrlName.EndsWith(IGNORE_CASE_POSTFIX, StringComparison.Ordinal))
                 return (ignoreCase: true, isRegexCompare: false);
-            else if (ctrlName.EndsWith(REGEX_POSTFIX, StringComparison.OrdinalIgnoreCase))
+            else if (ctrlName.EndsWith(REGEX_POSTFIX, StringComparison.Ordinal))
                 return (ignoreCase: false, isRegexCompare: true);
             else
                 return (ignoreCase: false, isRegexCompare: false);
@@ -71,7 +69,7 @@ namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
             else if (hasIgnorePostfix && hasRegexPostfix)
                 ctrlName = ctrlName.Substring(0, ctrlName.Length - IGNORE_CASE_REGEX_POSTFIX.Length);
 
-            return ctrlName.Equals(comparison.Test.Attribute.Name, StringComparison.OrdinalIgnoreCase);
+            return ctrlName.Equals(comparison.Test.Attribute.Name, StringComparison.Ordinal);
         }
     }
 }

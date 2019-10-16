@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using Shouldly;
 
 namespace Egil.AngleSharp.Diffing
@@ -16,6 +18,11 @@ namespace Egil.AngleSharp.Diffing
                             .ToArray();
 
             actual.ShouldSatisfyAllConditions(customMessage, convertedConditions);
+        }
+
+        public static void ShouldAllBe<T>(this IEnumerable<T> actual, Func<T, int, bool> elementPredicate)
+        {
+            actual.Select(elementPredicate).ShouldAllBe(x => x);
         }
     }
 }

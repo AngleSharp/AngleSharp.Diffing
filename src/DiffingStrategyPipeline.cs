@@ -25,9 +25,30 @@ namespace Egil.AngleSharp.Diffing
         public FilterDecision Filter(in AttributeComparisonSource attributeComparisonSource) => Filter(attributeComparisonSource, _attrsFilters);
 
         public IEnumerable<Comparison> Match(DiffContext context, SourceCollection controlSources, SourceCollection testSources)
-            => Match(context, controlSources, testSources, _nodeMatchers);
+        {
+            foreach (var matcher in _nodeMatchers)
+            {
+                foreach (var comparison in matcher(context, controlSources, testSources))
+                {
+                    controlSources.MarkAsMatched(comparison.Control);
+                    testSources.MarkAsMatched(comparison.Test);
+                    yield return comparison;
+                }
+            }
+        }
+            
         public IEnumerable<AttributeComparison> Match(DiffContext context, SourceMap controlAttrSources, SourceMap testAttrSources)
-            => Match(context, controlAttrSources, testAttrSources, _attrsMatchers);
+        {
+            foreach (var matcher in _attrsMatchers)
+            {
+                foreach (var comparison in matcher(context, controlAttrSources, testAttrSources))
+                {
+                    controlAttrSources.MarkAsMatched(comparison.Control);
+                    testAttrSources.MarkAsMatched(comparison.Test);
+                    yield return comparison;
+                }
+            }
+        }
 
         public CompareResult Compare(in Comparison comparison) 
             => Compare(comparison, _nodeComparers, CompareResult.DifferentAndBreak);
@@ -51,17 +72,6 @@ namespace Egil.AngleSharp.Diffing
                 result = filterStrategies[i](source, result);
             }
             return result;
-        }
-
-        private IEnumerable<TComparison> Match<TSources, TComparison>(DiffContext context, TSources controlSources, TSources testSources, List<MatchStrategy<TSources, TComparison>> matchStrategies)
-        {
-            foreach (var matcher in matchStrategies)
-            {
-                foreach (var comparison in matcher(context, controlSources, testSources))
-                {
-                    yield return comparison;
-                }
-            }
         }
 
         private CompareResult Compare<TComparison>(in TComparison comparison, List<CompareStrategy<TComparison>> compareStrategies, CompareResult initialResult)

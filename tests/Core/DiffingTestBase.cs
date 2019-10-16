@@ -63,5 +63,17 @@ namespace Egil.AngleSharp.Diffing.Core
                 ToAttributeComparisonSource(testHtml, testAttrName, ComparisonSourceType.Test)
                 );
         }
+
+        protected SourceCollection ToSourceCollection(string html, ComparisonSourceType sourceType = ComparisonSourceType.Control)
+        {
+            var sources = ToComparisonSourceList(html);
+            return new SourceCollection(sourceType, sources);
+        }
+
+        protected SourceMap ToSourceMap(string html, ComparisonSourceType sourceType = ComparisonSourceType.Control)
+        {
+            var source = ToComparisonSource(html, sourceType);
+            return new SourceMap(source);
+        }
     }
 }

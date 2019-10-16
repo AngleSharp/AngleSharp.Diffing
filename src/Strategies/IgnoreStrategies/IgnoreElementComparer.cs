@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,19 +8,9 @@ using Egil.AngleSharp.Diffing.Extensions;
 
 namespace Egil.AngleSharp.Diffing.Strategies.IgnoreStrategies
 {
-    public static class InlineIgnoreComparer
+    public static class IgnoreElementComparer
     {
         private const string DIFF_IGNORE_ATTRIBUTE = "diff:ignore";
-        private const string DIFF_IGNORE_POSTFIX = ":ignore";
-
-        public static CompareResult Compare(in AttributeComparison comparison, CompareResult currentDecision)
-        {
-            if (currentDecision.IsDecisionFinal()) return currentDecision;
-
-            return comparison.Control.Attribute.Name.EndsWith(DIFF_IGNORE_POSTFIX, StringComparison.OrdinalIgnoreCase)
-                ? CompareResult.Same
-                : currentDecision;
-        }
 
         public static CompareResult Compare(in Comparison comparison, CompareResult currentDecision)
         {

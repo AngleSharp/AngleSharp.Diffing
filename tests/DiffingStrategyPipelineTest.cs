@@ -12,6 +12,8 @@ namespace Egil.AngleSharp.Diffing
 {
     public class DiffingStrategyPipelineTest : DiffingTestBase
     {
+        private DiffContext _dummyContext = new DiffContext(null, null);
+
         private FilterDecision NegateDecision(FilterDecision decision) => decision switch
         {
             FilterDecision.Keep => FilterDecision.Exclude,
@@ -44,8 +46,8 @@ namespace Egil.AngleSharp.Diffing
             sut.Filter(new AttributeComparisonSource()).ShouldBe(expected);
         }
 
-        #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-        #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
         [Fact(DisplayName = "When no matcher strategy have been added, none comparisons are returned")]
         public void Test2()
         {
@@ -54,36 +56,32 @@ namespace Egil.AngleSharp.Diffing
             sut.Match(null, null, (SourceCollection)null).ShouldBeEmpty();
             sut.Match(null, null, (SourceMap)null).ShouldBeEmpty();
         }
-        #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
-        #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
         [Fact(DisplayName = "Node Matchers are allowed to match in the order they are added in")]
         public void Test6()
         {
-            var sources = ToComparisonSourceList("<p></p><span></span>").ToList();
-            var context = new DiffContext((IElement)sources[0].Node, (IElement)sources[0].Node);
-            var sourceColllection = new SourceCollection(ComparisonSourceType.Control, sources);
+            var sourceColllection = ToSourceCollection("<p></p><span></span>", ComparisonSourceType.Control);
             var sut = new DiffingStrategyPipeline();
             sut.AddMatcher((ctx, s, t) => new[] { new Comparison(s[0], t[0]) });
             sut.AddMatcher((ctx, s, t) => new[] { new Comparison(s[1], t[1]) });
 
-            var result = sut.Match(context, sourceColllection, sourceColllection).ToList();
+            var result = sut.Match(_dummyContext, sourceColllection, sourceColllection).ToList();
 
-            result[0].Control.ShouldBe(sources[0]);
-            result[1].Control.ShouldBe(sources[1]);
+            result[0].Control.ShouldBe(sourceColllection[0]);
+            result[1].Control.ShouldBe(sourceColllection[1]);
         }
 
         [Fact(DisplayName = "Attributes Matchers are allowed to match in the order they are added in")]
         public void Test7()
         {
-            var source = ToComparisonSource(@"<p foo=""bar"" baz=""bum""></p>");
-            var context = new DiffContext((IElement)source.Node, (IElement)source.Node);
-            var sourceMap = new SourceMap(source);
+            var sourceMap = ToSourceMap(@"<p foo=""bar"" baz=""bum""></p>");
             var sut = new DiffingStrategyPipeline();
             sut.AddMatcher((ctx, s, t) => new[] { new AttributeComparison(s["foo"], t["foo"]) });
             sut.AddMatcher((ctx, s, t) => new[] { new AttributeComparison(s["baz"], t["baz"]) });
 
-            var result = sut.Match(context, sourceMap, sourceMap).ToList();
+            var result = sut.Match(_dummyContext, sourceMap, sourceMap).ToList();
 
             result[0].Control.ShouldBe(sourceMap["foo"]);
             result[1].Control.ShouldBe(sourceMap["baz"]);
@@ -117,6 +115,34 @@ namespace Egil.AngleSharp.Diffing
             sut.Compare(new AttributeComparison()).ShouldBe(final);
         }
 
-        // if compare returns andStop, dont call any more comparers?
+        [Fact(DisplayName = "After two nodes has been matched, they are marked as matched in the source collection")]
+        public void Test101()
+        {
+            var context = new DiffContext(null, null);
+            var controlSources = ToSourceCollection("<p></p>", ComparisonSourceType.Control);
+            var testSources = ToSourceCollection("<p></p>", ComparisonSourceType.Test);
+            var sut = new DiffingStrategyPipeline();
+            sut.AddMatcher((ctx, s, t) => new[] { new Comparison(s[0], t[0]) });
+
+            var result = sut.Match(context, controlSources, testSources).ToList();
+
+            controlSources.GetUnmatched().ShouldBeEmpty();
+            testSources.GetUnmatched().ShouldBeEmpty();
+        }
+
+        [Fact(DisplayName = "After two attributes has been matched, they are marked as matched in the source map")]
+        public void Test102()
+        {
+            var context = new DiffContext(null, null);
+            var controlSources = ToSourceMap(@"<p foo=""bar""></p>", ComparisonSourceType.Control);
+            var testSources = ToSourceMap(@"<p foo=""bar""></p>", ComparisonSourceType.Test);
+            var sut = new DiffingStrategyPipeline();
+            sut.AddMatcher((ctx, s, t) => new[] { new AttributeComparison(s["foo"], t["foo"]) });
+
+            var result = sut.Match(context, controlSources, testSources).ToList();
+
+            controlSources.GetUnmatched().ShouldBeEmpty();
+            testSources.GetUnmatched().ShouldBeEmpty();
+        }
     }
 }
