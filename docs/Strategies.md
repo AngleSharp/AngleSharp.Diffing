@@ -263,7 +263,7 @@ To configure/override whitespace rules on a specific subtree in the comparison, 
 **NOTE:** It is on the issues list to deal with whitespace properly inside `<style>` and `<script>`-tags, e.g. inside strings.
 
 #### Perform case-_insensitve_ text comparison
-To compare the text in two text nodes to each other using a case-insensitive comparison, call the ``WithTextComparer(WhitespaceOption, ignoreCase: true)` method on a `DiffBuilder` instance, e.g.:
+To compare the text in two text nodes to each other using a case-insensitive comparison, call the `WithTextComparer(WhitespaceOption, ignoreCase: true)` method on a `DiffBuilder` instance, e.g.:
 
 ```csharp
 var diffs = DiffBuilder

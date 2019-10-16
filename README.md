@@ -24,6 +24,11 @@ var diffs = DiffBuilder
 
 Read more about the available options on the [Diffing Options/Strategies](/docs/Strategies.md) page.
 
+# Documentation
+- [Diffing Options/Strategies](/docs/Strategies.md)
+- [Creating custom diffing options/strategies](/docs/CustomStrategies.md)
+- [Difference engine internals](/docs/DifferenceEngineInternals.md)
+
 ## Acknowledgments
 Big thanks to [Florian Rappl](https://github.com/FlorianRappl) from the AngleSharp team for providing ideas, input and sample code for working with AngleSharp. 
 
