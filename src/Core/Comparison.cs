@@ -1,6 +1,7 @@
 ﻿using System;
 using AngleSharp.Dom;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics;
 
 namespace Egil.AngleSharp.Diffing.Core
 {
@@ -8,6 +9,7 @@ namespace Egil.AngleSharp.Diffing.Core
     /// Represent a comparison between two nodes.
     /// </summary>
     /// <typeparam name="TNode"></typeparam>
+    [DebuggerDisplay("Control: {Control.Path} | Test: {Test.Path}")]
     public readonly struct Comparison : IEquatable<Comparison>
     {
         public ComparisonSource Control { get; }
@@ -23,7 +25,7 @@ namespace Egil.AngleSharp.Diffing.Core
         public bool AreNodeTypesEqual() => Control.Node.NodeType == Test.Node.NodeType && Control.Node.NodeName == Test.Node.NodeName;
 
         public bool TryGetNodesAsType<TNode>([NotNullWhen(true)]out TNode? controlNode, [NotNullWhen(true)]out TNode? testNode) where TNode : class, INode
-        {
+        {            
             if (Control.Node is TNode ctrl && Test.Node is TNode test)
             {
                 controlNode = ctrl;

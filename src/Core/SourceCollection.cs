@@ -33,9 +33,9 @@ namespace Egil.AngleSharp.Diffing.Core
             EnsureSourcesAreInCorrectOrder();
         }
 
-        public IEnumerable<ComparisonSource> GetUnmatched()
+        public IEnumerable<ComparisonSource> GetUnmatched(int startIndex = 0)
         {
-            for (int i = 0; i < _sources.Length; i++)
+            for (int i = startIndex; i < _sources.Length; i++)
             {
                 if (_status[_sources[i].Index] == SOURCE_UNMATCHED)
                 {

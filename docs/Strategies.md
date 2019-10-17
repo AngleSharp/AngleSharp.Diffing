@@ -46,6 +46,8 @@ var diffs = DiffBuilder
     .Build();
 ``` 
 
+Read more about each of the strategies below, including some that are not part of the default set.
+
 ## Filter strategies
 These are the built-in filter strategies.
 
@@ -99,7 +101,7 @@ var diffs = DiffBuilder
 ```
 
 #### Forward-searching node matcher
-The forward-searching node-matcher strategy will only match control nodes with test nodes, if their `NodeName` match. It does this by taking one control node at the time, and searching from the previously matched test node until it finds a match. If it does not, it reports the control node as *missing*. After, any unmatched test nodes is reported as *unexpected*. 
+The forward-searching node-matcher strategy will only match control nodes with test nodes, if their `NodeName` match. It does this by taking one control node at the time, and searching after the previously matched test node until it finds a match. If it does not, continues with the next control node, and the unmatched control node is marked as *missing*. After, any unmatched test nodes is marked as *unexpected*. 
 
 The follow JavaScript-ish-code  illustrates how the algorithm works:
 
@@ -117,11 +119,11 @@ forwardSearchingMatcher(controlNodes, testNodes) {
                 lastMatchedTestNode = index
                 index = testNodes.length
             }
+            index++
         }
     }
     return matches
 }
-
 ```
 
 To choose this matcher, use the `WithSearchingNodeMatcher()` method on the `DiffBuilder` class, e.g.:

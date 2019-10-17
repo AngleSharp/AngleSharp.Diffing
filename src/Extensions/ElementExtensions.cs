@@ -13,6 +13,13 @@ namespace Egil.AngleSharp.Diffing.Extensions
             static bool ParseBoolAttribute(string boolValue) => string.IsNullOrWhiteSpace(boolValue) || bool.Parse(boolValue);
         }
 
+        public static bool TryGetAttrValue(this IElement element, string attributeName, [NotNullWhen(true)]out string result)
+        {
+            return TryGetAttrValue(element, attributeName, GetStringAttrValue, out result);
+
+            static string GetStringAttrValue(string value) => value;
+        }
+
         public static bool TryGetAttrValue<T>(this IElement element, string attributeName, out T result) where T : System.Enum
         {
             return TryGetAttrValue(element, attributeName, ParseEnum, out result);
@@ -32,9 +39,9 @@ namespace Egil.AngleSharp.Diffing.Extensions
             }
             else
             {
-                #pragma warning disable CS8653 // A default expression introduces a null value for a type parameter.
+#pragma warning disable CS8653 // A default expression introduces a null value for a type parameter.
                 result = default;
-                #pragma warning restore CS8653 // A default expression introduces a null value for a type parameter.
+#pragma warning restore CS8653 // A default expression introduces a null value for a type parameter.
                 return false;
             }
         }
@@ -62,6 +69,26 @@ namespace Egil.AngleSharp.Diffing.Extensions
             }
 
             return defaultValue;
+        }
+
+        public static bool TryGetNodeIndex(this INode node, [NotNullWhen(true)]out int index)
+        {
+            index = -1;
+
+            if(node.ParentElement is null) return false;
+
+            var parentElement = node.ParentElement;
+
+            for (int i = 0; i < parentElement.ChildNodes.Length; i++)
+            {
+                if (parentElement.ChildNodes[i].Equals(node))
+                {
+                    index = i;
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

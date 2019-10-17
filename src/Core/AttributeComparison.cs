@@ -1,6 +1,5 @@
 ﻿using AngleSharp.Dom;
 using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Egil.AngleSharp.Diffing.Core
 {

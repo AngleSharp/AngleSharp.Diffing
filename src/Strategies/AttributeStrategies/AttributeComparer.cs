@@ -1,20 +1,17 @@
 ﻿using System;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using AngleSharp.Dom;
 using Egil.AngleSharp.Diffing.Core;
 
 namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
 {
-    public class AttributeComparer
+    public static class AttributeComparer
     {
         private const string IGNORE_CASE_POSTFIX = ":ignorecase";
         private const string REGEX_POSTFIX = ":regex";
         private const string IGNORE_CASE_REGEX_POSTFIX = IGNORE_CASE_POSTFIX + REGEX_POSTFIX;
         private const string REGEX_IGNORE_CASE_POSTFIX = REGEX_POSTFIX + IGNORE_CASE_POSTFIX;
 
-        public CompareResult Compare(in AttributeComparison comparison, CompareResult currentDecision)
+        public static CompareResult Compare(in AttributeComparison comparison, CompareResult currentDecision)
         {
             if (currentDecision.IsDecisionFinal()) return currentDecision;
 

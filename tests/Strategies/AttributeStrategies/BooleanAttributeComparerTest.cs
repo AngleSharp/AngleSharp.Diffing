@@ -8,7 +8,7 @@ namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
 {
     public class BooleanAttributeComparerTest : DiffingTestBase
     {
-        public static IEnumerable<object[]> BooleanAttributes = BooleanAttributeComparer.BooleanAttributes.Select(x => new string[] { x }).ToArray();
+        public static readonly IEnumerable<object[]> BooleanAttributes = BooleanAttributeComparer.BooleanAttributes.Select(x => new string[] { x }).ToArray();
 
         [Fact(DisplayName = "When attribute names are not the same comparer returns different")]
         public void Test001()
