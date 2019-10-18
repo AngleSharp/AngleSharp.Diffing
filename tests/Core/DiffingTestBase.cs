@@ -7,7 +7,7 @@ namespace Egil.AngleSharp.Diffing.Core
 {
     public abstract class DiffingTestBase
     {
-        private readonly IBrowsingContext _context = BrowsingContext.New();
+        private readonly IBrowsingContext _context;
         private readonly IHtmlParser _htmlParser;
         private readonly IDocument _document;
 
@@ -15,6 +15,8 @@ namespace Egil.AngleSharp.Diffing.Core
 
         protected DiffingTestBase()
         {
+            var config = Configuration.Default.WithCss();
+            _context = BrowsingContext.New(config);
             _htmlParser = _context.GetService<IHtmlParser>();
             _document = _context.OpenNewAsync().Result;
         }

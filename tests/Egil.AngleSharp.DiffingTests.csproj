@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="AngleSharp" Version="$(AngleSharpVersion)" />
+    <PackageReference Include="AngleSharp.Css" Version="$(AngleSharpVersion)" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="$(FxCopAnalyzersVersion)">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

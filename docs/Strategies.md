@@ -39,6 +39,7 @@ var diffs = DiffBuilder
     .WithAttributeNameMatcher()
     .WithNodeNameComparer()
     .WithIgnoreElementSupport()
+    .WithStyleSheetComparer()
     .WithTextComparer(WhitespaceOption.Normalize, ignoreCase: false)
     .WithAttributeComparer()
     .WithClassAttributeComparer()
@@ -204,7 +205,7 @@ var diffs = DiffBuilder
     .Build();
 ```
 
-### Ignore element attribute
+#### Ignore element attribute
 If the `diff:ignore="true"` attribute is used on a control element (`="true"` implicit/optional), all their attributes and child nodes are skipped/ignored during comparison, including those of the test element, the control element is matched with.
 
 In this example, the `<h1>` tag, it's attribute and children are considered the same as the element it is matched with:
@@ -227,6 +228,8 @@ var diffs = DiffBuilder
 
 ### Text (text nodes) strategies
 The built-in text strategies offer a bunch of ways to control how text (text nodes) is handled during the diffing process.
+
+**NOTE:** It is on the issues list to enable a more intelligent, e.g. whitespace aware, comparison of JavaScript (text) inside `<script>`-tags and event-attributes.
 
 #### Whitespace handling
 Whitespace can be a source of false-positives when comparing two HTML fragments. Thus, the whitespace handling strategy offer different ways to deal with it during a comparison.
@@ -261,8 +264,6 @@ To configure/override whitespace rules on a specific subtree in the comparison, 
 <pre diff:whitespace="RemoveWhitespaceNodes">...</pre>
 ```
 
-**NOTE:** It is on the issues list to deal with whitespace properly inside `<style>` and `<script>`-tags, e.g. inside strings.
-
 #### Perform case-_insensitve_ text comparison
 To compare the text in two text nodes to each other using a case-insensitive comparison, call the `WithTextComparer(ignoreCase: true)` method on a `DiffBuilder` instance, e.g.:
 
@@ -294,6 +295,19 @@ By using the inline attribute `diff:regex` on the element containing the text no
 ```
 
 The above  control text would use case-insensitive regular expression to match against a test text string (e.g. "HELLO WORLD 2020").
+
+#### Style sheet text comparer
+Different rules whitespace apply to style sheets (style information) inside `<style>` tags and `style="..."` attributes, than to HTML5. This comparer will parse the style information inside `<style>` tags and `style="..."` attributes and compare the result of the parsing, instead doing a direct string comparison. This should remove false-positives where e.g. insignificant whitespace makes two otherwise equal set of style informations result in a diff.
+
+To add this comparer, use the `WithStyleSheetComparer()` method on the `DiffBuilder` class, e.g.:
+
+```csharp
+var diffs = DiffBuilder
+    .Compare(controlHtml)
+    .WithTest(testHtml)
+    .WithStyleSheetComparer()
+    .Build();
+```
 
 ### Attribute Compare options
 The library supports various ways to perform attribute comparison. 

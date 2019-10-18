@@ -20,5 +20,13 @@ namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
             return pipeline;
         }
 
+        /// <summary>
+        /// Enables the special style-tag style sheet text comparer.
+        /// </summary>
+        public static DiffingStrategyPipeline WithStyleSheetComparer(this DiffingStrategyPipeline pipeline)
+        {
+            pipeline.AddComparer(StyleSheetTextNodeComparer.Compare, isSpecializedComparer: true);
+            return pipeline;
+        }
     }
 }

@@ -26,6 +26,7 @@ namespace Egil.AngleSharp.Diffing.Strategies
                 .WithAttributeNameMatcher()
                 .WithNodeNameComparer()
                 .WithIgnoreElementSupport()
+                .WithStyleSheetComparer()
                 .WithTextComparer(WhitespaceOption.Normalize, ignoreCase: false)
                 .WithAttributeComparer()
                 .WithClassAttributeComparer()
