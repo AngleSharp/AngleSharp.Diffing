@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Egil.AngleSharp.Diffing.Strategies.NodeStrategies
+namespace Egil.AngleSharp.Diffing.Strategies.ElementStrategies
 {
     [Serializable]
     public class DiffMatchSelectorReturnedTooManyResultsException : Exception

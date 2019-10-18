@@ -5,12 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
 using Egil.AngleSharp.Diffing.Core;
+using Egil.AngleSharp.Diffing.Strategies.NodeStrategies;
 using Shouldly;
 using Xunit;
 
-namespace Egil.AngleSharp.Diffing.Strategies.NodeStrategies
+namespace Egil.AngleSharp.Diffing.Strategies.ElementStrategies
 {
-    public class CssSelectorNodeMatcherTest : DiffingTestBase
+    public class CssSelectorElementMatcherTest : DiffingTestBase
     {
         [Theory(DisplayName = "When a node is not an element and does not have the diff:match attribute, " +
                               "no match is attempted nor returned")]
@@ -23,7 +24,7 @@ namespace Egil.AngleSharp.Diffing.Strategies.NodeStrategies
             var controls = ToSourceCollection(html, ComparisonSourceType.Control);
             var tests = ToSourceCollection(html, ComparisonSourceType.Test);
 
-            var actual = CssSelectorNodeMatcher.Match(context, controls, tests).ToList();
+            var actual = CssSelectorElementMatcher.Match(context, controls, tests).ToList();
 
             actual.ShouldBeEmpty();
         }
@@ -37,7 +38,7 @@ namespace Egil.AngleSharp.Diffing.Strategies.NodeStrategies
             var tests = ToSourceCollection("<p></p><main><p></p></main>", ComparisonSourceType.Test);
             var context = new DiffContext(controls[0].Node.GetRoot() as IElement, tests[0].Node.GetRoot() as IElement);
 
-            var actual = CssSelectorNodeMatcher.Match(context, controls, tests).ToList();
+            var actual = CssSelectorElementMatcher.Match(context, controls, tests).ToList();
 
             actual.Count.ShouldBe(1);
             actual[0].ShouldSatisfyAllConditions(
@@ -53,7 +54,7 @@ namespace Egil.AngleSharp.Diffing.Strategies.NodeStrategies
             var tests = ToSourceCollection("<p></p><p></p>", ComparisonSourceType.Test);
             var context = new DiffContext(controls[0].Node.GetRoot() as IElement, tests[0].Node.GetRoot() as IElement);
 
-            Should.Throw<DiffMatchSelectorReturnedTooManyResultsException>(() => CssSelectorNodeMatcher.Match(context, controls, tests).ToList());
+            Should.Throw<DiffMatchSelectorReturnedTooManyResultsException>(() => CssSelectorElementMatcher.Match(context, controls, tests).ToList());
         }
 
         [Fact(DisplayName = "When a diff:match css selector finds zero element no matches are created")]
@@ -63,7 +64,20 @@ namespace Egil.AngleSharp.Diffing.Strategies.NodeStrategies
             var tests = ToSourceCollection("<p></p>", ComparisonSourceType.Test);
             var context = new DiffContext(controls[0].Node.GetRoot() as IElement, tests[0].Node.GetRoot() as IElement);
 
-            var actual = CssSelectorNodeMatcher.Match(context, controls, tests).ToList();
+            var actual = CssSelectorElementMatcher.Match(context, controls, tests).ToList();
+
+            actual.ShouldBeEmpty();
+        }
+
+        [Fact(DisplayName = "The matcher does not try to match control elements that are marked as matched already")]
+        public void Test005()
+        {
+            var controls = ToSourceCollection(@"<p diff:match=""p""></p>", ComparisonSourceType.Control);
+            var tests = ToSourceCollection("<p></p>", ComparisonSourceType.Test);
+            var context = new DiffContext(controls[0].Node.GetRoot() as IElement, tests[0].Node.GetRoot() as IElement);
+            controls.MarkAsMatched(controls[0]);
+
+            var actual = CssSelectorElementMatcher.Match(context, controls, tests).ToList();
 
             actual.ShouldBeEmpty();
         }

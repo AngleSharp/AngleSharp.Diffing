@@ -1,10 +1,10 @@
 ﻿using Egil.AngleSharp.Diffing.Core;
+using Egil.AngleSharp.Diffing.Strategies.AttributeStrategies;
 using Shouldly;
 using Xunit;
 
 namespace Egil.AngleSharp.Diffing.Strategies.IgnoreStrategies
 {
-
     public class IgnoreAttributeComparerTest : DiffingTestBase
     {
         [Fact(DisplayName = "When a attribute does not contain have the ':ignore' postfix, the current decision is returned")]

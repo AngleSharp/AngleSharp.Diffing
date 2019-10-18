@@ -2,7 +2,7 @@
 using Shouldly;
 using Xunit;
 
-namespace Egil.AngleSharp.Diffing.Strategies.IgnoreStrategies
+namespace Egil.AngleSharp.Diffing.Strategies.ElementStrategies
 {
     public class IgnoreElementComparerTest : DiffingTestBase
     {

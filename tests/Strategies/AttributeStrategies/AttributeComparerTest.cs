@@ -89,5 +89,4 @@ namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
             AttributeComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Same);
         }
     }
-
 }

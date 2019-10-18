@@ -39,8 +39,7 @@ namespace Egil.AngleSharp.Diffing.Core
             var elementSource = ToComparisonSource(@"<p></p>");
             var sut = new SourceMap(elementSource);
 
-            Should.Throw<ArgumentException>(() => sut["foo"])
-                .Message.ShouldBe("The map does not contain an attribute comparison source that matches the name 'foo'.");
+            Should.Throw<System.Collections.Generic.KeyNotFoundException>(() => sut["foo"]);
         }
 
         [Theory(DisplayName = "Contains returns true when map contains a source with the provided name, false otherwise")]
@@ -77,6 +76,25 @@ namespace Egil.AngleSharp.Diffing.Core
 
             sut.GetUnmatched().ShouldNotContain(foo);
             sut.GetUnmatched().Count().ShouldBe(1);
+        }
+
+        [Fact(DisplayName = "When a source is marked as matched, IsUnmatched returns false")]
+        public void Test6()
+        {
+            var sut = ToSourceMap(@"<p foo=""bar""></p>");
+            var foo = sut["foo"];
+
+            sut.MarkAsMatched(foo);
+
+            sut.IsUnmatched("foo").ShouldBeFalse();
+        }
+
+        [Fact(DisplayName = "When a source is unmatched, IsUnmatched returns true")]
+        public void Test7()
+        {
+            var sut = ToSourceMap(@"<p foo=""bar""></p>");
+
+            sut.IsUnmatched("foo").ShouldBeTrue();
         }
     }
 }

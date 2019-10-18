@@ -22,7 +22,7 @@ var testHtml = "<p>World, I say hello</p>";
 var diffs = DiffBuilder
     .Compare(controlHtml)
     .WithTest(testHtml)
-    .UseDefaultOptions()
+    .WithDefaultOptions()
     .Build();
 ```
 
@@ -32,17 +32,18 @@ Calling the `UseDefaultOptions()` method is equivalent to specifying the followi
 var diffs = DiffBuilder
     .Compare(controlHtml)
     .WithTest(testHtml)
-    .IgnoreComments()
     .IgnoreDiffAttributes()
-    .WithCssSelectorMatcher()
+    .IgnoreComments()
     .WithSearchingNodeMatcher()
-    .WithOneToOneAttributeMatcher()
+    .WithCssSelectorMatcher()
+    .WithAttributeNameMatcher()
     .WithNodeNameComparer()
+    .WithIgnoreElementSupport()
     .WithTextComparer(WhitespaceOption.Normalize, ignoreCase: false)
-    .EnableIgnoreAttribute()
     .WithAttributeComparer()
     .WithClassAttributeComparer()
     .WithBooleanAttributeComparer(BooleanAttributeComparision.Strict)
+    .WithInlineAttributeIgnoreSupport()
     .Build();
 ``` 
 
@@ -64,8 +65,8 @@ var diffs = DiffBuilder
 
 _**NOTE**: Currently, the ignore comment strategy does NOT remove comments from CSS or JavaScript embedded in `<style>` or `<script>` tags._
 
-### Ignoring special `diff:` attributes
-Any attributes that starts with `diff:` are automatically filtered out before matching/comparing happens. E.g. `diff:whitespace="..."` does not show up as a missing diff when added to an control element.
+### Ignoring special "diff"-attributes
+Any attributes that starts with `diff:` are automatically filtered out before matching/comparing happens. E.g. `diff:whitespace="..."` does not show up as a missing diff when added to an control element. 
 
 To enable this option, use the `IgnoreDiffAttributes()` method on the `DiffBuilder` class, e.g.:
 
@@ -161,7 +162,7 @@ The following control node will be compared against the `<h1>` in the `<header>`
 
 One use case of the CSS-selector element matcher is where you only want to test one part of a sub-tree, and ignore the rest. The example above will report the unmatched test nodes as *unexpected*, but those "diffs" can be ignored, since that is expected. This approach can save you from specifying all the needed control nodes, if only part of a sub tree needs to be compared.
 
-To choose this matcher, use the `WithSearchingMatcher()` method on the `DiffBuilder` class, e.g.:
+To choose this matcher, use the `WithCssSelectorMatcher()` method on the `DiffBuilder` class, e.g.:
 
 ```csharp
 var diffs = DiffBuilder
@@ -174,28 +175,26 @@ var diffs = DiffBuilder
 ### Attribute matching strategies
 These are the built-in attribute matching strategies.
 
-#### One-to-one attribute name matcher
+#### Attribute name matcher
 This selector will match attributes on a control element with attributes on a test element using the attribute's name. If an *control* attribute is not matched, it is reported as *missing* and if a *test* attribute is not matched, it is reported as *unexpected*.
 
-To choose this matcher, use the `WithOneToOneAttributeMatcher()` method on the `DiffBuilder` class, e.g.:
+To choose this matcher, use the `WithAttributeNameMatcher()` method on the `DiffBuilder` class, e.g.:
 
 ```csharp
 var diffs = DiffBuilder
     .Compare(controlHtml)
     .WithTest(testHtml)
-    .WithOneToOneAttributeMatcher()
+    .WithAttributeNameMatcher()
     .Build();
 ```
-
-**Note:** this matcher will not count any diff-`:postfix` modifiers on attributes as part of the name when matching, thus, `id:regex="..."` will be matched with `id="..."`.
 
 ## Comparing strategies
 These are the built-in comparing strategies.
 
-### Node compare strategy
+### Node and element compare strategy
 The basic node compare strategy will simply check if the node's types and node's name are equal.
 
-To choose this matcher, use the `WithNodeNameComparer()` method on the `DiffBuilder` class, e.g.:
+To choose this comparer, use the `WithNodeNameComparer()` method on the `DiffBuilder` class, e.g.:
 
 ```csharp
 var diffs = DiffBuilder
@@ -205,7 +204,7 @@ var diffs = DiffBuilder
     .Build();
 ```
 
-### Ignore attribute
+### Ignore element attribute
 If the `diff:ignore="true"` attribute is used on a control element (`="true"` implicit/optional), all their attributes and child nodes are skipped/ignored during comparison, including those of the test element, the control element is matched with.
 
 In this example, the `<h1>` tag, it's attribute and children are considered the same as the element it is matched with:
@@ -216,13 +215,13 @@ In this example, the `<h1>` tag, it's attribute and children are considered the 
 </header>
 ```
 
-Activate this strategy by calling the `EnableIgnoreAttribute()` method on a `DiffBuilder` instance, e.g.:
+Activate this strategy by calling the `WithIgnoreElementSupport()` method on a `DiffBuilder` instance, e.g.:
 
 ```csharp
 var diffs = DiffBuilder
     .Compare(controlHtml)
     .WithTest(testHtml)
-    .EnableIgnoreAttribute()
+    .WithIgnoreElementSupport()
     .Build();
 ```
 
@@ -265,13 +264,13 @@ To configure/override whitespace rules on a specific subtree in the comparison, 
 **NOTE:** It is on the issues list to deal with whitespace properly inside `<style>` and `<script>`-tags, e.g. inside strings.
 
 #### Perform case-_insensitve_ text comparison
-To compare the text in two text nodes to each other using a case-insensitive comparison, call the `WithTextComparer(WhitespaceOption, ignoreCase: true)` method on a `DiffBuilder` instance, e.g.:
+To compare the text in two text nodes to each other using a case-insensitive comparison, call the `WithTextComparer(ignoreCase: true)` method on a `DiffBuilder` instance, e.g.:
 
 ```csharp
 var diffs = DiffBuilder
     .Compare(controlHtml)
     .WithTest(testHtml)
-    .WithTextComparer(WhitespaceOption.Normalize, ignoreCase: true)
+    .WithTextComparer(ignoreCase: true)
     .Build();
 ```
 
@@ -296,25 +295,6 @@ By using the inline attribute `diff:regex` on the element containing the text no
 
 The above  control text would use case-insensitive regular expression to match against a test text string (e.g. "HELLO WORLD 2020").
 
-### Ignore postfix for attributes
-To ignore a specific attribute during comparison, add the `:ignore` postfix to the attribute on the control element. Thus will simply skip comparing the two attributes and not report any differences between them. E.g. to ignore the `class` attribute, do:
-
-```html
-<header>
-    <h1 class:ignore="heading-1">Hello world</h1>
-</header>
-```
-
-Activate this strategy by calling the `EnableIgnoreAttribute()` method on a `DiffBuilder` instance, e.g.:
-
-```csharp
-var diffs = DiffBuilder
-    .Compare(controlHtml)
-    .WithTest(testHtml)
-    .EnableIgnoreAttribute()
-    .Build();
-```
-
 ### Attribute Compare options
 The library supports various ways to perform attribute comparison. 
 
@@ -325,7 +305,15 @@ The *"name and value comparison"* is the base comparison option, and that will t
 - `attr="foo"` is the NOT same as `attr="bar"`
 - `foo="attr"` is the NOT same as `bar="attr"`
 
-This comparison mode is on by default.
+To choose this comparer, use the `WithAttributeComparer()` method on the `DiffBuilder` class, e.g.:
+
+```csharp
+var diffs = DiffBuilder
+    .Compare(controlHtml)
+    .WithTest(testHtml)
+    .WithAttributeComparer()
+    .Build();
+```
 
 #### RegEx attribute value comparer
 It is possible to specify a regular expression in the control attributes value, and add the `:regex` postfix to the *control* attributes name, to have the comparison performed using a Regex match test. E.g. 
@@ -377,5 +365,24 @@ var diffs = DiffBuilder
     .Compare(controlHtml)
     .WithTest(testHtml)
     .WithBooleanAttributeComparer(BooleanAttributeComparision.Strict)
+    .Build();
+```
+
+### Ignore attributes during diffing
+To ignore a specific attribute during comparison, add the `:ignore` postfix to the attribute on the control element. Thus will simply skip comparing the two attributes and not report any differences between them. E.g. to ignore the `class` attribute, do:
+
+```html
+<header>
+    <h1 class:ignore="heading-1">Hello world</h1>
+</header>
+```
+
+Activate this strategy by calling the `WithInlineAttributeIgnoreSupport()` method on a `DiffBuilder` instance, e.g.:
+
+```csharp
+var diffs = DiffBuilder
+    .Compare(controlHtml)
+    .WithTest(testHtml)
+    .WithInlineAttributeIgnoreSupport()
     .Build();
 ```

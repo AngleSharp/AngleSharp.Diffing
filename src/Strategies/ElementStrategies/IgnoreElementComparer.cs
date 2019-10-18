@@ -2,7 +2,7 @@
 using Egil.AngleSharp.Diffing.Core;
 using Egil.AngleSharp.Diffing.Extensions;
 
-namespace Egil.AngleSharp.Diffing.Strategies.IgnoreStrategies
+namespace Egil.AngleSharp.Diffing.Strategies.ElementStrategies
 {
     public static class IgnoreElementComparer
     {

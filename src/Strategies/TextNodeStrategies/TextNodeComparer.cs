@@ -11,6 +11,7 @@ namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
         private const string PRE_ELEMENTNAME = "PRE";
         private const string WHITESPACE_ATTR_NAME = "diff:whitespace";
         private const string IGNORECASE_ATTR_NAME = "diff:ignorecase";
+        private const string REGEX_ATTR_NAME = "diff:regex";
         private static readonly Regex WhitespaceReplace = new Regex(@"\s+", RegexOptions.Compiled | RegexOptions.CultureInvariant, TimeSpan.FromSeconds(5));
 
         public WhitespaceOption Whitespace { get; }
@@ -74,7 +75,7 @@ namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
         private static bool GetIsRegexComparison(IText controlTextNode)
         {
             var parent = controlTextNode.ParentElement;
-            return parent is { } && parent.TryGetAttrValue("diff:regex", out bool isRegex) && isRegex;
+            return parent is { } && parent.TryGetAttrValue(REGEX_ATTR_NAME, out bool isRegex) && isRegex;
         }
 
         private WhitespaceOption GetWhitespaceOption(IText textNode)

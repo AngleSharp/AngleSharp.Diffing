@@ -1,7 +1,7 @@
 ﻿using System;
 using Egil.AngleSharp.Diffing.Core;
 
-namespace Egil.AngleSharp.Diffing.Strategies.IgnoreStrategies
+namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
 {
     public static class IgnoreAttributeComparer
     {

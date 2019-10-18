@@ -32,7 +32,6 @@ namespace Egil.AngleSharp.Diffing
                 }
             }
         }
-            
         public IEnumerable<AttributeComparison> Match(DiffContext context, SourceMap controlAttrSources, SourceMap testAttrSources)
         {
             foreach (var matcher in _attrsMatchers)
@@ -46,19 +45,101 @@ namespace Egil.AngleSharp.Diffing
             }
         }
 
-        public CompareResult Compare(in Comparison comparison) 
+        public CompareResult Compare(in Comparison comparison)
             => Compare(comparison, _nodeComparers, CompareResult.DifferentAndBreak);
         public CompareResult Compare(in AttributeComparison comparison)
             => Compare(comparison, _attrComparers, CompareResult.Different);
 
-        public void AddFilter(FilterStrategy<ComparisonSource> filterStrategy) => _nodeFilters.Add(filterStrategy);
-        public void AddFilter(FilterStrategy<AttributeComparisonSource> filterStrategy) => _attrsFilters.Add(filterStrategy);
+        /// <summary>
+        /// Adds a node filter to the pipeline.
+        /// Specialized filters always execute after any generalized filters in the pipeline.
+        /// That enables them to correct for the generic filters decision.
+        /// </summary>
+        /// <param name="filterStrategy"></param>
+        /// <param name="isSpecializedFilter">true if <paramref name="filterStrategy"/> is a specialized filter, false if it is a generalized filter</param>
+        public void AddFilter(FilterStrategy<ComparisonSource> filterStrategy, bool isSpecializedFilter)
+        {
+            if (isSpecializedFilter)
+                _nodeFilters.Add(filterStrategy);
+            else
+                _nodeFilters.Insert(0, filterStrategy);
+        }
 
-        public void AddMatcher(MatchStrategy<SourceCollection, Comparison> matchStrategy) => _nodeMatchers.Add(matchStrategy);
-        public void AddMatcher(MatchStrategy<SourceMap, AttributeComparison> matchStrategy) => _attrsMatchers.Add(matchStrategy);
+        /// <summary>
+        /// Adds an attribute filter to the pipeline.
+        /// Specialized filters always execute after any generalized filters in the pipeline.
+        /// That enables them to correct for the generic filters decision.
+        /// </summary>
+        /// <param name="filterStrategy"></param>
+        /// <param name="isSpecializedFilter">true if <paramref name="filterStrategy"/> is a specialized filter, false if it is a generalized filter</param>
+        public void AddFilter(FilterStrategy<AttributeComparisonSource> filterStrategy, bool isSpecializedFilter)
+        {
+            if (isSpecializedFilter)
+                _attrsFilters.Add(filterStrategy);
+            else
+                _attrsFilters.Insert(0, filterStrategy);
+        }
 
-        public void AddComparer(CompareStrategy<Comparison> compareStrategy) => _nodeComparers.Add(compareStrategy);
-        public void AddComparer(CompareStrategy<AttributeComparison> compareStrategy) => _attrComparers.Add(compareStrategy);
+        /// <summary>
+        /// Adds a node matcher to the pipeline.
+        /// Specialized matchers always execute before any generalized matchers in the pipeline.
+        /// This enables the special matchers to handle special matching cases before the more simple generalized matchers process the rest.
+        /// </summary>
+        /// <param name="matchStrategy"></param>
+        /// <param name="isSpecializedMatcher">true if <paramref name="matchStrategy"/> is a specialized matcher, false if it is a generalized matcher</param>
+        public void AddMatcher(MatchStrategy<SourceCollection, Comparison> matchStrategy, bool isSpecializedMatcher)
+        {
+            if (isSpecializedMatcher)
+                _nodeMatchers.Insert(0, matchStrategy);
+            else
+                _nodeMatchers.Add(matchStrategy);
+        }
+
+        /// <summary>
+        /// Adds an attribute matcher to the pipeline.
+        /// Specialized matchers always execute before any generalized matchers in the pipeline.
+        /// This enables the special matchers to handle special matching cases before the more simple generalized matchers process the rest.
+        /// </summary>
+        /// <param name="matchStrategy"></param>
+        /// <param name="isSpecializedMatcher">true if <paramref name="matchStrategy"/> is a specialized matcher, false if it is a generalized matcher</param>
+
+        public void AddMatcher(MatchStrategy<SourceMap, AttributeComparison> matchStrategy, bool isSpecializedMatcher)
+        {
+            if (isSpecializedMatcher)
+                _attrsMatchers.Insert(0, matchStrategy);
+            else
+                _attrsMatchers.Add(matchStrategy);
+        }
+
+        /// <summary>
+        /// Adds a node comparer to the pipeline.
+        /// Specialized comparers always execute after any generalized comparers in the pipeline.
+        /// That enables them to correct for the generic comparers decision.
+        /// </summary>
+        /// <param name="compareStrategy"></param>
+        /// <param name="isSpecializedComparer">true if <paramref name="compareStrategy"/> is a specialized comparer, false if it is a generalized comparer</param>
+        public void AddComparer(CompareStrategy<Comparison> compareStrategy, bool isSpecializedComparer)
+        {
+            if (isSpecializedComparer)
+                _nodeComparers.Add(compareStrategy);
+            else
+                _nodeComparers.Insert(0, compareStrategy);
+        }
+
+        /// <summary>
+        /// Adds a attribute comparer to the pipeline.
+        /// Specialized comparers always execute after any generalized comparers in the pipeline.
+        /// That enables them to correct for the generic comparers decision.
+        /// </summary>
+        /// <param name="compareStrategy"></param>
+        /// <param name="isSpecializedComparer">true if <paramref name="compareStrategy"/> is a specialized comparer, false if it is a generalized comparer</param>
+        public void AddComparer(CompareStrategy<AttributeComparison> compareStrategy, bool isSpecializedComparer)
+        {
+            if (isSpecializedComparer)
+                _attrComparers.Add(compareStrategy);
+            else
+                _attrComparers.Insert(0, compareStrategy);
+        }
 
         private FilterDecision Filter<T>(in T source, List<FilterStrategy<T>> filterStrategies)
         {

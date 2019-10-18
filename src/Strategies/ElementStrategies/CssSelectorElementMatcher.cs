@@ -8,9 +8,9 @@ using AngleSharp.Dom;
 using Egil.AngleSharp.Diffing.Core;
 using Egil.AngleSharp.Diffing.Extensions;
 
-namespace Egil.AngleSharp.Diffing.Strategies.NodeStrategies
+namespace Egil.AngleSharp.Diffing.Strategies.ElementStrategies
 {
-    public static class CssSelectorNodeMatcher
+    public static class CssSelectorElementMatcher
     {
         private const string DIFF_MATCH_ATTR_NAME = "diff:match";
 
@@ -22,7 +22,7 @@ namespace Egil.AngleSharp.Diffing.Strategies.NodeStrategies
             if (controlSources is null) throw new ArgumentNullException(nameof(controlSources));
             if (testSources is null) throw new ArgumentNullException(nameof(testSources));
 
-            foreach (var control in controlSources)
+            foreach (var control in controlSources.GetUnmatched())
             {
                 if (control.Node.TryGetAttrValue(DIFF_MATCH_ATTR_NAME, out string cssSelector))
                 {
