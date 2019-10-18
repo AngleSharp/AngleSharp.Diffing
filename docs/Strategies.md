@@ -26,7 +26,7 @@ var diffs = DiffBuilder
     .Build();
 ```
 
-Calling the `UseDefaultOptions()` method is equivalent to specifying the following options explicitly: 
+Calling the `WithDefaultOptions()` method is equivalent to specifying the following options explicitly: 
 
 ```csharp
 var diffs = DiffBuilder
