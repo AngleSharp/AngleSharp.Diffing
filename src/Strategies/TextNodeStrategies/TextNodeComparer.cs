@@ -8,7 +8,7 @@ namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
 {
     public class TextNodeComparer
     {
-        private const string PRE_ELEMENTNAME = "PRE";
+        private static readonly string[] DefaultPreserveElement = new string[] { "PRE", "SCRIPT", "STYLE" };
         private const string WHITESPACE_ATTR_NAME = "diff:whitespace";
         private const string IGNORECASE_ATTR_NAME = "diff:ignorecase";
         private const string REGEX_ATTR_NAME = "diff:regex";
@@ -81,14 +81,15 @@ namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
         private WhitespaceOption GetWhitespaceOption(IText textNode)
         {
             var parent = textNode.ParentElement;
-
-            if (parent.NodeName.Equals(PRE_ELEMENTNAME, StringComparison.Ordinal))
+            foreach(var tagName in DefaultPreserveElement)
             {
-                return parent.TryGetAttrValue(WHITESPACE_ATTR_NAME, out WhitespaceOption option)
-                    ? option
-                    : WhitespaceOption.Preserve;
+                if (parent.NodeName.Equals(tagName, StringComparison.Ordinal))
+                {
+                    return parent.TryGetAttrValue(WHITESPACE_ATTR_NAME, out WhitespaceOption option)
+                        ? option
+                        : WhitespaceOption.Preserve;
+                }
             }
-
             return parent.GetInlineOptionOrDefault<WhitespaceOption>(WHITESPACE_ATTR_NAME, Whitespace);
         }
 
