@@ -7,7 +7,7 @@ namespace Egil.AngleSharp.Diffing
     public class DiffBuilderTest
     {
         [Fact(DisplayName = "Control and test html are set correctly")]
-        public void Test1()
+        public void Test001()
         {
             var control = "<p>control</p>";
             var test = "<p>test</p>";
@@ -21,7 +21,7 @@ namespace Egil.AngleSharp.Diffing
         }
 
         [Fact(DisplayName = "Builder throws if null is passed to control and test")]
-        public void Test2()
+        public void Test002()
         {
             Should.Throw<ArgumentNullException>(() => DiffBuilder.Compare(null!)).ParamName.ShouldBe(nameof(DiffBuilder.Control));
             Should.Throw<ArgumentNullException>(() => DiffBuilder.Compare("").WithTest(null!)).ParamName.ShouldBe(nameof(DiffBuilder.Test));
