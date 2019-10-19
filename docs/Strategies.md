@@ -259,11 +259,13 @@ To configure/override whitespace rules on a specific subtree in the comparison, 
 </header>
 ```
 
-**Special case for `<pre>` elements:** The content of `<pre>` elements will always be treated as the `Preserve` option, even if whitespace option is globally set to `RemoveWhitespaceNodes` or `Normalize`. To override this, add a in-line `diff:whitespace` attribute to the `<pre>`-tag, e.g.:
+**Special case for `<pre>`, `<script>`, and `<style>` elements:** The content of `<pre>`, `<script>`, and `<style>` elements will always be treated as the `Preserve` option, even if whitespace option is globally set to `RemoveWhitespaceNodes` or `Normalize`. To override this, add a in-line `diff:whitespace` attribute to the tags, e.g.:
 
 ```html
 <pre diff:whitespace="RemoveWhitespaceNodes">...</pre>
 ```
+
+This should ensure that the meaning of the content in those tags doesn't change by default. To deal correctly with whitespace in `<style>` tags, use the [Style sheet text comparer](#style-sheet-text-comparer).
 
 #### Perform case-_insensitve_ text comparison
 To compare the text in two text nodes to each other using a case-insensitive comparison, call the `WithTextComparer(ignoreCase: true)` method on a `DiffBuilder` instance, e.g.:

@@ -138,7 +138,7 @@ namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
         public void Test006(string tag)
         {
             var sut = new TextNodeComparer(WhitespaceOption.Normalize);
-            var elm = ToComparisonSource("<{tag} diff:whitespace=\"normalize\">foo   bar</{tag}>");
+            var elm = ToComparisonSource($"<{tag} diff:whitespace=\"normalize\">foo   bar</{tag}>");
             var controlSource = new ComparisonSource(elm.Node.FirstChild, 0, elm.Path, ComparisonSourceType.Control);
             var testSource = ToComparisonSource("foo bar", ComparisonSourceType.Test);
             var comparison = new Comparison(controlSource, testSource);
