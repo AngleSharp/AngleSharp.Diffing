@@ -7,6 +7,10 @@ namespace Egil.AngleSharp.Diffing.Strategies.IgnoreStrategies
 {
     public class IgnoreAttributeComparerTest : DiffingTestBase
     {
+        public IgnoreAttributeComparerTest(DiffingTestFixture fixture) : base(fixture)
+        {
+        }
+
         [Fact(DisplayName = "When a attribute does not contain have the ':ignore' postfix, the current decision is returned")]
         public void Test003()
         {

@@ -1,4 +1,4 @@
-﻿namespace Egil.AngleSharp.Diffing
+﻿namespace Egil.AngleSharp.Diffing.Core
 {
     public enum CompareResult
     {

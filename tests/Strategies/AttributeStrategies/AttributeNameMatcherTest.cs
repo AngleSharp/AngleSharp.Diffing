@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Egil.AngleSharp.Diffing;
 using Egil.AngleSharp.Diffing.Core;
 using Shouldly;
 using Xunit;
@@ -12,6 +13,10 @@ namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
     public class AttributeNameMatcherTest : DiffingTestBase
     {
         private readonly DiffContext _context = new DiffContext(null, null);
+
+        public AttributeNameMatcherTest(DiffingTestFixture fixture) : base(fixture)
+        {
+        }
 
         [Fact(DisplayName = "When one or both source maps is empty, no matches are returned")]
         public void Test001()

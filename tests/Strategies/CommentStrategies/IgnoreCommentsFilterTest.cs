@@ -1,11 +1,14 @@
-﻿using Egil.AngleSharp.Diffing.Core;
-using Shouldly;
+﻿using Shouldly;
 using Xunit;
 
 namespace Egil.AngleSharp.Diffing.Strategies.CommentStrategies
 {
     public class IgnoreCommentsFilterTest : DiffingTestBase
     {
+        public IgnoreCommentsFilterTest(DiffingTestFixture fixture) : base(fixture)
+        {
+        }
+
         [Theory(DisplayName = "Comment nodes and their child node are filtered out")]
         [InlineData("<!---->")]
         [InlineData("<!-- comment -->")]

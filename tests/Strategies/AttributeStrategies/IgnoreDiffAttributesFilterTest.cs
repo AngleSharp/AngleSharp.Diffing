@@ -1,11 +1,14 @@
-﻿using Egil.AngleSharp.Diffing.Core;
-using Shouldly;
+﻿using Shouldly;
 using Xunit;
 
 namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
 {
     public class IgnoreDiffAttributesFilterTest : DiffingTestBase
     {
+        public IgnoreDiffAttributesFilterTest(DiffingTestFixture fixture) : base(fixture)
+        {
+        }
+
         [Theory(DisplayName = "When an attribute starts with 'diff:' it is filtered out")]
         [InlineData(@"<p diff:whitespace=""Normalize"">", "diff:whitespace")]
         [InlineData(@"<p diff:ignore=""true"">", "diff:ignore")]

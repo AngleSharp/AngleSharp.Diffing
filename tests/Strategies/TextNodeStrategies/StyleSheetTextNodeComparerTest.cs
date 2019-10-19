@@ -11,6 +11,10 @@ namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
 {
     public class StyleSheetTextNodeComparerTest : TextNodeTestBase
     {
+        public StyleSheetTextNodeComparerTest(DiffingTestFixture fixture) : base(fixture)
+        {
+        }
+
         [Fact(DisplayName = "When input node is not a IText node, comparer does not run nor change the current decision")]
         public void Test000()
         {

@@ -1,5 +1,4 @@
-﻿using Egil.AngleSharp.Diffing.Core;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
@@ -20,6 +19,10 @@ namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
         };
 
         public static readonly IEnumerable<object[]> WhitespaceCharStrings = AllWhitespaceCharacters.Select(c => new string[] { c.ToString(CultureInfo.InvariantCulture) }).ToArray();
+
+        public TextNodeTestBase(DiffingTestFixture fixture) : base(fixture)
+        {
+        }
     }
 }
 

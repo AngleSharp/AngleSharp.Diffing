@@ -7,6 +7,10 @@ namespace Egil.AngleSharp.Diffing.Core
 {
     public class SourceCollectionTest : DiffingTestBase
     {
+        public SourceCollectionTest(DiffingTestFixture fixture) : base(fixture)
+        {
+        }
+
         [Theory(DisplayName = "Source type is correct saved in the collection")]
         [InlineData(ComparisonSourceType.Control)]
         [InlineData(ComparisonSourceType.Test)]

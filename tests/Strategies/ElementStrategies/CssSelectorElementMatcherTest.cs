@@ -13,6 +13,10 @@ namespace Egil.AngleSharp.Diffing.Strategies.ElementStrategies
 {
     public class CssSelectorElementMatcherTest : DiffingTestBase
     {
+        public CssSelectorElementMatcherTest(DiffingTestFixture fixture) : base(fixture)
+        {
+        }
+
         [Theory(DisplayName = "When a node is not an element and does not have the diff:match attribute, " +
                               "no match is attempted nor returned")]
         [InlineData("textnode")]

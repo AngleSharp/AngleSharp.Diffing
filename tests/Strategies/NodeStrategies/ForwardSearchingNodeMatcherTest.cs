@@ -9,6 +9,10 @@ namespace Egil.AngleSharp.Diffing.Strategies.NodeStrategies
     {
         private readonly DiffContext _context = new DiffContext(null, null);
 
+        public ForwardSearchingNodeMatcherTest(DiffingTestFixture fixture) : base(fixture)
+        {
+        }
+
         [Theory(DisplayName = "The matcher matches two nodes with the same node name")]
         [InlineData("textnode", "textnode")]
         [InlineData("<!--comment-->", "<!--comment-->")]

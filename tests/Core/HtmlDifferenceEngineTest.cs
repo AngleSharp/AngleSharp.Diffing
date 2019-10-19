@@ -8,6 +8,10 @@ namespace Egil.AngleSharp.Diffing.Core
 {
     public class HtmlDifferenceEngineTest : DiffingEngineTestBase
     {
+        public HtmlDifferenceEngineTest(DiffingTestFixture fixture) : base(fixture)
+        {
+        }
+
         [Fact(DisplayName = "Unmatched nodes in control/test are returned as missing/unexpected diffs")]
         public void UnmatchedNodesBecomesMissingUnexpectedDiffs()
         {

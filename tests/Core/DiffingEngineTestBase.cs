@@ -5,6 +5,10 @@ namespace Egil.AngleSharp.Diffing.Core
 {
     public abstract class DiffingEngineTestBase : DiffingTestBase
     {
+        public DiffingEngineTestBase(DiffingTestFixture fixture) : base(fixture)
+        {
+        }
+
         protected static HtmlDifferenceEngine CreateHtmlDiffEngine(
                 Func<DiffContext, SourceCollection, SourceCollection, IEnumerable<Comparison>>? nodeMatcher = null,
                 Func<DiffContext, SourceMap, SourceMap, IEnumerable<AttributeComparison>>? attrMatcher = null,

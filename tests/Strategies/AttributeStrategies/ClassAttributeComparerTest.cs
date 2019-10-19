@@ -6,6 +6,10 @@ namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
 {
     public class ClassAttributeComparerTest : DiffingTestBase
     {
+        public ClassAttributeComparerTest(DiffingTestFixture fixture) : base(fixture)
+        {
+        }
+
         [Theory(DisplayName = "When a class attribute is compared, the order of individual " +
                               "classes and multiple whitespace is ignored")]
         [InlineData("", "")]

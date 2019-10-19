@@ -10,6 +10,10 @@ namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
     {
         private readonly DiffContext _context = new DiffContext(null, null);
 
+        public PostfixedAttributeMatcherTest(DiffingTestFixture fixture) : base(fixture)
+        {
+        }
+
         public static IEnumerable<object[]> AttributeDiffPostfixesCombinations { get; } = new List<string[]>
         {
             new []{":ignore"},

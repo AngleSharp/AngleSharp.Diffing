@@ -6,6 +6,10 @@ namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
 {
     public class TextNodeFilterTest : TextNodeTestBase
     {
+        public TextNodeFilterTest(DiffingTestFixture fixture) : base(fixture)
+        {
+        }
+
         [Theory(DisplayName = "When whitespace option is Preserve, the provided decision is not changed by the filter for whitespace only text nodes")]
         [MemberData(nameof(WhitespaceCharStrings))]
         public void Test1(string whitespace)

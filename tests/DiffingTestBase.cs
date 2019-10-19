@@ -2,28 +2,25 @@ using System.Collections.Generic;
 using AngleSharp;
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
+using Egil.AngleSharp.Diffing.Core;
+using Xunit;
 
-namespace Egil.AngleSharp.Diffing.Core
+namespace Egil.AngleSharp.Diffing
 {
-    public abstract class DiffingTestBase
+    public abstract class DiffingTestBase : IClassFixture<DiffingTestFixture>
     {
-        private readonly IBrowsingContext _context;
-        private readonly IHtmlParser _htmlParser;
-        private readonly IDocument _document;
+        private readonly DiffingTestFixture _testFixture;
 
         protected INodeList EmptyNodeList => ToNodeList("");
 
-        protected DiffingTestBase()
+        public DiffingTestBase(DiffingTestFixture fixture)
         {
-            var config = Configuration.Default.WithCss();
-            _context = BrowsingContext.New(config);
-            _htmlParser = _context.GetService<IHtmlParser>();
-            _document = _context.OpenNewAsync().Result;
+            _testFixture = fixture;
         }
 
         protected INodeList ToNodeList(string? htmlsnippet)
         {
-            var fragment = _htmlParser.ParseFragment(htmlsnippet, _document.Body);
+            var fragment = _testFixture.Parse(htmlsnippet);
             return fragment;
         }
 
@@ -34,7 +31,7 @@ namespace Egil.AngleSharp.Diffing.Core
 
         protected INode ToNode(string htmlsnippet)
         {
-            var fragment = _htmlParser.ParseFragment(htmlsnippet, _document.Body);
+            var fragment = _testFixture.Parse(htmlsnippet);
             return fragment[0];
         }
 

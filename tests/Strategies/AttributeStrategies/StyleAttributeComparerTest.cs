@@ -11,6 +11,10 @@ namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
 {
     public class StyleAttributeComparerTest : DiffingTestBase
     {
+        public StyleAttributeComparerTest(DiffingTestFixture fixture) : base(fixture)
+        {
+        }
+
         [Fact(DisplayName = "When attribute is not style the current decision is used")]
         public void Test001()
         {

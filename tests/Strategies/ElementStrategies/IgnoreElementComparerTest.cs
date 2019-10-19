@@ -6,6 +6,10 @@ namespace Egil.AngleSharp.Diffing.Strategies.ElementStrategies
 {
     public class IgnoreElementComparerTest : DiffingTestBase
     {
+        public IgnoreElementComparerTest(DiffingTestFixture fixture) : base(fixture)
+        {
+        }
+
         [Theory(DisplayName = "When a control element does not contain the 'diff:ignore' attribute or it is 'diff:ignore=false', the current decision is returned")]
         [InlineData(@"<p></p>")]
         [InlineData(@"<p diff:ignore=""false""></p>")]

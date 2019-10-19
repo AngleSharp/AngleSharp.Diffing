@@ -7,6 +7,10 @@ namespace Egil.AngleSharp.Diffing.Core
 {
     public class SourceMapTest : DiffingTestBase
     {
+        public SourceMapTest(DiffingTestFixture fixture) : base(fixture)
+        {
+        }
+
         [Fact(DisplayName = "When initialized with a non-element an exception is thrown")]
         public void Test0()
         {

@@ -5,6 +5,10 @@ namespace Egil.AngleSharp.Diffing.Core
 {
     public class ComparisonSourceTest : DiffingTestBase
     {
+        public ComparisonSourceTest(DiffingTestFixture fixture) : base(fixture)
+        {
+        }
+
         [Fact(DisplayName = "Two sources are equal if all their properties are equal")]
         public void Test1()
         {

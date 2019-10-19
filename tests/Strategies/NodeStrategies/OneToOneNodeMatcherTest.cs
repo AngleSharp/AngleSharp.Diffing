@@ -9,6 +9,10 @@ namespace Egil.AngleSharp.Diffing.Strategies.NodeStrategies
     {
         private readonly DiffContext _context = new DiffContext(null, null);
 
+        public OneToOneNodeMatcherTest(DiffingTestFixture fixture) : base(fixture)
+        {
+        }
+
         [Fact(DisplayName = "With two equal length node lists, " +
                             "all control and test nodes are matched based on the order they are in the lists")]
         public void Test001()

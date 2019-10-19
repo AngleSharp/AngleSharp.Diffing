@@ -10,6 +10,10 @@ namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
     {
         public static readonly IEnumerable<object[]> BooleanAttributes = BooleanAttributeComparer.BooleanAttributes.Select(x => new string[] { x }).ToArray();
 
+        public BooleanAttributeComparerTest(DiffingTestFixture fixture) : base(fixture)
+        {
+        }
+
         [Fact(DisplayName = "When attribute names are not the same comparer returns different")]
         public void Test001()
         {

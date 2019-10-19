@@ -10,6 +10,10 @@ namespace Egil.AngleSharp.Diffing
     {
         private DiffContext _dummyContext = new DiffContext(null, null);
 
+        public DiffingStrategyPipelineTest(DiffingTestFixture fixture) : base(fixture)
+        {
+        }
+
         private FilterDecision NegateDecision(FilterDecision decision) => decision switch
         {
             FilterDecision.Keep => FilterDecision.Exclude,

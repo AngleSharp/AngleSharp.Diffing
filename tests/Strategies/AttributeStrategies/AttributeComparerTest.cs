@@ -7,6 +7,10 @@ namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
 
     public class AttributeComparerTest : DiffingTestBase
     {
+        public AttributeComparerTest(DiffingTestFixture fixture) : base(fixture)
+        {
+        }
+
         [Fact(DisplayName = "When compare is called with a current decision of Same or SameAndBreak, the current decision is returned")]
         public void Test001()
         {

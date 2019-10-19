@@ -6,6 +6,10 @@ namespace Egil.AngleSharp.Diffing.Strategies.NodeStrategies
 {
     public class NodeComparerTest : DiffingTestBase
     {
+        public NodeComparerTest(DiffingTestFixture fixture) : base(fixture)
+        {
+        }
+
         [Fact(DisplayName = "When control and test nodes have the same type and name, the result is Same")]
         public void Test001()
         {

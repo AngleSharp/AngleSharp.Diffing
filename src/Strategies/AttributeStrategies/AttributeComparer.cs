@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 using Egil.AngleSharp.Diffing.Core;
 
 namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
-{    
+{
     public static class AttributeComparer
     {
         private const string IGNORE_CASE_POSTFIX = ":ignorecase";
