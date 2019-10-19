@@ -63,5 +63,14 @@ namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
             pipeline.AddComparer(IgnoreAttributeComparer.Compare, isSpecializedComparer: true);
             return pipeline;
         }
+
+        /// <summary>
+        /// Enables the special style attributes comparer during diffing.
+        /// </summary>
+        public static DiffingStrategyPipeline WithStyleAttributeComparer(this DiffingStrategyPipeline pipeline)
+        {
+            pipeline.AddComparer(StyleAttributeComparer.Compare, isSpecializedComparer: true);
+            return pipeline;
+        }
     }
 }

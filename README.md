@@ -18,7 +18,7 @@ var testHtml = "<p>World, I say hello</p>";
 var diffs = DiffBuilder
     .Compare(controlHtml)
     .WithTest(testHtml)
-    .UseDefaultOptions()
+    .WithDefaultOptions()
     .Build();
 ```
 

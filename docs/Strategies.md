@@ -44,6 +44,7 @@ var diffs = DiffBuilder
     .WithAttributeComparer()
     .WithClassAttributeComparer()
     .WithBooleanAttributeComparer(BooleanAttributeComparision.Strict)
+    .WithStyleAttributeComparer()
     .WithInlineAttributeIgnoreSupport()
     .Build();
 ``` 
@@ -297,7 +298,7 @@ By using the inline attribute `diff:regex` on the element containing the text no
 The above  control text would use case-insensitive regular expression to match against a test text string (e.g. "HELLO WORLD 2020").
 
 #### Style sheet text comparer
-Different rules whitespace apply to style sheets (style information) inside `<style>` tags and `style="..."` attributes, than to HTML5. This comparer will parse the style information inside `<style>` tags and `style="..."` attributes and compare the result of the parsing, instead doing a direct string comparison. This should remove false-positives where e.g. insignificant whitespace makes two otherwise equal set of style informations result in a diff.
+Different whitespace rules apply to style sheets (style information) inside `<style>` tags, than to HTML5. This comparer will parse the style information inside `<style>` tags and compare the result of the parsing, instead doing a direct string comparison. This should remove false-positives where e.g. insignificant whitespace makes two otherwise equal set of style informations result in a diff.
 
 To add this comparer, use the `WithStyleSheetComparer()` method on the `DiffBuilder` class, e.g.:
 
@@ -382,7 +383,20 @@ var diffs = DiffBuilder
     .Build();
 ```
 
-### Ignore attributes during diffing
+#### Style attribute comparer
+Different whitespace rules apply to style information inside `style="..."` attributes, than to HTML5. This comparer will parse the style information inside `style="..."` attributes and compare the result of the parsing, instead doing a direct string comparison. This should remove false-positives where e.g. insignificant whitespace makes two otherwise equal set of style informations result in a diff.
+
+To add this comparer, use the `WithStyleAttributeComparer()` method on the `DiffBuilder` class, e.g.:
+
+```csharp
+var diffs = DiffBuilder
+    .Compare(controlHtml)
+    .WithTest(testHtml)
+    .WithStyleAttributeComparer()
+    .Build();
+```
+
+#### Ignore attributes during diffing
 To ignore a specific attribute during comparison, add the `:ignore` postfix to the attribute on the control element. Thus will simply skip comparing the two attributes and not report any differences between them. E.g. to ignore the `class` attribute, do:
 
 ```html
