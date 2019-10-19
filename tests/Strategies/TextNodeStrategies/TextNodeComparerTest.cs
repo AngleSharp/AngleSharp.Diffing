@@ -116,24 +116,30 @@ namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
             sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Same);
         }
 
-        [Fact(DisplayName = "When the parent element is <pre>, the is implicitly set to Preserve")]
-        public void Test005()
+        [Theory(DisplayName = "When the parent element is <pre/script/style>, the is implicitly set to Preserve")]
+        [InlineData("pre")]
+        [InlineData("script")]
+        [InlineData("style")]
+        public void Test005(string tag)
         {
             var sut = new TextNodeComparer(WhitespaceOption.Normalize);
-            var pre = ToComparisonSource("<pre>foo   bar</pre>");
-            var controlSource = new ComparisonSource(pre.Node.FirstChild, 0, pre.Path, ComparisonSourceType.Control);
+            var elm = ToComparisonSource($"<{tag}>foo   bar</{tag}>");
+            var controlSource = new ComparisonSource(elm.Node.FirstChild, 0, elm.Path, ComparisonSourceType.Control);
             var testSource = ToComparisonSource("foo bar", ComparisonSourceType.Test);
             var comparison = new Comparison(controlSource, testSource);
 
             sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
         }
 
-        [Fact(DisplayName = "When the parent element is <pre> and the whitespace option is set inline, the inline option is used instead of Preserve")]
-        public void Test006()
+        [Theory(DisplayName = "When the parent element is <pre/script/style> and the whitespace option is set inline, the inline option is used instead of Preserve")]
+        [InlineData("pre")]
+        [InlineData("script")]
+        [InlineData("style")]
+        public void Test006(string tag)
         {
             var sut = new TextNodeComparer(WhitespaceOption.Normalize);
-            var pre = ToComparisonSource("<pre diff:whitespace=\"normalize\">foo   bar</pre>");
-            var controlSource = new ComparisonSource(pre.Node.FirstChild, 0, pre.Path, ComparisonSourceType.Control);
+            var elm = ToComparisonSource("<{tag} diff:whitespace=\"normalize\">foo   bar</{tag}>");
+            var controlSource = new ComparisonSource(elm.Node.FirstChild, 0, elm.Path, ComparisonSourceType.Control);
             var testSource = ToComparisonSource("foo bar", ComparisonSourceType.Test);
             var comparison = new Comparison(controlSource, testSource);
 
