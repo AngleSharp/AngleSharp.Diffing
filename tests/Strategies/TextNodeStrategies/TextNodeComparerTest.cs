@@ -17,9 +17,8 @@ namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
             var sut = new TextNodeComparer();
 
             sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
-            sut.Compare(comparison, CompareResult.DifferentAndBreak).ShouldBe(CompareResult.DifferentAndBreak);
             sut.Compare(comparison, CompareResult.Same).ShouldBe(CompareResult.Same);
-            sut.Compare(comparison, CompareResult.SameAndBreak).ShouldBe(CompareResult.SameAndBreak);
+            sut.Compare(comparison, CompareResult.Skip).ShouldBe(CompareResult.Skip);
         }
 
         [Theory(DisplayName = "When option is Preserve or RemoveWhitespaceNodes, comparer does not run nor change the current decision")]
@@ -31,19 +30,18 @@ namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
             var sut = new TextNodeComparer(whitespaceOption);
 
             sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
-            sut.Compare(comparison, CompareResult.DifferentAndBreak).ShouldBe(CompareResult.DifferentAndBreak);
             sut.Compare(comparison, CompareResult.Same).ShouldBe(CompareResult.Same);
-            sut.Compare(comparison, CompareResult.SameAndBreak).ShouldBe(CompareResult.SameAndBreak);
+            sut.Compare(comparison, CompareResult.Skip).ShouldBe(CompareResult.Skip);
         }
 
-        [Fact(DisplayName = "When option is Normalize and current decision is Same or SameAndBreak, compare uses the current decision")]
+        [Fact(DisplayName = "When option is Normalize and current decision is Same or Skip, compare uses the current decision")]
         public void Test55()
         {
             var comparison = new Comparison();
             var sut = new TextNodeComparer(WhitespaceOption.Normalize);
 
             sut.Compare(comparison, CompareResult.Same).ShouldBe(CompareResult.Same);
-            sut.Compare(comparison, CompareResult.SameAndBreak).ShouldBe(CompareResult.SameAndBreak);
+            sut.Compare(comparison, CompareResult.Skip).ShouldBe(CompareResult.Skip);
         }
 
         [Theory(DisplayName = "When option is Normalize, any whitespace before and after a text node is removed before comparison")]

@@ -12,7 +12,7 @@ namespace Egil.AngleSharp.Diffing.Core
         [Fact(DisplayName = "Two sources are equal if all their properties are equal")]
         public void Test1()
         {
-            var node =  ToNode("<br>");
+            var node = ToNode("<br>");
             var source = new ComparisonSource(node, 1, "path", ComparisonSourceType.Control);
             var otherSource = new ComparisonSource(node, 1, "path", ComparisonSourceType.Control);
 
@@ -40,12 +40,30 @@ namespace Egil.AngleSharp.Diffing.Core
         [Fact(DisplayName = "Two sources are not equal if their nodes are not equal")]
         public void Test3()
         {
-            var source = new ComparisonSource(ToNode("<br>"), 1, "path", ComparisonSourceType.Control);
+            var source = new ComparisonSource(ToNode("<p>"), 1, "path", ComparisonSourceType.Control);
             var otherSource = new ComparisonSource(ToNode("<p>"), 1, "path", ComparisonSourceType.Control);
 
             source.Equals(otherSource).ShouldBeFalse();
             (source == otherSource).ShouldBeFalse();
             (source != otherSource).ShouldBeTrue();
+        }
+
+        [Fact(DisplayName = "GetHashCode correctly returns same value for two equal sources")]
+        public void Test001()
+        {
+            var node = ToNode("<br>");
+            var source = new ComparisonSource(node, 1, "path", ComparisonSourceType.Control);
+            var otherSource = new ComparisonSource(node, 1, "path", ComparisonSourceType.Control);
+
+            source.GetHashCode().ShouldBe(otherSource.GetHashCode());
+        }
+        [Fact(DisplayName = "GetHashCode correctly returns different values for two unequal sources")]
+        public void Test002()
+        {
+            var source = new ComparisonSource(ToNode("<br>"), 1, "path", ComparisonSourceType.Control);
+            var otherSource = new ComparisonSource(ToNode("<p>"), 2, "path/other", ComparisonSourceType.Test);
+
+            source.GetHashCode().ShouldNotBe(otherSource.GetHashCode());
         }
     }
 }

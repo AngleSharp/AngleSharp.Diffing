@@ -26,7 +26,7 @@ namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
 
         public CompareResult Compare(in Comparison comparison, CompareResult currentDecision)
         {
-            if (currentDecision.IsDecisionFinal()) return currentDecision;
+            if (currentDecision.IsSameOrSkip()) return currentDecision;
             
             if (comparison.TryGetNodesAsType<IText>(out var controlTextNode, out var testTextNode))
                 return Compare(controlTextNode, testTextNode);

@@ -14,7 +14,7 @@ namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
     {        
         public static CompareResult Compare(in AttributeComparison comparison, CompareResult currentDecision)
         {
-            if (currentDecision.IsDecisionFinal()) return currentDecision;
+            if (currentDecision.IsSameOrSkip()) return currentDecision;
 
             return IsStyleAttributeComparison(comparison)
                 ? CompareElementStyle(comparison)
@@ -23,7 +23,7 @@ namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
 
         private static CompareResult CompareElementStyle(in AttributeComparison comparison)
         {
-            var (ctrlElm, testElm) = comparison.GetNodesAsElements();
+            var (ctrlElm, testElm) = comparison.GetAttributeElements();
             var ctrlStyle = ctrlElm.GetStyle();
             var testStyle = testElm.GetStyle();
             return ctrlStyle.CssText.Equals(testStyle.CssText, StringComparison.Ordinal)

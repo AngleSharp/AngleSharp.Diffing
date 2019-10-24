@@ -21,9 +21,8 @@ namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
             var comparison = ToComparison("<p></p>", "<p></p>");
 
             StyleSheetTextNodeComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
-            StyleSheetTextNodeComparer.Compare(comparison, CompareResult.DifferentAndBreak).ShouldBe(CompareResult.DifferentAndBreak);
             StyleSheetTextNodeComparer.Compare(comparison, CompareResult.Same).ShouldBe(CompareResult.Same);
-            StyleSheetTextNodeComparer.Compare(comparison, CompareResult.SameAndBreak).ShouldBe(CompareResult.SameAndBreak);
+            StyleSheetTextNodeComparer.Compare(comparison, CompareResult.Skip).ShouldBe(CompareResult.Skip);
         }
 
         [Fact(DisplayName = "When input node is a IText node inside an element that is NOT a style tag, comparer does not run nor change the current decision")]
@@ -32,9 +31,8 @@ namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
             var comparison = ToComparison("<p>h1{background:#000;}</p>", "<p>h1{background:#000;}</p>");
 
             StyleSheetTextNodeComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
-            StyleSheetTextNodeComparer.Compare(comparison, CompareResult.DifferentAndBreak).ShouldBe(CompareResult.DifferentAndBreak);
             StyleSheetTextNodeComparer.Compare(comparison, CompareResult.Same).ShouldBe(CompareResult.Same);
-            StyleSheetTextNodeComparer.Compare(comparison, CompareResult.SameAndBreak).ShouldBe(CompareResult.SameAndBreak);
+            StyleSheetTextNodeComparer.Compare(comparison, CompareResult.Skip).ShouldBe(CompareResult.Skip);
         }
 
 

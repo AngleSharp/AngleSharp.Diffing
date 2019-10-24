@@ -47,7 +47,7 @@ namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
 
         public CompareResult Compare(in AttributeComparison comparison, CompareResult currentDecision)
         {
-            if (currentDecision.IsDecisionFinal()) return currentDecision;
+            if (currentDecision.IsSameOrSkip()) return currentDecision;
             if (!IsAttributeNamesEqual(comparison)) return CompareResult.Different;
             if (!BooleanAttributesSet.Contains(comparison.Control.Attribute.Name)) return currentDecision;
 

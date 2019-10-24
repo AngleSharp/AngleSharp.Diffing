@@ -8,7 +8,7 @@ namespace Egil.AngleSharp.Diffing
 {
     public class DiffingStrategyPipelineTest : DiffingTestBase
     {
-        private DiffContext _dummyContext = new DiffContext(null, null);
+        private readonly DiffContext _dummyContext = new DiffContext(null, null);
 
         public DiffingStrategyPipelineTest(DiffingTestFixture fixture) : base(fixture)
         {
@@ -177,21 +177,18 @@ namespace Egil.AngleSharp.Diffing
         }
 
 
-        [Fact(DisplayName = "When no compare strategy have been added, DifferentAndBreak is returned for node comparison and Different for attributes")]
+        [Fact(DisplayName = "When no compare strategy have been added, Different is returned for node and attribute comparisons")]
         public void Test3()
         {
             var sut = new DiffingStrategyPipeline();
 
-            sut.Compare(new Comparison()).ShouldBe(CompareResult.DifferentAndBreak);
+            sut.Compare(new Comparison()).ShouldBe(CompareResult.Different);
             sut.Compare(new AttributeComparison()).ShouldBe(CompareResult.Different);
         }
 
         [Theory(DisplayName = "Specialized comparers are executed in the order they are added in")]
         [InlineData(CompareResult.Different, CompareResult.Same)]
         [InlineData(CompareResult.Same, CompareResult.Different)]
-        [InlineData(CompareResult.Same, CompareResult.SameAndBreak)]
-        [InlineData(CompareResult.Different, CompareResult.DifferentAndBreak)]
-
         public void Test8(CompareResult first, CompareResult final)
         {
             var sut = new DiffingStrategyPipeline();
@@ -208,9 +205,6 @@ namespace Egil.AngleSharp.Diffing
         [Theory(DisplayName = "Generalized comparers are executed in the reverse order they are added in")]
         [InlineData(CompareResult.Different, CompareResult.Same)]
         [InlineData(CompareResult.Same, CompareResult.Different)]
-        [InlineData(CompareResult.Same, CompareResult.SameAndBreak)]
-        [InlineData(CompareResult.Different, CompareResult.DifferentAndBreak)]
-
         public void Test12321(CompareResult first, CompareResult final)
         {
             var sut = new DiffingStrategyPipeline();
@@ -227,9 +221,6 @@ namespace Egil.AngleSharp.Diffing
         [Theory(DisplayName = "Generalized comparers are always executed before specialized comparers")]
         [InlineData(CompareResult.Different, CompareResult.Same)]
         [InlineData(CompareResult.Same, CompareResult.Different)]
-        [InlineData(CompareResult.Same, CompareResult.SameAndBreak)]
-        [InlineData(CompareResult.Different, CompareResult.DifferentAndBreak)]
-
         public void Test8314(CompareResult first, CompareResult final)
         {
             var sut = new DiffingStrategyPipeline();

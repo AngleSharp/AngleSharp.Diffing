@@ -10,10 +10,10 @@ namespace Egil.AngleSharp.Diffing.Strategies.ElementStrategies
 
         public static CompareResult Compare(in Comparison comparison, CompareResult currentDecision)
         {
-            if (currentDecision.IsDecisionFinal()) return currentDecision;
+            if (currentDecision.IsSameOrSkip()) return currentDecision;
 
             return ControlHasTruthyIgnoreAttribute(comparison)
-                ? CompareResult.SameAndBreak
+                ? CompareResult.Skip
                 : currentDecision;
         }
 

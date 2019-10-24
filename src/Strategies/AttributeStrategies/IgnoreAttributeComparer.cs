@@ -9,7 +9,7 @@ namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
 
         public static CompareResult Compare(in AttributeComparison comparison, CompareResult currentDecision)
         {
-            if (currentDecision.IsDecisionFinal()) return currentDecision;
+            if (currentDecision.IsSameOrSkip()) return currentDecision;
 
             return comparison.Control.Attribute.Name.EndsWith(DIFF_IGNORE_POSTFIX, StringComparison.OrdinalIgnoreCase)
                 ? CompareResult.Same

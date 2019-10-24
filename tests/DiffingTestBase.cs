@@ -50,9 +50,8 @@ namespace Egil.AngleSharp.Diffing
 
         protected AttributeComparisonSource ToAttributeComparisonSource(string html, string attrName, ComparisonSourceType sourceType = ComparisonSourceType.Control)
         {
-            var elementSource = ToComparisonSource(html, sourceType);
-            var element = (IElement)elementSource.Node;
-            return new AttributeComparisonSource(element.Attributes[attrName], elementSource);
+            var elementSource = ToComparisonSource(html, sourceType);            
+            return new AttributeComparisonSource(attrName, elementSource);
         }
 
         protected AttributeComparison ToAttributeComparison(string controlHtml, string controlAttrName, string testHtml, string testAttrName)

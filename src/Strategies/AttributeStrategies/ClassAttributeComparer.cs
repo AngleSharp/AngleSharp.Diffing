@@ -10,10 +10,10 @@ namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
 
         public static CompareResult Compare(in AttributeComparison comparison, CompareResult currentDecision)
         {
-            if (currentDecision.IsDecisionFinal()) return currentDecision;
+            if (currentDecision.IsSameOrSkip()) return currentDecision;
             if (!IsClassAttributes(comparison)) return currentDecision;
 
-            var (ctrlElm, testElm) = comparison.GetNodesAsElements();            
+            var (ctrlElm, testElm) = comparison.GetAttributeElements();            
             if (ctrlElm.ClassList.Length != testElm.ClassList.Length) return CompareResult.Different;
 
             return ctrlElm.ClassList.All(x => testElm.ClassList.Contains(x))

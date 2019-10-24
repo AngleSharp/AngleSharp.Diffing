@@ -20,9 +20,8 @@ namespace Egil.AngleSharp.Diffing.Strategies.ElementStrategies
             var comparison = ToComparison(controlHtml, "<p></p>");
 
             IgnoreElementComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
-            IgnoreElementComparer.Compare(comparison, CompareResult.DifferentAndBreak).ShouldBe(CompareResult.DifferentAndBreak);
             IgnoreElementComparer.Compare(comparison, CompareResult.Same).ShouldBe(CompareResult.Same);
-            IgnoreElementComparer.Compare(comparison, CompareResult.SameAndBreak).ShouldBe(CompareResult.SameAndBreak);
+            IgnoreElementComparer.Compare(comparison, CompareResult.Skip).ShouldBe(CompareResult.Skip);
         }
 
         [Theory(DisplayName = "When a control element has 'diff:ignore' attribute, SameAndBreak is returned")]
@@ -34,7 +33,7 @@ namespace Egil.AngleSharp.Diffing.Strategies.ElementStrategies
         {
             var comparison = ToComparison(controlHtml, "<p></p>");
 
-            IgnoreElementComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.SameAndBreak);
+            IgnoreElementComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Skip);
         }
     }
 }

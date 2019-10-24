@@ -45,10 +45,8 @@ namespace Egil.AngleSharp.Diffing
             }
         }
 
-        public CompareResult Compare(in Comparison comparison)
-            => Compare(comparison, _nodeComparers, CompareResult.DifferentAndBreak);
-        public CompareResult Compare(in AttributeComparison comparison)
-            => Compare(comparison, _attrComparers, CompareResult.Different);
+        public CompareResult Compare(in Comparison comparison) => Compare(comparison, _nodeComparers, CompareResult.Different);
+        public CompareResult Compare(in AttributeComparison comparison) => Compare(comparison, _attrComparers, CompareResult.Different);
 
         /// <summary>
         /// Adds a node filter to the pipeline.

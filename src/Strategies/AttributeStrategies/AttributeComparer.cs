@@ -13,7 +13,7 @@ namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
 
         public static CompareResult Compare(in AttributeComparison comparison, CompareResult currentDecision)
         {
-            if (currentDecision.IsDecisionFinal()) return currentDecision;
+            if (currentDecision.IsSameOrSkip()) return currentDecision;
 
             var (ignoreCase, isRegexValueCompare) = GetComparisonModifiers(comparison);
 

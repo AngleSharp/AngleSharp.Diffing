@@ -11,14 +11,14 @@ namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
         {
         }
 
-        [Fact(DisplayName = "When compare is called with a current decision of Same or SameAndBreak, the current decision is returned")]
+        [Fact(DisplayName = "When compare is called with a current decision of Same or Skip, the current decision is returned")]
         public void Test001()
         {
             var comparison = ToAttributeComparison(@"<b foo>", "foo",
                                                     "<b bar>", "bar");
 
             AttributeComparer.Compare(comparison, CompareResult.Same).ShouldBe(CompareResult.Same);
-            AttributeComparer.Compare(comparison, CompareResult.SameAndBreak).ShouldBe(CompareResult.SameAndBreak);
+            AttributeComparer.Compare(comparison, CompareResult.Skip).ShouldBe(CompareResult.Skip);
         }
 
         [Fact(DisplayName = "When two attributes has the same name and no value, the compare result is Same")]

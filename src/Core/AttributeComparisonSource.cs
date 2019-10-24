@@ -1,6 +1,7 @@
-﻿using System;
+﻿using AngleSharp.Dom;
+using Egil.AngleSharp.Diffing.Extensions;
+using System;
 using System.Diagnostics.CodeAnalysis;
-using AngleSharp.Dom;
 
 namespace Egil.AngleSharp.Diffing.Core
 {
@@ -15,9 +16,11 @@ namespace Egil.AngleSharp.Diffing.Core
         public ComparisonSourceType SourceType { get; }
 
         [SuppressMessage("Globalization", "CA1308:Normalize strings to uppercase", Justification = "Path should be in lower case")]
-        public AttributeComparisonSource(IAttr attribute, in ComparisonSource elementSource)
+        public AttributeComparisonSource(string attributeName, in ComparisonSource elementSource)
         {
-            if (attribute is null) throw new ArgumentNullException(nameof(attribute));
+            if (string.IsNullOrEmpty(attributeName)) throw new ArgumentNullException(nameof(attributeName));
+            if (!elementSource.Node.TryGetAttr(attributeName, out var attribute))
+                throw new ArgumentException("The comparison source does not contain an element or the specified attribute is missing on the element.", nameof(elementSource));
 
             Attribute = attribute;
             ElementSource = elementSource;
@@ -30,7 +33,7 @@ namespace Egil.AngleSharp.Diffing.Core
         public override int GetHashCode() => (Attribute, ElementSource).GetHashCode();
         public override bool Equals(object obj) => obj is AttributeComparisonSource other && Equals(other);
         public static bool operator ==(AttributeComparisonSource left, AttributeComparisonSource right) => left.Equals(right);
-        public static bool operator !=(AttributeComparisonSource left, AttributeComparisonSource right) => !(left == right);
+        public static bool operator !=(AttributeComparisonSource left, AttributeComparisonSource right) => !left.Equals(right);
         #endregion
     }
 }

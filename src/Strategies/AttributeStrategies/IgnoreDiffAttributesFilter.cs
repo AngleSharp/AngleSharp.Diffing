@@ -16,12 +16,5 @@ namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
 
             return currentDecision;
         }
-
-        public static DiffBuilder IgnoreDiffAttributes(this DiffBuilder builder)
-        {
-            if (builder is null) throw new ArgumentNullException(nameof(builder));
-            builder.WithFilter(Filter);
-            return builder;
-        }
     }
 }

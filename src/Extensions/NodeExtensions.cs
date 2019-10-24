@@ -11,6 +11,20 @@ namespace Egil.AngleSharp.Diffing.Extensions
             return node is IElement element && element.Attributes.Length > 0;
         }
 
+        public static bool TryGetAttr(this INode node, string attributeName, [NotNullWhen(true)]out IAttr? attribute)
+        {
+            if (node is IElement element && element.HasAttribute(attributeName))
+            {
+                attribute = element.Attributes[attributeName];
+                return true;
+            }
+            else
+            {
+                attribute = default;
+                return false;
+            }
+        }
+
         public static bool TryGetAttrValue(this INode node, string attributeName, out bool result)
         {
 #pragma warning disable CS8653 // A default expression introduces a null value for a type parameter.

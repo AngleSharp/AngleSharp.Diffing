@@ -36,6 +36,7 @@ namespace Egil.AngleSharp.Diffing
 
         public DiffBuilder WithFilter(FilterStrategy<AttributeComparisonSource> filterStrategy)
         {
+        
             return this;
         }
 

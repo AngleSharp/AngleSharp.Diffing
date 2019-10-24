@@ -21,8 +21,7 @@ namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
             var comparison = ToAttributeComparison(@"<p foo=""bar"">", "foo", @"<p foo=""zab"">", "foo");
             StyleAttributeComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
             StyleAttributeComparer.Compare(comparison, CompareResult.Same).ShouldBe(CompareResult.Same);
-            StyleAttributeComparer.Compare(comparison, CompareResult.DifferentAndBreak).ShouldBe(CompareResult.DifferentAndBreak);
-            StyleAttributeComparer.Compare(comparison, CompareResult.SameAndBreak).ShouldBe(CompareResult.SameAndBreak);
+            StyleAttributeComparer.Compare(comparison, CompareResult.Skip).ShouldBe(CompareResult.Skip);
         }
 
         [Fact(DisplayName = "When style attributes has different values then Different is returned")]

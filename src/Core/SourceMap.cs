@@ -35,7 +35,7 @@ namespace Egil.AngleSharp.Diffing.Core
                 SourceType = elementSource.SourceType;
                 foreach (var attr in element.Attributes)
                 {
-                    _sources.Add(attr.Name, new AttributeComparisonSource(attr, elementSource));
+                    _sources.Add(attr.Name, new AttributeComparisonSource(attr.Name, elementSource));
                 }
             }
             else

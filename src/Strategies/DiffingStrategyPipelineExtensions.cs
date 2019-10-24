@@ -31,6 +31,7 @@ namespace Egil.AngleSharp.Diffing.Strategies
                 .WithAttributeComparer()
                 .WithClassAttributeComparer()
                 .WithBooleanAttributeComparer(BooleanAttributeComparision.Strict)
+                .WithStyleAttributeComparer()
                 .WithInlineAttributeIgnoreSupport();
             ;
         }

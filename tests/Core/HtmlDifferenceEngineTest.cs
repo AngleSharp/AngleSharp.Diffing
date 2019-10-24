@@ -361,13 +361,13 @@ namespace Egil.AngleSharp.Diffing.Core
             results[1].ShouldBeOfType<AttrDiff>().Test.SourceType.ShouldBe(ComparisonSourceType.Test);
         }
 
-        [Fact(DisplayName = "When comparer returns SameAndBreak from an element comparison, none of the attributes or child nodes are compared")]
+        [Fact(DisplayName = "When comparer returns Skip from an element comparison, none of the attributes or child nodes are compared")]
         public void Test1()
         {
             var sut = CreateHtmlDiffEngine(
                 nodeMatcher: OneToOneNodeListMatcher,
                 nodeFilter: NoneNodeFilter,
-                nodeComparer: c => c.Control.Node.NodeName == "P" ? CompareResult.SameAndBreak : throw new Exception("NODE COMPARER SHOULD NOT BE CALLED ON CHILD NODES"),
+                nodeComparer: c => c.Control.Node.NodeName == "P" ? CompareResult.Skip : throw new Exception("NODE COMPARER SHOULD NOT BE CALLED ON CHILD NODES"),
                 attrMatcher: (c, x, y) => throw new Exception("ATTR MATCHER SHOULD NOT BE CALLED"),
                 attrFilter: _ => throw new Exception("ATTR FILTER SHOULD NOT BE CALLED"),
                 attrComparer: _ => throw new Exception("ATTR COMPARER SHOULD NOT BE CALLED"));
@@ -377,20 +377,21 @@ namespace Egil.AngleSharp.Diffing.Core
             results.ShouldBeEmpty();
         }
 
-        [Fact(DisplayName = "When comparer returns DifferentAndBreak from an element comparison, none of the attributes or child nodes are compared")]
+        [Fact(DisplayName = "When comparer returns Skip from an attribute comparison, no diffs are returned")]
         public void Test2()
         {
             var sut = CreateHtmlDiffEngine(
                 nodeMatcher: OneToOneNodeListMatcher,
                 nodeFilter: NoneNodeFilter,
-                nodeComparer: c => c.Control.Node.NodeName == "P" ? CompareResult.DifferentAndBreak : throw new Exception("NODE COMPARER SHOULD NOT BE CALLED ON CHILD NODES"),
-                attrMatcher: (c, x, y) => throw new Exception("ATTR MATCHER SHOULD NOT BE CALLED"),
-                attrFilter: _ => throw new Exception("ATTR FILTER SHOULD NOT BE CALLED"),
-                attrComparer: _ => throw new Exception("ATTR COMPARER SHOULD NOT BE CALLED"));
+                nodeComparer: SameResultNodeComparer,
+                attrMatcher: AttributeNameMatcher,
+                attrFilter: NoneAttrFilter,
+                attrComparer: c => c.Control.Attribute.Name == "id" ? CompareResult.Skip : CompareResult.Different
+                );
 
-            var results = sut.Compare(ToNodeList(@"<p id=""foo""><em>foo</em></p>"), ToNodeList(@"<p id=""bar""><span>baz</span></p>"));
+            var results = sut.Compare(ToNodeList(@"<p id=""foo""></p>"), ToNodeList(@"<p id=""bar""></p>"));
 
-            results[0].Target.ShouldBe(DiffTarget.Element);
+            results.ShouldBeEmpty();
         }
 
         #region NodeFilters

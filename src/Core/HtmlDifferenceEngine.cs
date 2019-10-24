@@ -101,7 +101,7 @@ namespace Egil.AngleSharp.Diffing.Core
             }
 
             var compareRes = _compareStrategy.Compare(comparison);
-            if (compareRes == CompareResult.Different || compareRes == CompareResult.DifferentAndBreak)
+            if (compareRes == CompareResult.Different)
             {
                 IDiff diff = new Diff(comparison);
                 return new[] { diff };
@@ -115,12 +115,12 @@ namespace Egil.AngleSharp.Diffing.Core
             var result = new List<IDiff>();
 
             var compareRes = _compareStrategy.Compare(comparison);
-            if (compareRes == CompareResult.Different || compareRes == CompareResult.DifferentAndBreak)
+            if (compareRes == CompareResult.Different)
             {
                 result.Add(new Diff(comparison));
             }
 
-            if (compareRes == CompareResult.Same || compareRes == CompareResult.Different)
+            if (compareRes != CompareResult.Skip)
             {
                 result.AddRange(CompareElementAttributes(context, comparison));
                 result.AddRange(CompareChildNodes(context, comparison));
@@ -198,7 +198,7 @@ namespace Egil.AngleSharp.Diffing.Core
             foreach (var comparison in comparisons)
             {
                 var compareRes = _compareStrategy.Compare(comparison);
-                if (compareRes == CompareResult.Different || compareRes == CompareResult.DifferentAndBreak)
+                if (compareRes == CompareResult.Different)
                     yield return new AttrDiff(comparison);
             }
         }

@@ -17,7 +17,7 @@ namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
     {
         public static CompareResult Compare(in Comparison comparison, CompareResult currentDecision)
         {
-            if (currentDecision.IsDecisionFinal()) return currentDecision;
+            if (currentDecision.IsSameOrSkip()) return currentDecision;
             if (TryGetStyleDeclaretions(comparison, out var controlStyles, out var testStyles))
                 return Compare(controlStyles, testStyles);
             else
