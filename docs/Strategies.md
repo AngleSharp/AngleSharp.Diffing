@@ -45,7 +45,6 @@ var diffs = DiffBuilder
     .WithClassAttributeComparer()
     .WithBooleanAttributeComparer(BooleanAttributeComparision.Strict)
     .WithStyleAttributeComparer()
-    .WithInlineAttributeIgnoreSupport()
     .Build();
 ``` 
 
@@ -405,14 +404,4 @@ To ignore a specific attribute during comparison, add the `:ignore` postfix to t
 <header>
     <h1 class:ignore="heading-1">Hello world</h1>
 </header>
-```
-
-Activate this strategy by calling the `WithInlineAttributeIgnoreSupport()` method on a `DiffBuilder` instance, e.g.:
-
-```csharp
-var diffs = DiffBuilder
-    .Compare(controlHtml)
-    .WithTest(testHtml)
-    .WithInlineAttributeIgnoreSupport()
-    .Build();
 ```

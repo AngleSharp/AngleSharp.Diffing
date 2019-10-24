@@ -33,6 +33,7 @@ namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
         {
             pipeline.AddMatcher(PostfixedAttributeMatcher.Match, isSpecializedMatcher: true);
             pipeline.AddComparer(AttributeComparer.Compare, isSpecializedComparer: false);
+            pipeline.AddComparer(IgnoreAttributeComparer.Compare, isSpecializedComparer: true);
             return pipeline;
         }
 
@@ -51,16 +52,6 @@ namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
         public static DiffingStrategyPipeline WithBooleanAttributeComparer(this DiffingStrategyPipeline pipeline, BooleanAttributeComparision booleanAttributeComparision)
         {
             pipeline.AddComparer(new BooleanAttributeComparer(booleanAttributeComparision).Compare, isSpecializedComparer: true);
-            return pipeline;
-        }
-
-        /// <summary>
-        /// Enables ignoring attributes using the :ignore postfix for attributes during diffing.
-        /// </summary>
-        public static DiffingStrategyPipeline WithInlineAttributeIgnoreSupport(this DiffingStrategyPipeline pipeline)
-        {
-            pipeline.AddMatcher(IgnoreAttributeMatcher.Match, isSpecializedMatcher: true);
-            pipeline.AddComparer(IgnoreAttributeComparer.Compare, isSpecializedComparer: true);
             return pipeline;
         }
 
