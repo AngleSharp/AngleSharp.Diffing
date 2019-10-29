@@ -7,15 +7,14 @@ namespace Egil.AngleSharp.Diffing.Core
 {
     public class SourceMapTest : DiffingTestBase
     {
-        private ComparisonSource CreateSource(string html, ComparisonSourceType sourceType = ComparisonSourceType.Control)
+        public SourceMapTest(DiffingTestFixture fixture) : base(fixture)
         {
-            return ToNode(html).ToComparisonSource(0, sourceType);
         }
 
         [Fact(DisplayName = "When initialized with a non-element an exception is thrown")]
         public void Test0()
         {
-            var source = CreateSource(@"textnode", ComparisonSourceType.Test);
+            var source = ToComparisonSource(@"textnode", ComparisonSourceType.Test);
 
             Should.Throw<ArgumentException>(() => new SourceMap(source));
         }
@@ -23,7 +22,7 @@ namespace Egil.AngleSharp.Diffing.Core
         [Fact(DisplayName = "When initializing with an element source, its source type is used and its attributes are added at sources to the map")]
         public void Test1()
         {
-            var elementSource = CreateSource(@"<p foo=""bar"" baz=""foo""></p>", ComparisonSourceType.Test);
+            var elementSource = ToComparisonSource(@"<p foo=""bar"" baz=""foo""></p>", ComparisonSourceType.Test);
             var sut = new SourceMap(elementSource);
 
             sut.SourceType.ShouldBe(ComparisonSourceType.Test);
@@ -41,11 +40,10 @@ namespace Egil.AngleSharp.Diffing.Core
         [Fact(DisplayName = "Accessing the indexer with a attr name that is not in the set throws")]
         public void Test2()
         {
-            var elementSource = CreateSource(@"<p></p>");
+            var elementSource = ToComparisonSource(@"<p></p>");
             var sut = new SourceMap(elementSource);
 
-            Should.Throw<ArgumentException>(() => sut["foo"])
-                .Message.ShouldBe("The map does not contain an attribute comparison source that matches the name 'foo'.");
+            Should.Throw<System.Collections.Generic.KeyNotFoundException>(() => sut["foo"]);
         }
 
         [Theory(DisplayName = "Contains returns true when map contains a source with the provided name, false otherwise")]
@@ -53,7 +51,7 @@ namespace Egil.AngleSharp.Diffing.Core
         [InlineData(@"<p>", false)]
         public void Tests3(string html, bool expectedResult)
         {
-            var elementSource = CreateSource(html);
+            var elementSource = ToComparisonSource(html);
             var sut = new SourceMap(elementSource);
 
             sut.Contains("foo").ShouldBe(expectedResult);
@@ -62,10 +60,10 @@ namespace Egil.AngleSharp.Diffing.Core
         [Fact(DisplayName = "Sources can be removed from map by passing a predicate to the Remove method")]
         public void Test4()
         {
-            var elementSource = CreateSource(@"<p foo=""bar"" baz=""foo""></p>");
+            var elementSource = ToComparisonSource(@"<p foo=""bar"" baz=""foo""></p>");
             var sut = new SourceMap(elementSource);
 
-            sut.Remove((in AttributeComparisonSource cs) => cs.Attribute.Name != "foo");
+            sut.Remove((in AttributeComparisonSource cs) => cs.Attribute.Name == "foo" ? FilterDecision.Exclude : FilterDecision.Keep);
 
             sut.Count.ShouldBe(1);
             sut.Contains("foo").ShouldBeFalse();
@@ -74,7 +72,7 @@ namespace Egil.AngleSharp.Diffing.Core
         [Fact(DisplayName = "When a source is marked as matched, it is not returned in GetUnmatched")]
         public void Test5()
         {
-            var elementSource = CreateSource(@"<p foo=""bar"" baz=""foo""></p>");
+            var elementSource = ToComparisonSource(@"<p foo=""bar"" baz=""foo""></p>");
             var sut = new SourceMap(elementSource);
             var foo = sut["foo"];
 
@@ -82,6 +80,25 @@ namespace Egil.AngleSharp.Diffing.Core
 
             sut.GetUnmatched().ShouldNotContain(foo);
             sut.GetUnmatched().Count().ShouldBe(1);
+        }
+
+        [Fact(DisplayName = "When a source is marked as matched, IsUnmatched returns false")]
+        public void Test6()
+        {
+            var sut = ToSourceMap(@"<p foo=""bar""></p>");
+            var foo = sut["foo"];
+
+            sut.MarkAsMatched(foo);
+
+            sut.IsUnmatched("foo").ShouldBeFalse();
+        }
+
+        [Fact(DisplayName = "When a source is unmatched, IsUnmatched returns true")]
+        public void Test7()
+        {
+            var sut = ToSourceMap(@"<p foo=""bar""></p>");
+
+            sut.IsUnmatched("foo").ShouldBeTrue();
         }
     }
 }

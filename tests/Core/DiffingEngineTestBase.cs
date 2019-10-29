@@ -1,52 +1,19 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
-using AngleSharp;
-using AngleSharp.Dom;
-using AngleSharp.Html.Parser;
 
 namespace Egil.AngleSharp.Diffing.Core
 {
-    public abstract class DiffingTestBase
+    public abstract class DiffingEngineTestBase : DiffingTestBase
     {
-        private readonly IBrowsingContext _context = BrowsingContext.New();
-        private readonly IHtmlParser _htmlParser;
-        private readonly IDocument _document;
-
-        protected INodeList EmptyNodeList => ToNodeList("");
-
-        protected DiffingTestBase()
+        public DiffingEngineTestBase(DiffingTestFixture fixture) : base(fixture)
         {
-            _htmlParser = _context.GetService<IHtmlParser>();
-            _document = _context.OpenNewAsync().Result;
-        }
-
-        protected INodeList ToNodeList(string? htmlsnippet)
-        {
-            var fragment = _htmlParser.ParseFragment(htmlsnippet, _document.Body);
-            return fragment;
-        }
-
-        protected IEnumerable<ComparisonSource> ToComparisonSourceList(string html)
-        {
-            return ToNodeList(html).ToComparisonSourceList(ComparisonSourceType.Control);
-        }
-
-        protected INode ToNode(string htmlsnippet)
-        {
-            var fragment = _htmlParser.ParseFragment(htmlsnippet, _document.Body);
-            return fragment[0];
-        }
-
-        protected ComparisonSource ToComparisonSource(string html)
-        {
-            return ToNode(html).ToComparisonSource(0, ComparisonSourceType.Control);
         }
 
         protected static HtmlDifferenceEngine CreateHtmlDiffEngine(
                 Func<DiffContext, SourceCollection, SourceCollection, IEnumerable<Comparison>>? nodeMatcher = null,
                 Func<DiffContext, SourceMap, SourceMap, IEnumerable<AttributeComparison>>? attrMatcher = null,
-                Func<ComparisonSource, bool>? nodeFilter = null,
-                Func<AttributeComparisonSource, bool>? attrFilter = null,
+                Func<ComparisonSource, FilterDecision>? nodeFilter = null,
+                Func<AttributeComparisonSource, FilterDecision>? attrFilter = null,
                 Func<Comparison, CompareResult>? nodeComparer = null,
                 Func<AttributeComparison, CompareResult>? attrComparer = null
             )
@@ -84,19 +51,19 @@ namespace Egil.AngleSharp.Diffing.Core
 
         class MockFilterStrategy : IFilterStrategy
         {
-            private readonly Func<ComparisonSource, bool>? _nodeFilter;
-            private readonly Func<AttributeComparisonSource, bool>? _attrFilter;
+            private readonly Func<ComparisonSource, FilterDecision>? _nodeFilter;
+            private readonly Func<AttributeComparisonSource, FilterDecision>? _attrFilter;
 
-            public MockFilterStrategy(Func<ComparisonSource, bool>? nodeFilter = null, Func<AttributeComparisonSource, bool>? attrFilter = null)
+            public MockFilterStrategy(Func<ComparisonSource, FilterDecision>? nodeFilter = null, Func<AttributeComparisonSource, FilterDecision>? attrFilter = null)
             {
                 _nodeFilter = nodeFilter;
                 _attrFilter = attrFilter;
             }
 
-            public bool Filter(in AttributeComparisonSource attributeComparisonSource)
+            public FilterDecision Filter(in AttributeComparisonSource attributeComparisonSource)
                 => _attrFilter!(attributeComparisonSource);
 
-            public bool Filter(in ComparisonSource comparisonSource)
+            public FilterDecision Filter(in ComparisonSource comparisonSource)
                 => _nodeFilter!(comparisonSource);
         }
 

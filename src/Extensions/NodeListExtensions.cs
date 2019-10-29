@@ -24,13 +24,5 @@ namespace Egil.AngleSharp.Diffing
         }
 
         public static ComparisonSource ToComparisonSource(this INode node, int index, ComparisonSourceType sourceType, string path = "") => new ComparisonSource(node, index, path, sourceType);
-
-        public static bool IsEmptyOrEquals(this IAttr attr, string testValue, StringComparison comparison = StringComparison.OrdinalIgnoreCase)
-        {
-            attr = attr ?? throw new ArgumentNullException(nameof(attr));
-            var value = attr.Value;
-            return string.IsNullOrWhiteSpace(value) || value.Equals(testValue, comparison);
-        }
-
     }
 }

@@ -6,7 +6,7 @@ using AngleSharp.Dom;
 
 namespace Egil.AngleSharp.Diffing.Core
 {
-    public delegate bool SourceMapRemovePredicate(in AttributeComparisonSource source);
+    public delegate FilterDecision SourceMapRemovePredicate(in AttributeComparisonSource source);
 
     [SuppressMessage("Naming", "CA1710:Identifiers should have correct suffix")]
     public class SourceMap : IEnumerable<AttributeComparisonSource>
@@ -22,8 +22,6 @@ namespace Egil.AngleSharp.Diffing.Core
         {
             get
             {
-                if (!_sources.ContainsKey(name))
-                    throw new ArgumentException($"The map does not contain an attribute comparison source that matches the name '{name}'.");
                 return _sources[name];
             }
         }
@@ -35,7 +33,7 @@ namespace Egil.AngleSharp.Diffing.Core
                 SourceType = elementSource.SourceType;
                 foreach (var attr in element.Attributes)
                 {
-                    _sources.Add(attr.Name, new AttributeComparisonSource(attr, elementSource));
+                    _sources.Add(attr.Name, new AttributeComparisonSource(attr.Name, elementSource));
                 }
             }
             else
@@ -45,6 +43,8 @@ namespace Egil.AngleSharp.Diffing.Core
         }
 
         public bool Contains(string name) => _sources.ContainsKey(name);
+
+        public bool IsUnmatched(string name) => !_matched.Contains(name);
 
         public IEnumerable<AttributeComparisonSource> GetUnmatched()
         {
@@ -63,7 +63,7 @@ namespace Egil.AngleSharp.Diffing.Core
             var removeQueue = new Queue<string>(Count);
             foreach (var source in _sources.Values)
             {
-                if (!predicate(source)) removeQueue.Enqueue(source.Attribute.Name);
+                if (predicate(source) == FilterDecision.Exclude) removeQueue.Enqueue(source.Attribute.Name);
             }
             foreach (var name in removeQueue)
             {

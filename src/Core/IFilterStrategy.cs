@@ -11,13 +11,13 @@
         /// </summary>
         /// <param name="comparisonSource">A comparison source for the node</param>
         /// <returns>true if the node should be part of the comparison, false if the node should be filtered out.</returns>
-        bool Filter(in ComparisonSource comparisonSource);
+        FilterDecision Filter(in ComparisonSource comparisonSource);
 
         /// <summary>
         /// Decides whether an attribute should be part of the comparison.
         /// </summary>
         /// <param name="comparisonSource">A comparison source for the attribute</param>
         /// <returns>true if the attribute should be part of the comparison, false if the attribute should be filtered out.</returns>
-        bool Filter(in AttributeComparisonSource attributeComparisonSource);
+        FilterDecision Filter(in AttributeComparisonSource attributeComparisonSource);
     }
 }

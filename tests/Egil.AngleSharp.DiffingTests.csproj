@@ -2,16 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
-
     <IsPackable>false</IsPackable>
-
     <AssemblyName>Egil.AngleSharp.DiffingTests</AssemblyName>
-
     <RootNamespace>Egil.AngleSharp.Diffing</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AngleSharp" Version="0.14.0-alpha-783" />
+    <PackageReference Include="AngleSharp" Version="$(AngleSharpVersion)" />
+    <PackageReference Include="AngleSharp.Css" Version="$(AngleSharpVersion)" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="$(FxCopAnalyzersVersion)">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
