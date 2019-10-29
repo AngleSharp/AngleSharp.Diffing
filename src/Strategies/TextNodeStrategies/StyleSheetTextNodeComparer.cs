@@ -1,13 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using AngleSharp;
-using AngleSharp.Css.Dom;
-using AngleSharp.Css.Parser;
 using AngleSharp.Dom;
 using Egil.AngleSharp.Diffing.Core;
 

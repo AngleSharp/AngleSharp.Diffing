@@ -1,24 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Egil.AngleSharp.Diffing.Strategies.AttributeStrategies;
-using Egil.AngleSharp.Diffing.Strategies.CommentStrategies;
-using Egil.AngleSharp.Diffing.Strategies.ElementStrategies;
-using Egil.AngleSharp.Diffing.Strategies.NodeStrategies;
+﻿using Egil.AngleSharp.Diffing.Strategies.AttributeStrategies;
 using Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies;
 
-namespace Egil.AngleSharp.Diffing.Strategies
+namespace Egil.AngleSharp.Diffing
 {
-    public static class DiffingStrategyPipelineExtensions
+    public static partial class DiffBuilderExtensions
     {
         /// <summary>
         /// Sets up the diffing process using the default options.
         /// </summary>
-        public static DiffingStrategyPipeline WithDefaultOptions(this DiffingStrategyPipeline pipeline)
+        public static DiffBuilder WithDefaultOptions(this DiffBuilder builder)
         {
-            return pipeline
+            return builder
                 .IgnoreDiffAttributes()
                 .IgnoreComments()
                 .WithSearchingNodeMatcher()

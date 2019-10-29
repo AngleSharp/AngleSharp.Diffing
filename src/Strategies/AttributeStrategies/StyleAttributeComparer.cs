@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Egil.AngleSharp.Diffing.Core;
 using AngleSharp.Css.Dom;
-using AngleSharp.Css.Parser;
 using AngleSharp.Dom;
 
 namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies

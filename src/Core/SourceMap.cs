@@ -22,8 +22,6 @@ namespace Egil.AngleSharp.Diffing.Core
         {
             get
             {
-                //if (!_sources.ContainsKey(name))
-                //    throw new ArgumentException($"The map does not contain an attribute comparison source that matches the name '{name}'.");
                 return _sources[name];
             }
         }

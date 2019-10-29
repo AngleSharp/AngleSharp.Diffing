@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Egil.AngleSharp.Diffing.Core
+﻿namespace Egil.AngleSharp.Diffing.Core
 {
     public abstract class MissingDiffBase<T> : IDiff where T : struct
     {

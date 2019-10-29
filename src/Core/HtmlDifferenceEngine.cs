@@ -6,6 +6,7 @@ using Egil.AngleSharp.Diffing.Extensions;
 
 namespace Egil.AngleSharp.Diffing.Core
 {
+    // TODO: Create a class that holds all working data for a diff, and all the diffing logic itself. A mix between DiffContext and HtmlDifferenceEngine.
     public class HtmlDifferenceEngine
     {
         private readonly IFilterStrategy _filterStrategy;

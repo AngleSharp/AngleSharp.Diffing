@@ -4,7 +4,7 @@ using Egil.AngleSharp.Diffing.Core;
 using Shouldly;
 using Xunit;
 
-namespace Egil.AngleSharp.Diffing
+namespace Egil.AngleSharp.Diffing.Strategies
 {
     public class DiffingStrategyPipelineTest : DiffingTestBase
     {
@@ -262,6 +262,62 @@ namespace Egil.AngleSharp.Diffing
 
             controlSources.GetUnmatched().ShouldBeEmpty();
             testSources.GetUnmatched().ShouldBeEmpty();
+        }
+
+        [Fact(DisplayName = "When no matchers have been added, HasMatchers returns false")]
+        public void Test201()
+        {
+            var sut = new DiffingStrategyPipeline();
+            sut.HasMatchers.ShouldBeFalse();
+        }
+
+        [Fact(DisplayName = "When either a node or attribute matchers are missing, HasMatchers returns false")]
+        public void Test202()
+        {
+            var sutWithAttrMatcher = new DiffingStrategyPipeline();
+            sutWithAttrMatcher.AddMatcher((ctx, s, t) => Array.Empty<AttributeComparison>(), false);
+            sutWithAttrMatcher.HasMatchers.ShouldBeFalse();
+
+            var sutWithNodeMatcher = new DiffingStrategyPipeline();
+            sutWithNodeMatcher.AddMatcher((ctx, s, t) => Array.Empty<Comparison>(), false);
+            sutWithNodeMatcher.HasMatchers.ShouldBeFalse();
+        }
+
+        [Fact(DisplayName = "When at least one node and attribute matchers are added, HasMatchers returns true")]
+        public void Test203()
+        {
+            var sut = new DiffingStrategyPipeline();
+            sut.AddMatcher((ctx, s, t) => Array.Empty<AttributeComparison>(), false);
+            sut.AddMatcher((ctx, s, t) => Array.Empty<Comparison>(), false);
+            sut.HasMatchers.ShouldBeTrue();
+        }
+
+        [Fact(DisplayName = "When no comparer have been added, HasComparers returns false")]
+        public void Test301()
+        {
+            var sut = new DiffingStrategyPipeline();
+            sut.HasComparers.ShouldBeFalse();
+        }
+
+        [Fact(DisplayName = "When either a node or attribute comparer are missing, HasComparers returns false")]
+        public void Test302()
+        {
+            var sutWithAttrComparer = new DiffingStrategyPipeline();
+            sutWithAttrComparer.AddComparer((in AttributeComparison c, CompareResult current) => current, isSpecializedComparer: false);
+            sutWithAttrComparer.HasComparers.ShouldBeFalse();
+
+            var sutWithNodeComparer = new DiffingStrategyPipeline();
+            sutWithNodeComparer.AddComparer((in Comparison c, CompareResult current) => current, isSpecializedComparer: false);
+            sutWithNodeComparer.HasComparers.ShouldBeFalse();
+        }
+
+        [Fact(DisplayName = "When at least one node and attribute comparer are added, HasComparers returns true")]
+        public void Test303()
+        {
+            var sut = new DiffingStrategyPipeline();
+            sut.AddComparer((in AttributeComparison c, CompareResult current) => current, isSpecializedComparer: false);
+            sut.AddComparer((in Comparison c, CompareResult current) => current, isSpecializedComparer: false);
+            sut.HasComparers.ShouldBeTrue();
         }
     }
 }

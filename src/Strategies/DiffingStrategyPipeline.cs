@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Egil.AngleSharp.Diffing.Core;
 
-namespace Egil.AngleSharp.Diffing
+namespace Egil.AngleSharp.Diffing.Strategies
 {
 
     public delegate FilterDecision FilterStrategy<TSource>(in TSource source, FilterDecision currentDecision);
@@ -16,6 +16,9 @@ namespace Egil.AngleSharp.Diffing
         private readonly List<MatchStrategy<SourceMap, AttributeComparison>> _attrsMatchers = new List<MatchStrategy<SourceMap, AttributeComparison>>();
         private readonly List<CompareStrategy<Comparison>> _nodeComparers = new List<CompareStrategy<Comparison>>();
         private readonly List<CompareStrategy<AttributeComparison>> _attrComparers = new List<CompareStrategy<AttributeComparison>>();
+
+        public bool HasMatchers => _nodeMatchers.Count > 0 && _attrsMatchers.Count > 0;
+        public bool HasComparers => _nodeComparers.Count > 0 && _attrComparers.Count > 0;
 
         public FilterDecision Filter(in ComparisonSource comparisonSource) => Filter(comparisonSource, _nodeFilters);
         public FilterDecision Filter(in AttributeComparisonSource attributeComparisonSource) => Filter(attributeComparisonSource, _attrsFilters);
@@ -100,7 +103,6 @@ namespace Egil.AngleSharp.Diffing
         /// </summary>
         /// <param name="matchStrategy"></param>
         /// <param name="isSpecializedMatcher">true if <paramref name="matchStrategy"/> is a specialized matcher, false if it is a generalized matcher</param>
-
         public void AddMatcher(MatchStrategy<SourceMap, AttributeComparison> matchStrategy, bool isSpecializedMatcher)
         {
             if (isSpecializedMatcher)

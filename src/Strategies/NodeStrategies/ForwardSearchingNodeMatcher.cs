@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using Egil.AngleSharp.Diffing.Core;
 using Egil.AngleSharp.Diffing.Extensions;
 
