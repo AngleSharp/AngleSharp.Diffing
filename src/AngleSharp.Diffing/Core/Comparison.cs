@@ -42,7 +42,7 @@ namespace Egil.AngleSharp.Diffing.Core
 
         #region Equals and HashCode
         public bool Equals(Comparison other) => Control.Equals(other.Control) && Test.Equals(other.Test);
-        public override bool Equals(object obj) => obj is Comparison other && Equals(other);
+        public override bool Equals(object? obj) => obj is Comparison other && Equals(other);
         public override int GetHashCode() => (Control, Test).GetHashCode();
         public static bool operator ==(Comparison left, Comparison right) => left.Equals(right);
         public static bool operator !=(Comparison left, Comparison right) => !left.Equals(right);

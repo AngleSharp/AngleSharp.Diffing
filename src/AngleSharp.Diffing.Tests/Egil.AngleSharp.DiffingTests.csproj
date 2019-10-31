@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Egil.AngleSharp.Diffing.csproj" />
+    <ProjectReference Include="..\AngleSharp.Diffing\Egil.AngleSharp.Diffing.csproj" />
   </ItemGroup>
 
 </Project>

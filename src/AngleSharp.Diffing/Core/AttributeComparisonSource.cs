@@ -31,7 +31,7 @@ namespace Egil.AngleSharp.Diffing.Core
         #region Equals and HashCode
         public bool Equals(AttributeComparisonSource other) => Object.ReferenceEquals(Attribute, other.Attribute) && Path.Equals(other.Path, StringComparison.Ordinal) && ElementSource.Equals(other.ElementSource) ;
         public override int GetHashCode() => (Attribute, ElementSource).GetHashCode();
-        public override bool Equals(object obj) => obj is AttributeComparisonSource other && Equals(other);
+        public override bool Equals(object? obj) => obj is AttributeComparisonSource other && Equals(other);
         public static bool operator ==(AttributeComparisonSource left, AttributeComparisonSource right) => left.Equals(right);
         public static bool operator !=(AttributeComparisonSource left, AttributeComparisonSource right) => !left.Equals(right);
         #endregion
