@@ -3,23 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29230.61
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Egil.AngleSharp.Diffing", "src\Egil.AngleSharp.Diffing.csproj", "{2BFFA992-22C2-4A65-94D8-CA06E81D2364}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Egil.AngleSharp.Diffing", "AngleSharp.Diffing\Egil.AngleSharp.Diffing.csproj", "{2BFFA992-22C2-4A65-94D8-CA06E81D2364}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F81A673B-5C04-4C04-BFD8-7E017CF2E1AE}"
-	ProjectSection(SolutionItems) = preProject
-		Directory.Build.props = Directory.Build.props
-		LICENSE = LICENSE
-	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Egil.AngleSharp.DiffingTests", "tests\Egil.AngleSharp.DiffingTests.csproj", "{18203D98-66B4-4736-B79A-3B7D02EFA9E8}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{091B9704-B116-4BAA-8393-401ADAF7A818}"
-	ProjectSection(SolutionItems) = preProject
-		docs\CustomStrategies.md = docs\CustomStrategies.md
-		docs\DiffingEngineInternals.md = docs\DiffingEngineInternals.md
-		README.md = README.md
-		docs\Strategies.md = docs\Strategies.md
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Egil.AngleSharp.DiffingTests", "AngleSharp.Diffing.Tests\Egil.AngleSharp.DiffingTests.csproj", "{18203D98-66B4-4736-B79A-3B7D02EFA9E8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

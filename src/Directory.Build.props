@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <Description>Provides a complete diffing model of HTML.</Description>
+    <Product>AngleSharp.Diffing</Product>
+    <Version>0.13.0</Version>
+  </PropertyGroup>
+</Project>
