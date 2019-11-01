@@ -76,6 +76,8 @@ namespace AngleSharp.Diffing.Core
 
             void UpdateMatchedTracking(in Comparison comparison)
             {
+                controls.MarkAsMatched(comparison.Control);
+                tests.MarkAsMatched(comparison.Test);
                 context.MissingSources.Remove(comparison.Control);
                 context.UnexpectedSources.Remove(comparison.Test);
             }

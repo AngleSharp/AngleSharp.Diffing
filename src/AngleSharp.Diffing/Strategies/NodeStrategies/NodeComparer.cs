@@ -1,4 +1,4 @@
-﻿using AngleSharp.Diffing.Core;
+using AngleSharp.Diffing.Core;
 
 namespace AngleSharp.Diffing.Strategies.NodeStrategies
 {

@@ -7,6 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AngleSharp.Diffing", "Angle
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AngleSharp.DiffingTests", "AngleSharp.Diffing.Tests\AngleSharp.DiffingTests.csproj", "{18203D98-66B4-4736-B79A-3B7D02EFA9E8}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E8E3C8B4-92C3-4DB7-B920-D28651E24A57}"
+	ProjectSection(SolutionItems) = preProject
+		AngleSharp.Diffing.nuspec = AngleSharp.Diffing.nuspec
+		Directory.Build.props = Directory.Build.props
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

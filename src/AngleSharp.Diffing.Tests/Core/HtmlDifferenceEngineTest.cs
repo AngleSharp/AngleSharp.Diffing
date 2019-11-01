@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using AngleSharp.Dom;
+using AngleSharp.Diffing.Strategies.NodeStrategies;
 using Shouldly;
 using Xunit;
 
@@ -412,14 +413,7 @@ namespace AngleSharp.Diffing.Core
         private static IEnumerable<Comparison> OneToOneNodeListMatcher(
             DiffContext context,
             SourceCollection controlNodes,
-            SourceCollection testNodes)
-        {
-            var matchLength = Math.Min(controlNodes.Count, testNodes.Count);
-            for (int i = 0; i < matchLength; i++)
-            {
-                yield return new Comparison(controlNodes[i], testNodes[i]);
-            }
-        }
+            SourceCollection testNodes) => OneToOneNodeMatcher.Match(context, controlNodes, testNodes);
 
         #endregion
 

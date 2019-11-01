@@ -51,18 +51,18 @@ namespace AngleSharp.Diffing
             diffs.ShouldNotBeEmpty();
         }
 
-        [Fact(DisplayName = "Test")]
-        public void MyTestMethod()
-        {
-            var control = "\r\n        <h1>Hello world</h1>\r\n        <h1>Hello world</h1>\r\n    ";
-            var test = "\r\n        <h1>Hello world</h1>\r\n        <h1>Hello world</h1>\r\n    ";
+        //[Fact(DisplayName = "Calling Build() with DefaultOptions() returns expected diffs")]
+        //public void Test7()
+        //{
+        //    var control = "<h1>Hello World</h1>";
+        //    var test = "<h1>Hello world</h1>";
 
-            var diffs = new DiffBuilder(DefaultStrategy)
-                .Compare(control)
-                .WithTest(test)
-                .Build();
+        //    var diffs = new DiffBuilder(DefaultStrategy)
+        //        .Compare(control)
+        //        .WithTest(test)
+        //        .Build();
 
-            diffs.ShouldBeEmpty();
-        }
+        //    diffs.ShouldNotBeEmpty();
+        //}
     }
 }

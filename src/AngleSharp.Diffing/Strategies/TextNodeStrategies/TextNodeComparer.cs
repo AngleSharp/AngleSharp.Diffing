@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text.RegularExpressions;
 using AngleSharp.Dom;
 using AngleSharp.Diffing.Core;
@@ -44,7 +44,7 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
             if (option == WhitespaceOption.Normalize)
             {
                 controlText = WhitespaceReplace.Replace(controlText.Trim(), " ");
-                testText = WhitespaceReplace.Replace(controlText.Trim(), " ");
+                testText = WhitespaceReplace.Replace(testText.Trim(), " ");
             }
 
             var isRegexCompare = GetIsRegexComparison(controlTextNode);

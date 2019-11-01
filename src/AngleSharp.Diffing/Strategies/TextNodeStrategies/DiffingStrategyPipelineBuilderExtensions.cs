@@ -10,7 +10,7 @@ namespace AngleSharp.Diffing
         public static IDiffingStrategyPipelineBuilder WithTextComparer(this IDiffingStrategyPipelineBuilder builder, WhitespaceOption whitespaceOption, bool ignoreCase)
         {
             builder.WithFilter(new TextNodeFilter(whitespaceOption).Filter, isSpecializedFilter: true);
-            builder.WithComparer(new TextNodeComparer(whitespaceOption, ignoreCase).Compare, isSpecializedComparer: false);
+            builder.WithComparer(new TextNodeComparer(whitespaceOption, ignoreCase).Compare, isSpecializedComparer: true);
             return builder;
         }
 

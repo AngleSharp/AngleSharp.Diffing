@@ -1,4 +1,5 @@
-﻿using System.Linq;
+using System.Linq;
+using AngleSharp.Dom;
 using AngleSharp.Diffing.Core;
 using Shouldly;
 using Xunit;
@@ -26,6 +27,21 @@ namespace AngleSharp.Diffing.Strategies.NodeStrategies
 
             actual.Count.ShouldBe(1);
             actual.ShouldAllBe((c, idx) => c.Control == controls[idx] && c.Test == tests[idx]);
+        }
+
+        [Theory(DisplayName = "The matcher matches two nodes with the same node name")]
+        [InlineData("asdf<h1>Hello world</h1>asdf<h1>Hello world</h1>", "asdf<h1>Hello world</h1>asdf<h1>Hello world</h1>")]
+        public void Test0011(string controlHtml, string testHtml)
+        {
+            var controls = ToSourceCollection(controlHtml, ComparisonSourceType.Control);
+            var tests = ToSourceCollection(testHtml, ComparisonSourceType.Test);
+            controls.Remove((in ComparisonSource x) => x.Node is IElement ? FilterDecision.Keep : FilterDecision.Exclude);
+            tests.Remove((in ComparisonSource x) => x.Node is IElement ? FilterDecision.Keep : FilterDecision.Exclude);
+
+            var actual = ForwardSearchingNodeMatcher.Match(_context, controls, tests).ToList();
+
+            actual.Count.ShouldBe(2);
+            actual.ShouldAllBe(c => c.Control == controls[c.Control.Index] && c.Test == tests[c.Test.Index]);
         }
 
         [Theory(DisplayName = "The matcher does not matches two nodes with the different node names")]
