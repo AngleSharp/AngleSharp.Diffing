@@ -4,11 +4,20 @@
     <Product>AngleSharp.Diffing</Product>
     <Version>0.13.0</Version>
   </PropertyGroup>
+
   <PropertyGroup>
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
     <WarningsAsErrors>CS8600;CS8602;CS8603;CS8625</WarningsAsErrors>
   </PropertyGroup>
+  <PropertyGroup>
+    <AnnotatedReferenceAssemblyVersion>3.0.0</AnnotatedReferenceAssemblyVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="TunnelVisionLabs.ReferenceAssemblyAnnotator" Version="1.0.0-alpha.77" PrivateAssets="all" />
+    <PackageDownload Include="Microsoft.NETCore.App.Ref" Version="[$(AnnotatedReferenceAssemblyVersion)]" />
+  </ItemGroup>
+
   <PropertyGroup>
     <AngleSharpVersion>0.13.0</AngleSharpVersion>
     <FxCopAnalyzersVersion>2.9.6</FxCopAnalyzersVersion>
