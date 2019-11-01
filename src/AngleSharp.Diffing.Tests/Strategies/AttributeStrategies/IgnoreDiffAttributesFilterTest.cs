@@ -1,4 +1,5 @@
-﻿using Shouldly;
+﻿using Egil.AngleSharp.Diffing.Core;
+using Shouldly;
 using Xunit;
 
 namespace AngleSharp.Diffing.Strategies.AttributeStrategies

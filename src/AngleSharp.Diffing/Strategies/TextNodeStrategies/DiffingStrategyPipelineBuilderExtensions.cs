@@ -1,13 +1,13 @@
-﻿using AngleSharp.Diffing.Strategies.TextNodeStrategies;
+using Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies;
 
-namespace AngleSharp.Diffing
+namespace Egil.AngleSharp.Diffing
 {
-    public static partial class DiffBuilderExtensions
+    public static partial class DiffingStrategyPipelineBuilderExtensions
     {
         /// <summary>
         /// Enables the one-to-one node-matching strategy during diffing.
         /// </summary>
-        public static DiffBuilder WithTextComparer(this DiffBuilder builder, WhitespaceOption whitespaceOption, bool ignoreCase)
+        public static IDiffingStrategyPipelineBuilder WithTextComparer(this IDiffingStrategyPipelineBuilder builder, WhitespaceOption whitespaceOption, bool ignoreCase)
         {
             builder.WithFilter(new TextNodeFilter(whitespaceOption).Filter, isSpecializedFilter: true);
             builder.WithComparer(new TextNodeComparer(whitespaceOption, ignoreCase).Compare, isSpecializedComparer: false);
@@ -17,7 +17,7 @@ namespace AngleSharp.Diffing
         /// <summary>
         /// Enables the special style-tag style sheet text comparer.
         /// </summary>
-        public static DiffBuilder WithStyleSheetComparer(this DiffBuilder builder)
+        public static IDiffingStrategyPipelineBuilder WithStyleSheetComparer(this IDiffingStrategyPipelineBuilder builder)
         {
             builder.WithComparer(StyleSheetTextNodeComparer.Compare, isSpecializedComparer: true);
             return builder;

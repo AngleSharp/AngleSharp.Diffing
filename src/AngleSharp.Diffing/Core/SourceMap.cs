@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -6,7 +6,7 @@ using AngleSharp.Dom;
 
 namespace AngleSharp.Diffing.Core
 {
-    public delegate FilterDecision SourceMapRemovePredicate(in AttributeComparisonSource source);
+    internal delegate FilterDecision SourceMapRemovePredicate(in AttributeComparisonSource source);
 
     [SuppressMessage("Naming", "CA1710:Identifiers should have correct suffix")]
     public class SourceMap : IEnumerable<AttributeComparisonSource>

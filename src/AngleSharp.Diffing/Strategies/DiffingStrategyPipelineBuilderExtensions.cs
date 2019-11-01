@@ -1,14 +1,14 @@
-﻿using AngleSharp.Diffing.Strategies.AttributeStrategies;
-using AngleSharp.Diffing.Strategies.TextNodeStrategies;
+using Egil.AngleSharp.Diffing.Strategies.AttributeStrategies;
+using Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies;
 
-namespace AngleSharp.Diffing
+namespace Egil.AngleSharp.Diffing
 {
-    public static partial class DiffBuilderExtensions
+    public static partial class DiffingStrategyPipelineBuilderExtensions
     {
         /// <summary>
         /// Sets up the diffing process using the default options.
         /// </summary>
-        public static DiffBuilder WithDefaultOptions(this DiffBuilder builder)
+        public static IDiffingStrategyPipelineBuilder WithDefaultOptions(this IDiffingStrategyPipelineBuilder builder)
         {
             return builder
                 .IgnoreDiffAttributes()

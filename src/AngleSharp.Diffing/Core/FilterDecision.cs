@@ -1,4 +1,4 @@
-﻿namespace AngleSharp.Diffing
+namespace Egil.AngleSharp.Diffing.Core
 {
     public enum FilterDecision
     {

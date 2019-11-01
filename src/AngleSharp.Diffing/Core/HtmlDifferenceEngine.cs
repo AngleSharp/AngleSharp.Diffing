@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AngleSharp.Dom;
@@ -66,7 +66,7 @@ namespace AngleSharp.Diffing.Core
         {
             foreach (var comparison in _matcherStrategy.Match(context, controls, tests))
             {
-                MarkSelectedSourcesAsMatched(comparison);
+                UpdateMatchedTracking(comparison);
                 yield return comparison;
             }
 
@@ -74,10 +74,8 @@ namespace AngleSharp.Diffing.Core
 
             yield break;
 
-            void MarkSelectedSourcesAsMatched(in Comparison comparison)
+            void UpdateMatchedTracking(in Comparison comparison)
             {
-                controls.MarkAsMatched(comparison.Control);
-                tests.MarkAsMatched(comparison.Test);
                 context.MissingSources.Remove(comparison.Control);
                 context.UnexpectedSources.Remove(comparison.Test);
             }

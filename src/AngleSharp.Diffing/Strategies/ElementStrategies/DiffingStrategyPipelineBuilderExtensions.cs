@@ -1,13 +1,13 @@
-﻿using AngleSharp.Diffing.Strategies.ElementStrategies;
+using Egil.AngleSharp.Diffing.Strategies.ElementStrategies;
 
-namespace AngleSharp.Diffing
+namespace Egil.AngleSharp.Diffing
 {
-    public static partial class DiffBuilderExtensions
+    public static partial class DiffingStrategyPipelineBuilderExtensions
     {
         /// <summary>
         /// Enables the CSS-selector matcher strategy during diffing.
         /// </summary>
-        public static DiffBuilder WithCssSelectorMatcher(this DiffBuilder builder)
+        public static IDiffingStrategyPipelineBuilder WithCssSelectorMatcher(this IDiffingStrategyPipelineBuilder builder)
         {
             builder.WithMatcher(CssSelectorElementMatcher.Match, isSpecializedMatcher: true);
             return builder;
@@ -18,7 +18,7 @@ namespace AngleSharp.Diffing
         /// </summary>
         /// <param name="builder"></param>
         /// <returns></returns>
-        public static DiffBuilder WithIgnoreElementSupport(this DiffBuilder builder)
+        public static IDiffingStrategyPipelineBuilder WithIgnoreElementSupport(this IDiffingStrategyPipelineBuilder builder)
         {
             builder.WithComparer(IgnoreElementComparer.Compare, isSpecializedComparer: true);
             return builder;

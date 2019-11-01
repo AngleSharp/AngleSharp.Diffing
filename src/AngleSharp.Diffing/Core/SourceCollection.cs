@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace AngleSharp.Diffing.Core
 {
-    public delegate FilterDecision SourceCollectionRemovePredicate(in ComparisonSource source);
+    internal delegate FilterDecision SourceCollectionRemovePredicate(in ComparisonSource source);
 
     public class SourceCollection : IEnumerable<ComparisonSource>
     {
