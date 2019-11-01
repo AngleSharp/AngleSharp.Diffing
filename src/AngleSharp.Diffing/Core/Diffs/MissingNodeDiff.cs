@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace Egil.AngleSharp.Diffing.Core
+namespace AngleSharp.Diffing.Core
 {
 
     [DebuggerDisplay("Diff={Target} {Result} Control={Control.Node.NodeName}[{Control.Index}]")]

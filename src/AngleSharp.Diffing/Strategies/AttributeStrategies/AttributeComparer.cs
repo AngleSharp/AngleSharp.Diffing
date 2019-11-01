@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Text.RegularExpressions;
-using Egil.AngleSharp.Diffing.Core;
+using AngleSharp.Diffing.Core;
 
-namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
+namespace AngleSharp.Diffing.Strategies.AttributeStrategies
 {
     public static class AttributeComparer
     {

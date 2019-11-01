@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using AngleSharp.Dom;
-using Egil.AngleSharp.Diffing.Extensions;
+using AngleSharp.Diffing.Extensions;
 
-namespace Egil.AngleSharp.Diffing.Core
+namespace AngleSharp.Diffing.Core
 {
     // TODO: Create a class that holds all working data for a diff, and all the diffing logic itself. A mix between DiffContext and HtmlDifferenceEngine.
     public class HtmlDifferenceEngine

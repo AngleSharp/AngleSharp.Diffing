@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Egil.AngleSharp.Diffing.Extensions
+namespace AngleSharp.Diffing.Extensions
 {
     public static class EnumExtensions
     {

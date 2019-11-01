@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Linq;
 
-namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
+namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
 {
     public abstract class TextNodeTestBase : DiffingTestBase
     {

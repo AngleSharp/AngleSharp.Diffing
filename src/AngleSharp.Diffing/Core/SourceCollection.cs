@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Egil.AngleSharp.Diffing.Core
+namespace AngleSharp.Diffing.Core
 {
     public delegate FilterDecision SourceCollectionRemovePredicate(in ComparisonSource source);
 

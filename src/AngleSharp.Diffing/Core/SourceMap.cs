@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using AngleSharp.Dom;
 
-namespace Egil.AngleSharp.Diffing.Core
+namespace AngleSharp.Diffing.Core
 {
     public delegate FilterDecision SourceMapRemovePredicate(in AttributeComparisonSource source);
 

@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using AngleSharp.Dom;
 
-namespace Egil.AngleSharp.Diffing.Extensions
+namespace AngleSharp.Diffing.Extensions
 {
     public static class NodeExtensions
     {

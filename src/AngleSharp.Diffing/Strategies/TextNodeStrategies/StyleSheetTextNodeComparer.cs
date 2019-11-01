@@ -2,9 +2,9 @@
 using System.Diagnostics.CodeAnalysis;
 using AngleSharp;
 using AngleSharp.Dom;
-using Egil.AngleSharp.Diffing.Core;
+using AngleSharp.Diffing.Core;
 
-namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
+namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
 {
     public static class StyleSheetTextNodeComparer
     {

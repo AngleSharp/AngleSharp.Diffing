@@ -1,4 +1,4 @@
-﻿namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
+﻿namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
 {
     public enum WhitespaceOption
     {

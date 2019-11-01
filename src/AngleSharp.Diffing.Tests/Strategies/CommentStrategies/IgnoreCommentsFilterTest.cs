@@ -1,7 +1,7 @@
 ﻿using Shouldly;
 using Xunit;
 
-namespace Egil.AngleSharp.Diffing.Strategies.CommentStrategies
+namespace AngleSharp.Diffing.Strategies.CommentStrategies
 {
     public class IgnoreCommentsFilterTest : DiffingTestBase
     {

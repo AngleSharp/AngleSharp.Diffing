@@ -1,8 +1,8 @@
 ﻿using AngleSharp.Dom;
-using Egil.AngleSharp.Diffing.Core;
-using Egil.AngleSharp.Diffing.Extensions;
+using AngleSharp.Diffing.Core;
+using AngleSharp.Diffing.Extensions;
 
-namespace Egil.AngleSharp.Diffing.Strategies.ElementStrategies
+namespace AngleSharp.Diffing.Strategies.ElementStrategies
 {
     public static class IgnoreElementComparer
     {

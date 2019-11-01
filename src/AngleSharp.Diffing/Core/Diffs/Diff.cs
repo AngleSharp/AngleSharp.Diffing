@@ -1,4 +1,4 @@
-﻿namespace Egil.AngleSharp.Diffing.Core
+﻿namespace AngleSharp.Diffing.Core
 {
     public class Diff : DiffBase<ComparisonSource>
     {

@@ -1,7 +1,7 @@
 ﻿using AngleSharp.Dom;
-using Egil.AngleSharp.Diffing.Core;
+using AngleSharp.Diffing.Core;
 
-namespace Egil.AngleSharp.Diffing.Strategies.CommentStrategies
+namespace AngleSharp.Diffing.Strategies.CommentStrategies
 {
     public static class IgnoreCommentsFilter
     {

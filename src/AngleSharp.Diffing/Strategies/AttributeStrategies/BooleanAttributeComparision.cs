@@ -1,4 +1,4 @@
-﻿namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
+﻿namespace AngleSharp.Diffing.Strategies.AttributeStrategies
 {
     public enum BooleanAttributeComparision
     {

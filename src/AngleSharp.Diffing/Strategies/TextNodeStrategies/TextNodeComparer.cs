@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using AngleSharp.Dom;
-using Egil.AngleSharp.Diffing.Core;
-using Egil.AngleSharp.Diffing.Extensions;
+using AngleSharp.Diffing.Core;
+using AngleSharp.Diffing.Extensions;
 
-namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
+namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
 {
     public class TextNodeComparer
     {
@@ -27,7 +27,7 @@ namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
         public CompareResult Compare(in Comparison comparison, CompareResult currentDecision)
         {
             if (currentDecision.IsSameOrSkip()) return currentDecision;
-            
+
             if (comparison.TryGetNodesAsType<IText>(out var controlTextNode, out var testTextNode))
                 return Compare(controlTextNode, testTextNode);
             else
@@ -49,7 +49,7 @@ namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
 
             var isRegexCompare = GetIsRegexComparison(controlTextNode);
 
-            return isRegexCompare 
+            return isRegexCompare
                 ? PerformRegexCompare(compareMethod, controlText, testText)
                 : PerformStringCompare(compareMethod, controlText, testText);
         }

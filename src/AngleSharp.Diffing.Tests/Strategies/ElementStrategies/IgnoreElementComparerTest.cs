@@ -1,8 +1,8 @@
-﻿using Egil.AngleSharp.Diffing.Core;
+﻿using AngleSharp.Diffing.Core;
 using Shouldly;
 using Xunit;
 
-namespace Egil.AngleSharp.Diffing.Strategies.ElementStrategies
+namespace AngleSharp.Diffing.Strategies.ElementStrategies
 {
     public class IgnoreElementComparerTest : DiffingTestBase
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Egil.AngleSharp.Diffing.Extensions
+namespace AngleSharp.Diffing.Extensions
 {
     [Serializable]
     public class NodeNotFoundException : Exception

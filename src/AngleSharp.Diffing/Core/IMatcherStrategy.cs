@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 
-namespace Egil.AngleSharp.Diffing.Core
+namespace AngleSharp.Diffing.Core
 {
     /// <summary>
-    /// The node and attribute matching strategy used by the <see cref="HtmlDifferenceEngine"/> 
+    /// The node and attribute matching strategy used by the <see cref="HtmlDifferenceEngine"/>
     /// when matching up nodes and attributes for comparison.
     /// </summary>
     public interface IMatcherStrategy

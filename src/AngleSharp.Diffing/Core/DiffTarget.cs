@@ -1,6 +1,6 @@
 ﻿using AngleSharp.Dom;
 
-namespace Egil.AngleSharp.Diffing.Core
+namespace AngleSharp.Diffing.Core
 {
     public enum DiffTarget
     {

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using AngleSharp.Dom;
-using Egil.AngleSharp.Diffing.Core;
+using AngleSharp.Diffing.Core;
 
-namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
+namespace AngleSharp.Diffing.Strategies.AttributeStrategies
 {
     public class BooleanAttributeComparer
     {

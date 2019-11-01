@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Egil.AngleSharp.Diffing.Extensions
+namespace AngleSharp.Diffing.Extensions
 {
     public static class CollectionExtensions
     {

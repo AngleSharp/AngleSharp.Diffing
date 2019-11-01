@@ -1,12 +1,12 @@
 ﻿using System;
-using Egil.AngleSharp.Diffing.Core;
+using AngleSharp.Diffing.Core;
 using AngleSharp.Css.Dom;
 using AngleSharp.Dom;
 
-namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
+namespace AngleSharp.Diffing.Strategies.AttributeStrategies
 {
     public static class StyleAttributeComparer
-    {        
+    {
         public static CompareResult Compare(in AttributeComparison comparison, CompareResult currentDecision)
         {
             if (currentDecision.IsSameOrSkip()) return currentDecision;
@@ -28,7 +28,7 @@ namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
 
         private static bool IsStyleAttributeComparison(in AttributeComparison comparison)
         {
-            return comparison.Control.Attribute.Name.Equals(AttributeNames.Style, StringComparison.Ordinal) && 
+            return comparison.Control.Attribute.Name.Equals(AttributeNames.Style, StringComparison.Ordinal) &&
                 comparison.Test.Attribute.Name.Equals(AttributeNames.Style, StringComparison.Ordinal);
         }
     }

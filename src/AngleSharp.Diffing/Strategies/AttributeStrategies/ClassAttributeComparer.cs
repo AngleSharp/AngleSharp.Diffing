@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
-using Egil.AngleSharp.Diffing.Core;
+using AngleSharp.Diffing.Core;
 
-namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
+namespace AngleSharp.Diffing.Strategies.AttributeStrategies
 {
     public static class ClassAttributeComparer
     {
@@ -13,7 +13,7 @@ namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
             if (currentDecision.IsSameOrSkip()) return currentDecision;
             if (!IsClassAttributes(comparison)) return currentDecision;
 
-            var (ctrlElm, testElm) = comparison.GetAttributeElements();            
+            var (ctrlElm, testElm) = comparison.GetAttributeElements();
             if (ctrlElm.ClassList.Length != testElm.ClassList.Length) return CompareResult.Different;
 
             return ctrlElm.ClassList.All(x => testElm.ClassList.Contains(x))

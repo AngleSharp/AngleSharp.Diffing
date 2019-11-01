@@ -1,6 +1,6 @@
-﻿using Egil.AngleSharp.Diffing.Strategies.ElementStrategies;
+﻿using AngleSharp.Diffing.Strategies.ElementStrategies;
 
-namespace Egil.AngleSharp.Diffing
+namespace AngleSharp.Diffing
 {
     public static partial class DiffBuilderExtensions
     {

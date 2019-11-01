@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using AngleSharp;
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
-using Egil.AngleSharp.Diffing.Core;
-using Egil.AngleSharp.Diffing.Strategies;
+using AngleSharp.Diffing.Core;
+using AngleSharp.Diffing.Strategies;
 
-namespace Egil.AngleSharp.Diffing
+namespace AngleSharp.Diffing
 {
     public class DiffBuilder
     {

@@ -4,7 +4,7 @@ using AngleSharp.Dom;
 using Shouldly;
 using Xunit;
 
-namespace Egil.AngleSharp.Diffing.Core
+namespace AngleSharp.Diffing.Core
 {
     public class HtmlDifferenceEngineTest : DiffingEngineTestBase
     {
@@ -453,7 +453,7 @@ namespace Egil.AngleSharp.Diffing.Core
 
         #endregion
 
-        #region AttributeFilters 
+        #region AttributeFilters
 
         private static FilterDecision NoneAttrFilter(AttributeComparisonSource source) => FilterDecision.Keep;
 

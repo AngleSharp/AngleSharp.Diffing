@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using AngleSharp;
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
-using Egil.AngleSharp.Diffing.Core;
+using AngleSharp.Diffing.Core;
 using Xunit;
 
-namespace Egil.AngleSharp.Diffing
+namespace AngleSharp.Diffing
 {
     public abstract class DiffingTestBase : IClassFixture<DiffingTestFixture>
     {
@@ -50,7 +50,7 @@ namespace Egil.AngleSharp.Diffing
 
         protected AttributeComparisonSource ToAttributeComparisonSource(string html, string attrName, ComparisonSourceType sourceType = ComparisonSourceType.Control)
         {
-            var elementSource = ToComparisonSource(html, sourceType);            
+            var elementSource = ToComparisonSource(html, sourceType);
             return new AttributeComparisonSource(attrName, elementSource);
         }
 

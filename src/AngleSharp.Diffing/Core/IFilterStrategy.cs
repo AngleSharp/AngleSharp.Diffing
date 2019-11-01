@@ -1,7 +1,7 @@
-﻿namespace Egil.AngleSharp.Diffing.Core
+﻿namespace AngleSharp.Diffing.Core
 {
     /// <summary>
-    /// The filter strategy used by the <see cref="HtmlDifferenceEngine"/> 
+    /// The filter strategy used by the <see cref="HtmlDifferenceEngine"/>
     /// when filtering out unwanted nodes and attributes from the DOM-tree before comparison.
     /// </summary>
     public interface IFilterStrategy

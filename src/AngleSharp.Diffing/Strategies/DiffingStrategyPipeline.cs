@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Egil.AngleSharp.Diffing.Core;
+using AngleSharp.Diffing.Core;
 
-namespace Egil.AngleSharp.Diffing.Strategies
+namespace AngleSharp.Diffing.Strategies
 {
 
     public delegate FilterDecision FilterStrategy<TSource>(in TSource source, FilterDecision currentDecision);

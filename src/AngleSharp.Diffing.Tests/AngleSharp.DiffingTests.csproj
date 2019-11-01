@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <IsPackable>false</IsPackable>
-    <AssemblyName>Egil.AngleSharp.DiffingTests</AssemblyName>
-    <RootNamespace>Egil.AngleSharp.Diffing</RootNamespace>
+    <AssemblyName>AngleSharp.Diffing.Tests</AssemblyName>
+    <RootNamespace>AngleSharp.Diffing</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AngleSharp.Diffing\Egil.AngleSharp.Diffing.csproj" />
+    <ProjectReference Include="..\AngleSharp.Diffing\AngleSharp.Diffing.csproj" />
   </ItemGroup>
 
 </Project>

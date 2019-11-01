@@ -1,8 +1,8 @@
-﻿using Egil.AngleSharp.Diffing.Core;
+﻿using AngleSharp.Diffing.Core;
 using Shouldly;
 using Xunit;
 
-namespace Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies
+namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
 {
     public class TextNodeFilterTest : TextNodeTestBase
     {

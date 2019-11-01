@@ -3,7 +3,7 @@ using System.Linq;
 using Shouldly;
 using Xunit;
 
-namespace Egil.AngleSharp.Diffing.Core
+namespace AngleSharp.Diffing.Core
 {
     public class SourceMapTest : DiffingTestBase
     {

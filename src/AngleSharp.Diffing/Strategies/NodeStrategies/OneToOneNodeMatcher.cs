@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Egil.AngleSharp.Diffing.Core;
+using AngleSharp.Diffing.Core;
 
-namespace Egil.AngleSharp.Diffing.Strategies.NodeStrategies
+namespace AngleSharp.Diffing.Strategies.NodeStrategies
 {
     public static class OneToOneNodeMatcher
     {

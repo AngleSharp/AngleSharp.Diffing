@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Egil.AngleSharp.Diffing.Core;
-using Egil.AngleSharp.Diffing.Extensions;
+using AngleSharp.Diffing.Core;
+using AngleSharp.Diffing.Extensions;
 
-namespace Egil.AngleSharp.Diffing.Strategies.NodeStrategies
+namespace AngleSharp.Diffing.Strategies.NodeStrategies
 {
     public static class ForwardSearchingNodeMatcher
     {

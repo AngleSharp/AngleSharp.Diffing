@@ -1,9 +1,9 @@
 ﻿using System.Linq;
-using Egil.AngleSharp.Diffing.Core;
+using AngleSharp.Diffing.Core;
 using Xunit;
 using Shouldly;
 
-namespace Egil.AngleSharp.Diffing.Strategies.NodeStrategies
+namespace AngleSharp.Diffing.Strategies.NodeStrategies
 {
     public class OneToOneNodeMatcherTest : DiffingTestBase
     {
@@ -60,7 +60,7 @@ namespace Egil.AngleSharp.Diffing.Strategies.NodeStrategies
         [Fact(DisplayName = "When a control node has previous been matched, it is not matched again")]
         public void Test003()
         {
-            var controls = ToSourceCollection("<p></p>text<!--comment-->", ComparisonSourceType.Control);            
+            var controls = ToSourceCollection("<p></p>text<!--comment-->", ComparisonSourceType.Control);
             var tests = ToSourceCollection("<!--comment--><p></p>text", ComparisonSourceType.Test);
             controls.MarkAsMatched(controls[1]);
 

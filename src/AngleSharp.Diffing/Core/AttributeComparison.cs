@@ -1,7 +1,7 @@
 ﻿using AngleSharp.Dom;
 using System;
 
-namespace Egil.AngleSharp.Diffing.Core
+namespace AngleSharp.Diffing.Core
 {
     public readonly struct AttributeComparison : IEquatable<AttributeComparison>
     {

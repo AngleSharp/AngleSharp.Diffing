@@ -2,9 +2,9 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using AngleSharp.Dom;
-using Egil.AngleSharp.Diffing.Extensions;
+using AngleSharp.Diffing.Extensions;
 
-namespace Egil.AngleSharp.Diffing.Core
+namespace AngleSharp.Diffing.Core
 {
     [SuppressMessage("Globalization", "CA1308:Normalize strings to uppercase", Justification = "Path should be in lower case")]
     [DebuggerDisplay("{Index} : {Path}")]

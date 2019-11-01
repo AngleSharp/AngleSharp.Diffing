@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace Egil.AngleSharp.Diffing.Core
+namespace AngleSharp.Diffing.Core
 {
     [DebuggerDisplay("Diff={Target} {Result} Test={Test.Node.NodeName}[{Test.Index}]")]
     public class UnexpectedNodeDiff : UnexpectedDiffBase<ComparisonSource>

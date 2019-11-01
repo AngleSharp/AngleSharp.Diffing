@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
-using Egil.AngleSharp.Diffing.Core;
-using Egil.AngleSharp.Diffing.Strategies.NodeStrategies;
+using AngleSharp.Diffing.Core;
+using AngleSharp.Diffing.Strategies.NodeStrategies;
 using Shouldly;
 using Xunit;
 
-namespace Egil.AngleSharp.Diffing.Strategies.ElementStrategies
+namespace AngleSharp.Diffing.Strategies.ElementStrategies
 {
     public class CssSelectorElementMatcherTest : DiffingTestBase
     {

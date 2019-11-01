@@ -1,9 +1,9 @@
 ﻿using System.Linq;
-using Egil.AngleSharp.Diffing.Core;
+using AngleSharp.Diffing.Core;
 using Shouldly;
 using Xunit;
 
-namespace Egil.AngleSharp.Diffing.Strategies.NodeStrategies
+namespace AngleSharp.Diffing.Strategies.NodeStrategies
 {
     public class ForwardSearchingNodeMatcherTest : DiffingTestBase
     {

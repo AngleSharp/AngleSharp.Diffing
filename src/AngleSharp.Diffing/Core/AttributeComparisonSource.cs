@@ -1,9 +1,9 @@
 ﻿using AngleSharp.Dom;
-using Egil.AngleSharp.Diffing.Extensions;
+using AngleSharp.Diffing.Extensions;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Egil.AngleSharp.Diffing.Core
+namespace AngleSharp.Diffing.Core
 {
     public readonly struct AttributeComparisonSource : IEquatable<AttributeComparisonSource>, IComparisonSource
     {

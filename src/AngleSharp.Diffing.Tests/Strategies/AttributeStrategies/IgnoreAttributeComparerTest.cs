@@ -1,9 +1,9 @@
-﻿using Egil.AngleSharp.Diffing.Core;
-using Egil.AngleSharp.Diffing.Strategies.AttributeStrategies;
+﻿using AngleSharp.Diffing.Core;
+using AngleSharp.Diffing.Strategies.AttributeStrategies;
 using Shouldly;
 using Xunit;
 
-namespace Egil.AngleSharp.Diffing.Strategies.IgnoreStrategies
+namespace AngleSharp.Diffing.Strategies.IgnoreStrategies
 {
     public class IgnoreAttributeComparerTest : DiffingTestBase
     {

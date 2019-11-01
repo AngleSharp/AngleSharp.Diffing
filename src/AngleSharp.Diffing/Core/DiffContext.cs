@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using AngleSharp.Dom;
-using Egil.AngleSharp.Diffing.Extensions;
+using AngleSharp.Diffing.Extensions;
 
-namespace Egil.AngleSharp.Diffing.Core
+namespace AngleSharp.Diffing.Core
 {
     public class DiffContext
     {

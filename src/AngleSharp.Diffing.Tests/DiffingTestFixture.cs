@@ -2,7 +2,7 @@
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
 
-namespace Egil.AngleSharp.Diffing
+namespace AngleSharp.Diffing
 {
     public class DiffingTestFixture
     {

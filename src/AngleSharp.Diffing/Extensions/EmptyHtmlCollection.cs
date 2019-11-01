@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using AngleSharp.Dom;
 
-namespace Egil.AngleSharp.Diffing.Extensions
+namespace AngleSharp.Diffing.Extensions
 {
     public class EmptyHtmlCollection<T> : IHtmlCollection<T> where T : IElement
     {

@@ -1,4 +1,4 @@
-﻿using Egil.AngleSharp.Diffing.Core;
+﻿using AngleSharp.Diffing.Core;
 using Shouldly;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
+namespace AngleSharp.Diffing.Strategies.AttributeStrategies
 {
     public class StyleAttributeComparerTest : DiffingTestBase
     {
@@ -27,7 +27,7 @@ namespace Egil.AngleSharp.Diffing.Strategies.AttributeStrategies
         [Fact(DisplayName = "When style attributes has different values then Different is returned")]
         public void Test002()
         {
-            var comparison = ToAttributeComparison(@"<p style=""color: red"">", "style", @"<p style=""color: black"">", "style"); 
+            var comparison = ToAttributeComparison(@"<p style=""color: red"">", "style", @"<p style=""color: black"">", "style");
             StyleAttributeComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
         }
 

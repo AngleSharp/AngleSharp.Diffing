@@ -2,7 +2,7 @@
 using System;
 using Xunit;
 
-namespace Egil.AngleSharp.Diffing.Core
+namespace AngleSharp.Diffing.Core
 {
     public class AttributeComparisonSourceTest : DiffingTestBase
     {
