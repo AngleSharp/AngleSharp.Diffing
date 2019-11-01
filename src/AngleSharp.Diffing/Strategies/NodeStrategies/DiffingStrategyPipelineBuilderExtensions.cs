@@ -1,3 +1,5 @@
+using AngleSharp.Diffing.Strategies.CommentStrategies;
+using AngleSharp.Diffing.Strategies.ElementStrategies;
 using AngleSharp.Diffing.Strategies.NodeStrategies;
 
 namespace AngleSharp.Diffing
@@ -19,15 +21,6 @@ namespace AngleSharp.Diffing
         public static IDiffingStrategyPipelineBuilder WithSearchingNodeMatcher(this IDiffingStrategyPipelineBuilder builder)
         {
             builder.WithMatcher(ForwardSearchingNodeMatcher.Match, isSpecializedMatcher: false);
-            return builder;
-        }
-
-        /// <summary>
-        /// Enables the basic node compare strategy during diffing.
-        /// </summary>
-        public static IDiffingStrategyPipelineBuilder WithNodeNameComparer(this IDiffingStrategyPipelineBuilder builder)
-        {
-            builder.WithComparer(NodeComparer.Compare, isSpecializedComparer: false);
             return builder;
         }
     }

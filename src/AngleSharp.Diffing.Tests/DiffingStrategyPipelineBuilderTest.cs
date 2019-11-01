@@ -35,7 +35,7 @@ namespace AngleSharp.Diffing
             Should.Throw<InvalidOperationException>(
                 () => new DiffingStrategyPipelineBuilder()
                 .WithClassAttributeComparer()
-                .WithNodeNameComparer()
+                .WithElementComparer()
                 .Build());
         }
 

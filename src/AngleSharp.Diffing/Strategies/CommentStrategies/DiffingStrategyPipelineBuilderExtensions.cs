@@ -12,5 +12,14 @@ namespace AngleSharp.Diffing
             builder.WithFilter(IgnoreCommentsFilter.Filter, true);
             return builder;
         }
+
+        /// <summary>
+        /// Enables the basic comment comparer, that checks if two nodes are comment nodes.
+        /// </summary>
+        public static IDiffingStrategyPipelineBuilder WithCommentComparer(this IDiffingStrategyPipelineBuilder builder)
+        {
+            builder.WithComparer(CommentComparer.Compare, isSpecializedComparer: false);
+            return builder;
+        }
     }
 }
