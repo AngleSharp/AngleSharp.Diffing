@@ -77,7 +77,7 @@ Task("Run-Unit-Tests")
         if (isRunningOnAppVeyor)
         {
             settings.TestAdapterPath = Directory(".");
-            settings.Logger = "Appveyor";
+            //settings.Logger = "Appveyor";
             // TODO Finds a way to exclude tests not allowed to run on appveyor
             // Not used in current code
             //settings.Where = "cat != ExcludeFromAppVeyor";
