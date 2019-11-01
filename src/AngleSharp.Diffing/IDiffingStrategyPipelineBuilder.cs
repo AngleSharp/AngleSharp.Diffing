@@ -1,7 +1,7 @@
-using Egil.AngleSharp.Diffing.Core;
-using Egil.AngleSharp.Diffing.Strategies;
+using AngleSharp.Diffing.Core;
+using AngleSharp.Diffing.Strategies;
 
-namespace Egil.AngleSharp.Diffing
+namespace AngleSharp.Diffing
 {
     public interface IDiffingStrategyPipelineBuilder
     {

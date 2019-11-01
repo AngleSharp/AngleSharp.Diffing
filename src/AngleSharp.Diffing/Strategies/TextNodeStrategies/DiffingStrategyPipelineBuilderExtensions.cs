@@ -1,6 +1,6 @@
-using Egil.AngleSharp.Diffing.Strategies.TextNodeStrategies;
+using AngleSharp.Diffing.Strategies.TextNodeStrategies;
 
-namespace Egil.AngleSharp.Diffing
+namespace AngleSharp.Diffing
 {
     public static partial class DiffingStrategyPipelineBuilderExtensions
     {

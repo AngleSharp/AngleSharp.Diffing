@@ -6,7 +6,7 @@ using AngleSharp.Dom;
 
 namespace AngleSharp.Diffing.Core
 {
-    internal delegate FilterDecision SourceMapRemovePredicate(in AttributeComparisonSource source);
+    public delegate FilterDecision SourceMapRemovePredicate(in AttributeComparisonSource source);
 
     [SuppressMessage("Naming", "CA1710:Identifiers should have correct suffix")]
     public class SourceMap : IEnumerable<AttributeComparisonSource>
@@ -58,7 +58,7 @@ namespace AngleSharp.Diffing.Core
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        internal void Remove(SourceMapRemovePredicate predicate)
+        public void Remove(SourceMapRemovePredicate predicate)
         {
             var removeQueue = new Queue<string>(Count);
             foreach (var source in _sources.Values)
@@ -71,7 +71,7 @@ namespace AngleSharp.Diffing.Core
             }
         }
 
-        internal void MarkAsMatched(in AttributeComparisonSource source)
+        public void MarkAsMatched(in AttributeComparisonSource source)
         {
             _matched.Add(source.Attribute.Name);
         }

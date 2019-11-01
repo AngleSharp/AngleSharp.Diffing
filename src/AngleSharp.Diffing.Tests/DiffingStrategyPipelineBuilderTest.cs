@@ -1,10 +1,10 @@
 using System;
 using System.Linq;
-using Egil.AngleSharp.Diffing.Core;
+using AngleSharp.Diffing.Core;
 using Shouldly;
 using Xunit;
 
-namespace Egil.AngleSharp.Diffing
+namespace AngleSharp.Diffing
 {
     public class DiffingStrategyPipelineBuilderTest : DiffingTestBase
     {

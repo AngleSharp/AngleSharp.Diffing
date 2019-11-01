@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace AngleSharp.Diffing.Core
 {
-    internal delegate FilterDecision SourceCollectionRemovePredicate(in ComparisonSource source);
+    public delegate FilterDecision SourceCollectionRemovePredicate(in ComparisonSource source);
 
     public class SourceCollection : IEnumerable<ComparisonSource>
     {
@@ -56,7 +56,7 @@ namespace AngleSharp.Diffing.Core
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        internal void MarkAsMatched(in ComparisonSource source)
+        public void MarkAsMatched(in ComparisonSource source)
         {
             if (_status[source.Index] == SOURCE_REMOVED)
                 throw new InvalidOperationException("A removed source cannot be marked as matched. The source is not supposed to be part of the comparison.");
@@ -64,7 +64,7 @@ namespace AngleSharp.Diffing.Core
             _status[source.Index]++;
         }
 
-        internal void Remove(SourceCollectionRemovePredicate predicate)
+        public void Remove(SourceCollectionRemovePredicate predicate)
         {
             for (int i = 0; i < _sources.Length; i++)
             {

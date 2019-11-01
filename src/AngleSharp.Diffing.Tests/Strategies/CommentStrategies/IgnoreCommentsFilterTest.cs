@@ -1,4 +1,4 @@
-﻿using Egil.AngleSharp.Diffing.Core;
+using AngleSharp.Diffing.Core;
 using Shouldly;
 using Xunit;
 

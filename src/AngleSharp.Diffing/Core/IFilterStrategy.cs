@@ -1,4 +1,6 @@
-﻿namespace AngleSharp.Diffing.Core
+using AngleSharp.Diffing.Core;
+
+namespace AngleSharp.Diffing.Core
 {
     /// <summary>
     /// The filter strategy used by the <see cref="HtmlDifferenceEngine"/>
