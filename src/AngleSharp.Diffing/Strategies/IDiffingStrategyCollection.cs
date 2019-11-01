@@ -3,7 +3,7 @@ using AngleSharp.Diffing.Strategies;
 
 namespace AngleSharp.Diffing
 {
-    public interface IDiffingStrategyPipelineBuilder
+    public interface IDiffingStrategyCollection
     {
         /// <summary>
         /// Adds a attribute comparer to the pipeline.
@@ -12,7 +12,7 @@ namespace AngleSharp.Diffing
         /// </summary>
         /// <param name="compareStrategy"></param>
         /// <param name="isSpecializedComparer">true if <paramref name="compareStrategy"/> is a specialized comparer, false if it is a generalized comparer</param>
-        IDiffingStrategyPipelineBuilder WithComparer(CompareStrategy<AttributeComparison> compareStrategy, bool isSpecializedComparer = true);
+        IDiffingStrategyCollection AddComparer(CompareStrategy<AttributeComparison> compareStrategy, bool isSpecializedComparer = true);
         /// <summary>
         /// Adds a node comparer to the pipeline.
         /// Specialized comparers always execute after any generalized comparers in the pipeline.
@@ -20,7 +20,7 @@ namespace AngleSharp.Diffing
         /// </summary>
         /// <param name="compareStrategy"></param>
         /// <param name="isSpecializedComparer">true if <paramref name="compareStrategy"/> is a specialized comparer, false if it is a generalized comparer</param>
-        IDiffingStrategyPipelineBuilder WithComparer(CompareStrategy<Comparison> compareStrategy, bool isSpecializedComparer = true);
+        IDiffingStrategyCollection AddComparer(CompareStrategy<Comparison> compareStrategy, bool isSpecializedComparer = true);
         /// <summary>
         /// Adds an attribute filter to the pipeline.
         /// Specialized filters always execute after any generalized filters in the pipeline.
@@ -28,7 +28,7 @@ namespace AngleSharp.Diffing
         /// </summary>
         /// <param name="filterStrategy"></param>
         /// <param name="isSpecializedFilter">true if <paramref name="filterStrategy"/> is a specialized filter, false if it is a generalized filter</param>
-        IDiffingStrategyPipelineBuilder WithFilter(FilterStrategy<AttributeComparisonSource> filterStrategy, bool isSpecializedFilter = true);
+        IDiffingStrategyCollection AddFilter(FilterStrategy<AttributeComparisonSource> filterStrategy, bool isSpecializedFilter = true);
         /// <summary>
         /// Adds a node filter to the pipeline.
         /// Specialized filters always execute after any generalized filters in the pipeline.
@@ -36,7 +36,7 @@ namespace AngleSharp.Diffing
         /// </summary>
         /// <param name="filterStrategy"></param>
         /// <param name="isSpecializedFilter">true if <paramref name="filterStrategy"/> is a specialized filter, false if it is a generalized filter</param>
-        IDiffingStrategyPipelineBuilder WithFilter(FilterStrategy<ComparisonSource> filterStrategy, bool isSpecializedFilter = true);
+        IDiffingStrategyCollection AddFilter(FilterStrategy<ComparisonSource> filterStrategy, bool isSpecializedFilter = true);
         /// <summary>
         /// Adds a node matcher to the pipeline.
         /// Specialized matchers always execute before any generalized matchers in the pipeline.
@@ -44,7 +44,7 @@ namespace AngleSharp.Diffing
         /// </summary>
         /// <param name="matchStrategy"></param>
         /// <param name="isSpecializedMatcher">true if <paramref name="matchStrategy"/> is a specialized matcher, false if it is a generalized matcher</param>
-        IDiffingStrategyPipelineBuilder WithMatcher(MatchStrategy<SourceCollection, Comparison> matchStrategy, bool isSpecializedMatcher = true);
+        IDiffingStrategyCollection AddMatcher(MatchStrategy<SourceCollection, Comparison> matchStrategy, bool isSpecializedMatcher = true);
         /// <summary>
         /// Adds an attribute matcher to the pipeline.
         /// Specialized matchers always execute before any generalized matchers in the pipeline.
@@ -52,8 +52,6 @@ namespace AngleSharp.Diffing
         /// </summary>
         /// <param name="matchStrategy"></param>
         /// <param name="isSpecializedMatcher">true if <paramref name="matchStrategy"/> is a specialized matcher, false if it is a generalized matcher</param>
-        IDiffingStrategyPipelineBuilder WithMatcher(MatchStrategy<SourceMap, AttributeComparison> matchStrategy, bool isSpecializedMatcher = true);
-
-        DiffingStrategyPipeline Build();
+        IDiffingStrategyCollection AddMatcher(MatchStrategy<SourceMap, AttributeComparison> matchStrategy, bool isSpecializedMatcher = true);
     }
 }

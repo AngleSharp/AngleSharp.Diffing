@@ -7,19 +7,19 @@ namespace AngleSharp.Diffing
         /// <summary>
         /// Enables the one-to-one node-matching strategy during diffing.
         /// </summary>
-        public static IDiffingStrategyPipelineBuilder WithTextComparer(this IDiffingStrategyPipelineBuilder builder, WhitespaceOption whitespaceOption, bool ignoreCase)
+        public static IDiffingStrategyCollection AddTextComparer(this IDiffingStrategyCollection builder, WhitespaceOption whitespaceOption, bool ignoreCase)
         {
-            builder.WithFilter(new TextNodeFilter(whitespaceOption).Filter, isSpecializedFilter: true);
-            builder.WithComparer(new TextNodeComparer(whitespaceOption, ignoreCase).Compare, isSpecializedComparer: true);
+            builder.AddFilter(new TextNodeFilter(whitespaceOption).Filter, isSpecializedFilter: true);
+            builder.AddComparer(new TextNodeComparer(whitespaceOption, ignoreCase).Compare, isSpecializedComparer: true);
             return builder;
         }
 
         /// <summary>
         /// Enables the special style-tag style sheet text comparer.
         /// </summary>
-        public static IDiffingStrategyPipelineBuilder WithStyleSheetComparer(this IDiffingStrategyPipelineBuilder builder)
+        public static IDiffingStrategyCollection AddStyleSheetComparer(this IDiffingStrategyCollection builder)
         {
-            builder.WithComparer(StyleSheetTextNodeComparer.Compare, isSpecializedComparer: true);
+            builder.AddComparer(StyleSheetTextNodeComparer.Compare, isSpecializedComparer: true);
             return builder;
         }
     }

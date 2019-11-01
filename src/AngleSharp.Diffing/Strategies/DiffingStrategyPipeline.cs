@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using AngleSharp.Diffing.Core;
 
 namespace AngleSharp.Diffing.Strategies
@@ -8,7 +8,7 @@ namespace AngleSharp.Diffing.Strategies
     public delegate IEnumerable<TComparison> MatchStrategy<in TSources, out TComparison>(DiffContext context, TSources controlSources, TSources testSources);
     public delegate CompareResult CompareStrategy<TComparison>(in TComparison comparison, CompareResult currentDecision);
 
-    public class DiffingStrategyPipeline : IFilterStrategy, IMatcherStrategy, ICompareStrategy
+    public class DiffingStrategyPipeline : IFilterStrategy, IMatcherStrategy, ICompareStrategy, IDiffingStrategyCollection
     {
         private readonly List<FilterStrategy<ComparisonSource>> _nodeFilters = new List<FilterStrategy<ComparisonSource>>();
         private readonly List<FilterStrategy<AttributeComparisonSource>> _attrsFilters = new List<FilterStrategy<AttributeComparisonSource>>();
@@ -58,12 +58,13 @@ namespace AngleSharp.Diffing.Strategies
         /// </summary>
         /// <param name="filterStrategy"></param>
         /// <param name="isSpecializedFilter">true if <paramref name="filterStrategy"/> is a specialized filter, false if it is a generalized filter</param>
-        public void AddFilter(FilterStrategy<ComparisonSource> filterStrategy, bool isSpecializedFilter)
+        public IDiffingStrategyCollection AddFilter(FilterStrategy<ComparisonSource> filterStrategy, bool isSpecializedFilter)
         {
             if (isSpecializedFilter)
                 _nodeFilters.Add(filterStrategy);
             else
                 _nodeFilters.Insert(0, filterStrategy);
+            return this;
         }
 
         /// <summary>
@@ -73,12 +74,13 @@ namespace AngleSharp.Diffing.Strategies
         /// </summary>
         /// <param name="filterStrategy"></param>
         /// <param name="isSpecializedFilter">true if <paramref name="filterStrategy"/> is a specialized filter, false if it is a generalized filter</param>
-        public void AddFilter(FilterStrategy<AttributeComparisonSource> filterStrategy, bool isSpecializedFilter)
+        public IDiffingStrategyCollection AddFilter(FilterStrategy<AttributeComparisonSource> filterStrategy, bool isSpecializedFilter)
         {
             if (isSpecializedFilter)
                 _attrsFilters.Add(filterStrategy);
             else
                 _attrsFilters.Insert(0, filterStrategy);
+            return this;
         }
 
         /// <summary>
@@ -88,12 +90,13 @@ namespace AngleSharp.Diffing.Strategies
         /// </summary>
         /// <param name="matchStrategy"></param>
         /// <param name="isSpecializedMatcher">true if <paramref name="matchStrategy"/> is a specialized matcher, false if it is a generalized matcher</param>
-        public void AddMatcher(MatchStrategy<SourceCollection, Comparison> matchStrategy, bool isSpecializedMatcher)
+        public IDiffingStrategyCollection AddMatcher(MatchStrategy<SourceCollection, Comparison> matchStrategy, bool isSpecializedMatcher)
         {
             if (isSpecializedMatcher)
                 _nodeMatchers.Insert(0, matchStrategy);
             else
                 _nodeMatchers.Add(matchStrategy);
+            return this;
         }
 
         /// <summary>
@@ -103,12 +106,13 @@ namespace AngleSharp.Diffing.Strategies
         /// </summary>
         /// <param name="matchStrategy"></param>
         /// <param name="isSpecializedMatcher">true if <paramref name="matchStrategy"/> is a specialized matcher, false if it is a generalized matcher</param>
-        public void AddMatcher(MatchStrategy<SourceMap, AttributeComparison> matchStrategy, bool isSpecializedMatcher)
+        public IDiffingStrategyCollection AddMatcher(MatchStrategy<SourceMap, AttributeComparison> matchStrategy, bool isSpecializedMatcher)
         {
             if (isSpecializedMatcher)
                 _attrsMatchers.Insert(0, matchStrategy);
             else
                 _attrsMatchers.Add(matchStrategy);
+            return this;
         }
 
         /// <summary>
@@ -118,12 +122,13 @@ namespace AngleSharp.Diffing.Strategies
         /// </summary>
         /// <param name="compareStrategy"></param>
         /// <param name="isSpecializedComparer">true if <paramref name="compareStrategy"/> is a specialized comparer, false if it is a generalized comparer</param>
-        public void AddComparer(CompareStrategy<Comparison> compareStrategy, bool isSpecializedComparer)
+        public IDiffingStrategyCollection AddComparer(CompareStrategy<Comparison> compareStrategy, bool isSpecializedComparer)
         {
             if (isSpecializedComparer)
                 _nodeComparers.Add(compareStrategy);
             else
                 _nodeComparers.Insert(0, compareStrategy);
+            return this;
         }
 
         /// <summary>
@@ -133,12 +138,13 @@ namespace AngleSharp.Diffing.Strategies
         /// </summary>
         /// <param name="compareStrategy"></param>
         /// <param name="isSpecializedComparer">true if <paramref name="compareStrategy"/> is a specialized comparer, false if it is a generalized comparer</param>
-        public void AddComparer(CompareStrategy<AttributeComparison> compareStrategy, bool isSpecializedComparer)
+        public IDiffingStrategyCollection AddComparer(CompareStrategy<AttributeComparison> compareStrategy, bool isSpecializedComparer)
         {
             if (isSpecializedComparer)
                 _attrComparers.Add(compareStrategy);
             else
                 _attrComparers.Insert(0, compareStrategy);
+            return this;
         }
 
         private FilterDecision Filter<T>(in T source, List<FilterStrategy<T>> filterStrategies)

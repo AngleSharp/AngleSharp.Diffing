@@ -1,4 +1,6 @@
 # AngleSharp Diffing - A diff/compare library for AngleSharp
+[![Build status](https://ci.appveyor.com/api/projects/status/8awr3r4ylwy9habm?svg=true)](https://ci.appveyor.com/project/FlorianRappl/anglesharp-diffing)
+
 This library makes it possible to compare a AngleSharp _control_ `INodeList` and a _test_ `INodeList` and get a list of `IDiff` differences between them.
 
 The _control_ nodes represents the expected HTML tree, i.e. how the nodes are expected to look, and the _test_ nodes represents the nodes that should be compared to the _control_ nodes.
@@ -16,17 +18,16 @@ To find the differences between a control HTML fragment and a test HTML fragment
 var controlHtml = "<p>Hello World</p>";
 var testHtml = "<p>World, I say hello</p>";
 var diffs = DiffBuilder
-    .Compare(controlHtml)
-    .WithTest(testHtml)
-    .WithDefaultOptions()
+    .Compare(control)
+    .WithTest(test)
     .Build();
 ```
 
-Read more about the available options on the [Diffing Options/Strategies](/docs/Strategies.md) page.
+Read more about the available options on the [Options](/docs/Options.md) page.
 
 # Documentation
-- [Diffing Options/Strategies](/docs/Strategies.md)
-- [Creating custom diffing options/strategies](/docs/CustomStrategies.md)
+- [Options](/docs/Options.md)
+- [Creating custom diffing options](/docs/CustomOptions.md)
 - [Difference engine internals](/docs/DiffingEngineInternals.md)
 
 ## Acknowledgments

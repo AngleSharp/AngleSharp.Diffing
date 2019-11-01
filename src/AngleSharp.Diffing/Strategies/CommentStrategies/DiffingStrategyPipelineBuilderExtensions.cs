@@ -7,18 +7,18 @@ namespace AngleSharp.Diffing
         /// <summary>
         /// Enables ignoring HTML comments during diffing.
         /// </summary>
-        public static IDiffingStrategyPipelineBuilder IgnoreComments(this IDiffingStrategyPipelineBuilder builder)
+        public static IDiffingStrategyCollection IgnoreComments(this IDiffingStrategyCollection builder)
         {
-            builder.WithFilter(IgnoreCommentsFilter.Filter, true);
+            builder.AddFilter(IgnoreCommentsFilter.Filter, true);
             return builder;
         }
 
         /// <summary>
         /// Enables the basic comment comparer, that checks if two nodes are comment nodes.
         /// </summary>
-        public static IDiffingStrategyPipelineBuilder WithCommentComparer(this IDiffingStrategyPipelineBuilder builder)
+        public static IDiffingStrategyCollection AddCommentComparer(this IDiffingStrategyCollection builder)
         {
-            builder.WithComparer(CommentComparer.Compare, isSpecializedComparer: false);
+            builder.AddComparer(CommentComparer.Compare, isSpecializedComparer: false);
             return builder;
         }
     }

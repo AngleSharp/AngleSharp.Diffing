@@ -12,7 +12,7 @@ namespace AngleSharp.Diffing
         private readonly IBrowsingContext _context;
         private readonly IHtmlParser _htmlParser;
         private readonly IDocument _document;
-        private readonly DiffingStrategyPipeline _diffStrategy;
+        private DiffingStrategyPipeline? _diffStrategy;
         private string _control = string.Empty;
         private string _test = string.Empty;
 
@@ -20,21 +20,18 @@ namespace AngleSharp.Diffing
 
         public string Test { get => _test; set => _test = value ?? throw new ArgumentNullException(nameof(Test)); }
 
-        public DiffBuilder(DiffingStrategyPipeline diffStrategy)
+        private DiffBuilder(string control)
         {
-            if(diffStrategy is null) throw new ArgumentNullException(nameof(diffStrategy));
-            _diffStrategy = diffStrategy;
-
+            Control = control;
             var config = Configuration.Default.WithCss();
             _context = BrowsingContext.New(config);
             _htmlParser = _context.GetService<IHtmlParser>();
             _document = _context.OpenNewAsync().Result;
         }
 
-        public DiffBuilder Compare(string control)
+        public static DiffBuilder Compare(string control)
         {
-            Control = control;
-            return this;
+            return new DiffBuilder(control);
         }
 
         public DiffBuilder WithTest(string test)
@@ -43,8 +40,21 @@ namespace AngleSharp.Diffing
             return this;
         }
 
+        public DiffBuilder WithOptions(Action<IDiffingStrategyCollection> registerOptions)
+        {
+            _diffStrategy = new DiffingStrategyPipeline();
+            registerOptions(_diffStrategy);
+            return this;
+        }
+
         public IList<IDiff> Build()
         {
+            if (_diffStrategy is null)
+            {
+                _diffStrategy = new DiffingStrategyPipeline();
+                _diffStrategy.AddDefaultOptions();
+            }
+
             return new HtmlDifferenceEngine(_diffStrategy, _diffStrategy, _diffStrategy)
                 .Compare(Parse(Control), Parse(Test));
         }

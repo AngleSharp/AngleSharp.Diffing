@@ -8,22 +8,22 @@ namespace AngleSharp.Diffing
         /// <summary>
         /// Sets up the diffing process using the default options.
         /// </summary>
-        public static IDiffingStrategyPipelineBuilder WithDefaultOptions(this IDiffingStrategyPipelineBuilder builder)
+        public static IDiffingStrategyCollection AddDefaultOptions(this IDiffingStrategyCollection builder)
         {
             return builder
                 .IgnoreDiffAttributes()
                 .IgnoreComments()
-                .WithSearchingNodeMatcher()
-                .WithCssSelectorMatcher()
-                .WithAttributeNameMatcher()
-                .WithElementComparer()                
-                .WithIgnoreElementSupport()
-                .WithStyleSheetComparer()
-                .WithTextComparer(WhitespaceOption.Normalize, ignoreCase: false)
-                .WithAttributeComparer()
-                .WithClassAttributeComparer()
-                .WithBooleanAttributeComparer(BooleanAttributeComparision.Strict)
-                .WithStyleAttributeComparer();
+                .AddSearchingNodeMatcher()
+                .AddCssSelectorMatcher()
+                .AddAttributeNameMatcher()
+                .AddElementComparer()                
+                .AddIgnoreElementSupport()
+                .AddStyleSheetComparer()
+                .AddTextComparer(WhitespaceOption.Normalize, ignoreCase: false)
+                .AddAttributeComparer()
+                .AddClassAttributeComparer()
+                .AddBooleanAttributeComparer(BooleanAttributeComparision.Strict)
+                .AddStyleAttributeComparer();
             ;
         }
     }

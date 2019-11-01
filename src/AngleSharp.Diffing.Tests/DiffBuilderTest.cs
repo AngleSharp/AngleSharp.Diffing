@@ -1,4 +1,5 @@
 using System;
+using AngleSharp.Diffing.Core;
 using AngleSharp.Diffing.Strategies;
 using Shouldly;
 using Xunit;
@@ -8,15 +9,13 @@ namespace AngleSharp.Diffing
 
     public class DiffBuilderTest
     {
-        private DiffingStrategyPipeline DefaultStrategy { get; } = new DiffingStrategyPipelineBuilder().WithDefaultOptions().Build();
-
         [Fact(DisplayName = "Control and test html are set correctly")]
         public void Test001()
         {
             var control = "<p>control</p>";
             var test = "<p>test</p>";
 
-            var sut = new DiffBuilder(DefaultStrategy)
+            var sut = DiffBuilder
                 .Compare(control)
                 .WithTest(test);
 
@@ -27,42 +26,57 @@ namespace AngleSharp.Diffing
         [Fact(DisplayName = "Builder throws if null is passed to control and test")]
         public void Test002()
         {
-            Should.Throw<ArgumentNullException>(() => new DiffBuilder(DefaultStrategy).Compare(null!)).ParamName.ShouldBe(nameof(DiffBuilder.Control));
-            Should.Throw<ArgumentNullException>(() => new DiffBuilder(DefaultStrategy).Compare("").WithTest(null!)).ParamName.ShouldBe(nameof(DiffBuilder.Test));
-        }
-
-        [Fact(DisplayName = "Creating DiffBuilder with null strategies throws")]
-        public void Test3()
-        {
-            Should.Throw<ArgumentNullException>(() => new DiffBuilder(null!));
+            Should.Throw<ArgumentNullException>(() => DiffBuilder.Compare(null!)).ParamName.ShouldBe(nameof(DiffBuilder.Control));
+            Should.Throw<ArgumentNullException>(() => DiffBuilder.Compare("").WithTest(null!)).ParamName.ShouldBe(nameof(DiffBuilder.Test));
         }
 
         [Fact(DisplayName = "Calling Build() with DefaultOptions() returns expected diffs")]
-        public void Test6()
+        public void Test003()
         {
             var control = "<p>hello <em>world</em></p>";
             var test = "<p>world says <strong>hello</strong></p>";
 
-            var diffs = new DiffBuilder(DefaultStrategy)
+            var diffs = DiffBuilder
                 .Compare(control)
                 .WithTest(test)
                 .Build();
 
-            diffs.ShouldNotBeEmpty();
+            diffs.Count.ShouldBe(3);
         }
 
-        [Fact(DisplayName = "Calling Build() with DefaultOptions() returns expected diffs")]
-        public void Test7()
+        [Fact(DisplayName = "Setting options works")]
+        public void Test004()
         {
-            var control = "<h1>Hello World</h1>";
-            var test = "<h1>Hello world</h1>";
+            var control = "<p foo>hello world</p>";
+            var test = "<p foo>hello world</p>";
 
-            var diffs = new DiffBuilder(DefaultStrategy)
+            var nodeFilterCalled = false;
+            var attrFilterCalled = false;
+            var nodeMatcherCalled = false;
+            var attrMatcherCalled = false;
+            var nodeComparerCalled = false;
+            var attrComparerCalled = false;
+
+            var diffs = DiffBuilder
                 .Compare(control)
                 .WithTest(test)
+                .WithOptions(options => options
+                    .AddDefaultOptions()
+                    .AddFilter((in ComparisonSource source, FilterDecision currentDecision) => { nodeFilterCalled = true; return currentDecision; })
+                    .AddFilter((in AttributeComparisonSource source, FilterDecision currentDecision) => { attrFilterCalled = true; return currentDecision; })
+                    .AddMatcher((ctx, ctrlSrc, testSrc) => { nodeMatcherCalled = true; return Array.Empty<Comparison>(); })
+                    .AddMatcher((ctx, ctrlSrc, testSrc) => { attrMatcherCalled = true; return Array.Empty<AttributeComparison>(); })
+                    .AddComparer((in Comparison comparison, CompareResult currentDecision) => { nodeComparerCalled = true; return currentDecision; })
+                    .AddComparer((in AttributeComparison comparison, CompareResult currentDecision) => { attrComparerCalled = true; return currentDecision; })
+                )
                 .Build();
 
-            diffs.ShouldNotBeEmpty();
+            nodeFilterCalled.ShouldBeTrue();
+            attrFilterCalled.ShouldBeTrue();
+            nodeMatcherCalled.ShouldBeTrue();
+            attrMatcherCalled.ShouldBeTrue();
+            nodeComparerCalled.ShouldBeTrue();
+            attrComparerCalled.ShouldBeTrue();
         }
     }
 }

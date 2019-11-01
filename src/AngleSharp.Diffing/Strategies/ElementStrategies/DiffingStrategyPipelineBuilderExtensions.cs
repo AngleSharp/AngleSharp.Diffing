@@ -7,18 +7,18 @@ namespace AngleSharp.Diffing
         /// <summary>
         /// Enables the basic element comparer, that checks if two nodes are element nodes and have the same name.
         /// </summary>
-        public static IDiffingStrategyPipelineBuilder WithElementComparer(this IDiffingStrategyPipelineBuilder builder)
+        public static IDiffingStrategyCollection AddElementComparer(this IDiffingStrategyCollection builder)
         {
-            builder.WithComparer(ElementComparer.Compare, isSpecializedComparer: false);
+            builder.AddComparer(ElementComparer.Compare, isSpecializedComparer: false);
             return builder;
         }
 
         /// <summary>
         /// Enables the CSS-selector matcher strategy during diffing.
         /// </summary>
-        public static IDiffingStrategyPipelineBuilder WithCssSelectorMatcher(this IDiffingStrategyPipelineBuilder builder)
+        public static IDiffingStrategyCollection AddCssSelectorMatcher(this IDiffingStrategyCollection builder)
         {
-            builder.WithMatcher(CssSelectorElementMatcher.Match, isSpecializedMatcher: true);
+            builder.AddMatcher(CssSelectorElementMatcher.Match, isSpecializedMatcher: true);
             return builder;
         }
 
@@ -27,9 +27,9 @@ namespace AngleSharp.Diffing
         /// </summary>
         /// <param name="builder"></param>
         /// <returns></returns>
-        public static IDiffingStrategyPipelineBuilder WithIgnoreElementSupport(this IDiffingStrategyPipelineBuilder builder)
+        public static IDiffingStrategyCollection AddIgnoreElementSupport(this IDiffingStrategyCollection builder)
         {
-            builder.WithComparer(IgnoreElementComparer.Compare, isSpecializedComparer: true);
+            builder.AddComparer(IgnoreElementComparer.Compare, isSpecializedComparer: true);
             return builder;
         }
     }

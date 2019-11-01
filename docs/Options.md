@@ -1,4 +1,4 @@
-# Diffing options/strategies: 
+# Diffing Options
 The library comes with a bunch of options (internally referred to as strategies), for the following three main steps in the diffing process:
 
 1. Filtering out irrelevant nodes and attributes
@@ -7,14 +7,12 @@ The library comes with a bunch of options (internally referred to as strategies)
 
 To make it easier to configure the diffing engine, the library comes with a `DiffBuilder` class, which handles the relative complex task of setting up the `HtmlDifferenceEngine`.
 
-Using the `UseDefaultOptions()` method is equivalent to setting the following options explicitly:
-
-To learn how to create your own strategies, visit the [Custom Strategies](CustomStrategies.md) page.
+To learn how to create your own strategies, visit the [Custom Options](CustomOptions.md) page.
 
 The following section documents the current built-in strategies that are available. 
 
 ## Default Options
-In most cases, calling the `UseDefaultOptions()` method on a `DiffBuilder` instance will give you a good set of strategies for a comparison, e.g.
+In most cases, calling `DiffBuilder.Compare(...).WithTest(...).Build()` will give you a good set of default options for a comparison, e.g.
 
 ```csharp
 var controlHtml = "<p>Hello World</p>";
@@ -22,29 +20,42 @@ var testHtml = "<p>World, I say hello</p>";
 var diffs = DiffBuilder
     .Compare(controlHtml)
     .WithTest(testHtml)
-    .WithDefaultOptions()
     .Build();
 ```
 
-Calling the `WithDefaultOptions()` method is equivalent to specifying the following options explicitly: 
+If you want to be more explicit, the following is equivalent to the code above:
+
+```csharp
+var controlHtml = "<p>Hello World</p>";
+var testHtml = "<p>World, I say hello</p>";
+var diffs = DiffBuilder
+    .Compare(control)
+    .WithTest(test)
+    .WithOptions((IDiffingStrategyCollection options) => options.AddDefaultOptions())
+    .Build();
+``` 
+
+Calling the `AddDefaultOptions()` method is equivalent to specifying the following options explicitly: 
 
 ```csharp
 var diffs = DiffBuilder
     .Compare(controlHtml)
     .WithTest(testHtml)
-    .IgnoreDiffAttributes()
-    .IgnoreComments()
-    .WithSearchingNodeMatcher()
-    .WithCssSelectorMatcher()
-    .WithAttributeNameMatcher()
-    .WithNodeNameComparer()
-    .WithIgnoreElementSupport()
-    .WithStyleSheetComparer()
-    .WithTextComparer(WhitespaceOption.Normalize, ignoreCase: false)
-    .WithAttributeComparer()
-    .WithClassAttributeComparer()
-    .WithBooleanAttributeComparer(BooleanAttributeComparision.Strict)
-    .WithStyleAttributeComparer()
+    .WithOptions((IDiffingStrategyCollection options) => options
+        .IgnoreDiffAttributes()
+        .IgnoreComments()
+        .AddSearchingNodeMatcher()
+        .AddCssSelectorMatcher()
+        .AddAttributeNameMatcher()
+        .AddElementComparer()                
+        .AddIgnoreElementSupport()
+        .AddStyleSheetComparer()
+        .AddTextComparer(WhitespaceOption.Normalize, ignoreCase: false)
+        .AddAttributeComparer()
+        .AddClassAttributeComparer()
+        .AddBooleanAttributeComparer(BooleanAttributeComparision.Strict)
+        .AddStyleAttributeComparer()
+    )
     .Build();
 ``` 
 
@@ -54,28 +65,49 @@ Read more about each of the strategies below, including some that are not part o
 These are the built-in filter strategies.
 
 ### Ignore comments
-Enabling this strategy will ignore all comment nodes during comparison. Activate by calling the `IgnoreComments()` method on a `DiffBuilder` instance, e.g.:
+Enabling this strategy will ignore all comment nodes during comparison. Activate by calling the `IgnoreComments()` method on a `IDiffingStrategyCollection` type, e.g.:
 
 ```csharp
 var diffs = DiffBuilder
     .Compare(controlHtml)
     .WithTest(testHtml)
-    .IgnoreComments()
+    .WithOptions(options => options.IgnoreComments())
     .Build();
 ```
 
 _**NOTE**: Currently, the ignore comment strategy does NOT remove comments from CSS or JavaScript embedded in `<style>` or `<script>` tags._
 
-### Ignoring special "diff"-attributes
-Any attributes that starts with `diff:` are automatically filtered out before matching/comparing happens. E.g. `diff:whitespace="..."` does not show up as a missing diff when added to an control element. 
+### Ignore element attribute
+If the `diff:ignore="true"` attribute is used on a control element (`="true"` implicit/optional), all their attributes and child nodes are skipped/ignored during comparison, including those of the test element, the control element is matched with.
 
-To enable this option, use the `IgnoreDiffAttributes()` method on the `DiffBuilder` class, e.g.:
+In this example, the `<h1>` tag, it's attribute and children are considered the same as the element it is matched with:
+
+```html
+<header>
+    <h1 class="heading-1" diff:ignore>Hello world</h1>
+</header>
+```
+
+Activate this strategy by calling the `AddIgnoreElementSupport()` method on the `IDiffingStrategyCollection` type, e.g.:
 
 ```csharp
 var diffs = DiffBuilder
     .Compare(controlHtml)
     .WithTest(testHtml)
-    .IgnoreDiffAttributes()
+    .WithOptions(options => options.AddIgnoreElementSupport())
+    .Build();
+```
+
+### Ignoring special "diff"-attributes
+Any attributes that starts with `diff:` are automatically filtered out before matching/comparing happens. E.g. `diff:whitespace="..."` does not show up as a missing diff when added to an control element. 
+
+To enable this option, use the `IgnoreDiffAttributes()` method on the `IDiffingStrategyCollection` type, e.g.:
+
+```csharp
+var diffs = DiffBuilder
+    .Compare(controlHtml)
+    .WithTest(testHtml)
+    .WithOptions(options => options.IgnoreDiffAttributes())
     .Build();
 ```
 
@@ -92,13 +124,13 @@ If either of the lists is shorter than the other, the remaining items will be re
 
 If a node has been marked as matched by a previous executed matcher, the One-to-one matcher will not use that node in its matching, and skip over it.
 
-To choose this matcher, use the `WithOneToOneNodeMatcher()` method on the `DiffBuilder` class, e.g.:
+To choose this matcher, use the `AddOneToOneNodeMatcher()` method on the `IDiffingStrategyCollection` type, e.g.:
 
 ```csharp
 var diffs = DiffBuilder
     .Compare(controlHtml)
     .WithTest(testHtml)
-    .WithOneToOneNodeMatcher()
+    .WithOptions(options => options.AddOneToOneNodeMatcher())
     .Build();
 ```
 
@@ -128,13 +160,13 @@ forwardSearchingMatcher(controlNodes, testNodes) {
 }
 ```
 
-To choose this matcher, use the `WithSearchingNodeMatcher()` method on the `DiffBuilder` class, e.g.:
+To choose this matcher, use the `AddSearchingNodeMatcher()` method on the `IDiffingStrategyCollection` type, e.g.:
 
 ```csharp
 var diffs = DiffBuilder
     .Compare(controlHtml)
     .WithTest(testHtml)
-    .WithSearchingNodeMatcher()
+    .WithOptions(options => options.AddSearchingNodeMatcher())
     .Build();
 ```
 
@@ -163,13 +195,13 @@ The following control node will be compared against the `<h1>` in the `<header>`
 
 One use case of the CSS-selector element matcher is where you only want to test one part of a sub-tree, and ignore the rest. The example above will report the unmatched test nodes as *unexpected*, but those "diffs" can be ignored, since that is expected. This approach can save you from specifying all the needed control nodes, if only part of a sub tree needs to be compared.
 
-To choose this matcher, use the `WithCssSelectorMatcher()` method on the `DiffBuilder` class, e.g.:
+To choose this matcher, use the `AddCssSelectorMatcher()` method on the `IDiffingStrategyCollection` type, e.g.:
 
 ```csharp
 var diffs = DiffBuilder
     .Compare(controlHtml)
     .WithTest(testHtml)
-    .WithCssSelectorMatcher()
+    .WithOptions(options => options.AddCssSelectorMatcher())
     .Build();
 ```
 
@@ -179,50 +211,42 @@ These are the built-in attribute matching strategies.
 #### Attribute name matcher
 This selector will match attributes on a control element with attributes on a test element using the attribute's name. If an *control* attribute is not matched, it is reported as *missing* and if a *test* attribute is not matched, it is reported as *unexpected*.
 
-To choose this matcher, use the `WithAttributeNameMatcher()` method on the `DiffBuilder` class, e.g.:
+To choose this matcher, use the `AddAttributeNameMatcher()` method on the `IDiffingStrategyCollection` type, e.g.:
 
 ```csharp
 var diffs = DiffBuilder
     .Compare(controlHtml)
     .WithTest(testHtml)
-    .WithAttributeNameMatcher()
+    .WithOptions(options => options.AddAttributeNameMatcher())
     .Build();
 ```
 
 ## Comparing strategies
 These are the built-in comparing strategies.
 
-### Node and element compare strategy
-The basic node compare strategy will simply check if the node's types and node's name are equal.
+### Element compare strategy
+The basic element compare strategy will simply check if the both nodes's are elements and the element's name are the same.
 
-To choose this comparer, use the `WithNodeNameComparer()` method on the `DiffBuilder` class, e.g.:
+To choose this comparer, use the `AddElementComparer()` method on the `IDiffingStrategyCollection` type, e.g.:
 
 ```csharp
 var diffs = DiffBuilder
     .Compare(controlHtml)
     .WithTest(testHtml)
-    .WithNodeNameComparer()
+    .WithOptions(options => options.AddElementComparer())
     .Build();
 ```
 
-#### Ignore element attribute
-If the `diff:ignore="true"` attribute is used on a control element (`="true"` implicit/optional), all their attributes and child nodes are skipped/ignored during comparison, including those of the test element, the control element is matched with.
+### Comment compare strategy
+The basic comment compare strategy will simply check if the both nodes's are comments.
 
-In this example, the `<h1>` tag, it's attribute and children are considered the same as the element it is matched with:
-
-```html
-<header>
-    <h1 class="heading-1" diff:ignore>Hello world</h1>
-</header>
-```
-
-Activate this strategy by calling the `WithIgnoreElementSupport()` method on a `DiffBuilder` instance, e.g.:
+To choose this comparer, use the `AddCommentComparer()` method on the `IDiffingStrategyCollection` type, e.g.:
 
 ```csharp
 var diffs = DiffBuilder
     .Compare(controlHtml)
     .WithTest(testHtml)
-    .WithIgnoreElementSupport()
+    .WithOptions(options => options.AddCommentComparer())
     .Build();
 ```
 
@@ -240,13 +264,13 @@ Whitespace can be a source of false-positives when comparing two HTML fragments.
 
 These options can be set either _globally_ for the entire comparison, or inline on a _specific subtrees in the comparison_. 
 
-To set a global default, call the method `WithTextComparer(WhitespaceOption)` on a `DiffBuilder` instance, e.g.:
+To set a global default, call the method `AddTextComparer(WhitespaceOption)` on the `IDiffingStrategyCollection` type, e.g.:
 
 ```csharp
 var diffs = DiffBuilder
     .Compare(controlHtml)
     .WithTest(testHtml)
-    .WithTextComparer(WhitespaceOption.Normalize)
+    .WithOptions(options => options.AddTextComparer(WhitespaceOption.Normalize))
     .Build();
 ```
 
@@ -267,13 +291,13 @@ To configure/override whitespace rules on a specific subtree in the comparison, 
 This should ensure that the meaning of the content in those tags doesn't change by default. To deal correctly with whitespace in `<style>` tags, use the [Style sheet text comparer](#style-sheet-text-comparer).
 
 #### Perform case-_insensitve_ text comparison
-To compare the text in two text nodes to each other using a case-insensitive comparison, call the `WithTextComparer(ignoreCase: true)` method on a `DiffBuilder` instance, e.g.:
+To compare the text in two text nodes to each other using a case-insensitive comparison, call the `AddTextComparer(ignoreCase: true)` method on the `IDiffingStrategyCollection` type, e.g.:
 
 ```csharp
 var diffs = DiffBuilder
     .Compare(controlHtml)
     .WithTest(testHtml)
-    .WithTextComparer(ignoreCase: true)
+    .WithOptions(options => options.AddTextComparer(ignoreCase: true))
     .Build();
 ```
 
@@ -301,13 +325,13 @@ The above  control text would use case-insensitive regular expression to match a
 #### Style sheet text comparer
 Different whitespace rules apply to style sheets (style information) inside `<style>` tags, than to HTML5. This comparer will parse the style information inside `<style>` tags and compare the result of the parsing, instead doing a direct string comparison. This should remove false-positives where e.g. insignificant whitespace makes two otherwise equal set of style informations result in a diff.
 
-To add this comparer, use the `WithStyleSheetComparer()` method on the `DiffBuilder` class, e.g.:
+To add this comparer, use the `AddStyleSheetComparer()` method on the `IDiffingStrategyCollection` type, e.g.:
 
 ```csharp
 var diffs = DiffBuilder
     .Compare(controlHtml)
     .WithTest(testHtml)
-    .WithStyleSheetComparer()
+    .WithOptions(options => options.AddStyleSheetComparer())
     .Build();
 ```
 
@@ -321,13 +345,13 @@ The *"name and value comparison"* is the base comparison option, and that will t
 - `attr="foo"` is the NOT same as `attr="bar"`
 - `foo="attr"` is the NOT same as `bar="attr"`
 
-To choose this comparer, use the `WithAttributeComparer()` method on the `DiffBuilder` class, e.g.:
+To choose this comparer, use the `AddAttributeComparer()` method on the `IDiffingStrategyCollection` type, e.g.:
 
 ```csharp
 var diffs = DiffBuilder
     .Compare(controlHtml)
     .WithTest(testHtml)
-    .WithAttributeComparer()
+    .WithOptions(options => options.AddAttributeComparer())    
     .Build();
 ```
 
@@ -352,13 +376,13 @@ The class attribute is special in HTML. It can contain a space separated list of
 
 - `class="foo bar"` is the same as `class="bar foo"`
 
-To enable the special handling of the class attribute, call the `WithClassAttributeComparer()` on a `DiffBuilder` instance, e.g.:
+To enable the special handling of the class attribute, call the `AddClassAttributeComparer()` on the `IDiffingStrategyCollection` type, e.g.:
 
 ```csharp
 var diffs = DiffBuilder
     .Compare(controlHtml)
     .WithTest(testHtml)
-    .WithClassAttributeComparer()
+    .WithOptions(options => options.AddClassAttributeComparer())
     .Build();
 ```
 
@@ -374,26 +398,26 @@ For example, in **strict** mode, the following are considered equal:
 - `required=""` is the same as `required="required"`
 - `required="required"` is the same as `required="required"`
 
-To enable the special handling of boolean attributes, call the `WithBooleanAttributeComparer(BooleanAttributeComparision.Strict)` or `WithBooleanAttributeComparer(BooleanAttributeComparision.Loose)` on a `DiffBuilder` instance, e.g.:
+To enable the special handling of boolean attributes, call the `AddBooleanAttributeComparer(BooleanAttributeComparision.Strict)` or `AddBooleanAttributeComparer(BooleanAttributeComparision.Loose)` on the `IDiffingStrategyCollection` type, e.g.:
 
 ```csharp
 var diffs = DiffBuilder
     .Compare(controlHtml)
     .WithTest(testHtml)
-    .WithBooleanAttributeComparer(BooleanAttributeComparision.Strict)
+    .WithOptions(options => options.AddBooleanAttributeComparer(BooleanAttributeComparision.Strict))
     .Build();
 ```
 
 #### Style attribute comparer
 Different whitespace rules apply to style information inside `style="..."` attributes, than to HTML5. This comparer will parse the style information inside `style="..."` attributes and compare the result of the parsing, instead doing a direct string comparison. This should remove false-positives where e.g. insignificant whitespace makes two otherwise equal set of style informations result in a diff.
 
-To add this comparer, use the `WithStyleAttributeComparer()` method on the `DiffBuilder` class, e.g.:
+To add this comparer, use the `AddStyleAttributeComparer()` method on the `IDiffingStrategyCollection` type, e.g.:
 
 ```csharp
 var diffs = DiffBuilder
     .Compare(controlHtml)
     .WithTest(testHtml)
-    .WithStyleAttributeComparer()
+    .WithOptions(options => options.AddStyleAttributeComparer())
     .Build();
 ```
 
