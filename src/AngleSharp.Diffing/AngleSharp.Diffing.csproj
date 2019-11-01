@@ -13,12 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Matchers\**" />
-    <EmbeddedResource Remove="Matchers\**" />
-    <None Remove="Matchers\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AngleSharp" Version="$(AngleSharpVersion)" />
     <PackageReference Include="AngleSharp.Css" Version="$(AngleSharpVersion)" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="$(FxCopAnalyzersVersion)">
