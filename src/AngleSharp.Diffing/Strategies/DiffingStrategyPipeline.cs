@@ -8,7 +8,7 @@ namespace AngleSharp.Diffing.Strategies
     public delegate IEnumerable<TComparison> MatchStrategy<in TSources, out TComparison>(DiffContext context, TSources controlSources, TSources testSources);
     public delegate CompareResult CompareStrategy<TComparison>(in TComparison comparison, CompareResult currentDecision);
 
-    public class DiffingStrategyPipeline : IFilterStrategy, IMatcherStrategy, ICompareStrategy, IDiffingStrategyCollection
+    public class DiffingStrategyPipeline : IDiffingStrategy, IDiffingStrategyCollection
     {
         private readonly List<FilterStrategy<ComparisonSource>> _nodeFilters = new List<FilterStrategy<ComparisonSource>>();
         private readonly List<FilterStrategy<AttributeComparisonSource>> _attrsFilters = new List<FilterStrategy<AttributeComparisonSource>>();

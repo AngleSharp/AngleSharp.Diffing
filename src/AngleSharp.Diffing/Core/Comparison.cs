@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using AngleSharp.Dom;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics;
@@ -8,7 +8,6 @@ namespace AngleSharp.Diffing.Core
     /// <summary>
     /// Represent a comparison between two nodes.
     /// </summary>
-    /// <typeparam name="TNode"></typeparam>
     [DebuggerDisplay("Control: {Control.Path} | Test: {Test.Path}")]
     public readonly struct Comparison : IEquatable<Comparison>
     {
@@ -41,11 +40,13 @@ namespace AngleSharp.Diffing.Core
         }
 
         #region Equals and HashCode
+        #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         public bool Equals(Comparison other) => Control.Equals(other.Control) && Test.Equals(other.Test);
         public override bool Equals(object? obj) => obj is Comparison other && Equals(other);
         public override int GetHashCode() => (Control, Test).GetHashCode();
         public static bool operator ==(Comparison left, Comparison right) => left.Equals(right);
         public static bool operator !=(Comparison left, Comparison right) => !left.Equals(right);
+        #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
         #endregion
     }
 }

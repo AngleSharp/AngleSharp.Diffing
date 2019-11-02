@@ -47,7 +47,7 @@ namespace AngleSharp.Diffing
             return this;
         }
 
-        public IList<IDiff> Build()
+        public IEnumerable<IDiff> Build()
         {
             if (_diffStrategy is null)
             {
@@ -55,7 +55,7 @@ namespace AngleSharp.Diffing
                 _diffStrategy.AddDefaultOptions();
             }
 
-            return new HtmlDifferenceEngine(_diffStrategy, _diffStrategy, _diffStrategy)
+            return new HtmlDifferenceEngine(_diffStrategy)
                 .Compare(Parse(Control), Parse(Test));
         }
 

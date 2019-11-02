@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using AngleSharp.Diffing.Core;
 using AngleSharp.Diffing.Strategies;
 using Shouldly;
@@ -41,7 +42,7 @@ namespace AngleSharp.Diffing
                 .WithTest(test)
                 .Build();
 
-            diffs.Count.ShouldBe(3);
+            diffs.Count().ShouldBe(3);
         }
 
         [Fact(DisplayName = "Setting options works")]
@@ -69,7 +70,8 @@ namespace AngleSharp.Diffing
                     .AddComparer((in Comparison comparison, CompareResult currentDecision) => { nodeComparerCalled = true; return currentDecision; })
                     .AddComparer((in AttributeComparison comparison, CompareResult currentDecision) => { attrComparerCalled = true; return currentDecision; })
                 )
-                .Build();
+                .Build()
+                .ToList();
 
             nodeFilterCalled.ShouldBeTrue();
             attrFilterCalled.ShouldBeTrue();

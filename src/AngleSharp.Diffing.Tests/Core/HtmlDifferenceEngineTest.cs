@@ -4,6 +4,7 @@ using AngleSharp.Dom;
 using AngleSharp.Diffing.Strategies.NodeStrategies;
 using Shouldly;
 using Xunit;
+using System.Linq;
 
 namespace AngleSharp.Diffing.Core
 {
@@ -18,7 +19,8 @@ namespace AngleSharp.Diffing.Core
         {
             var sut = CreateHtmlDiffEngine(nodeMatcher: NoneNodeMatcher, nodeFilter: NoneNodeFilter);
 
-            var results = sut.Compare(ToNodeList("<p></p><!--comment-->text"), ToNodeList("<p></p><!--comment-->text"));
+            var results = sut.Compare(ToNodeList("<p></p><!--comment-->text"), ToNodeList("<p></p><!--comment-->text"))
+                .ToList();
 
             results.Count.ShouldBe(6);
             results[0].ShouldSatisfyAllConditions(
@@ -58,7 +60,7 @@ namespace AngleSharp.Diffing.Core
                 nodeFilter: NoneNodeFilter,
                 nodeComparer: SameResultNodeComparer);
 
-            var results = sut.Compare(nodes, nodes);
+            var results = sut.Compare(nodes, nodes).ToList();
 
             results.Count.ShouldBe(2);
             results[0].ShouldBeOfType<MissingNodeDiff>().Control.Node.ShouldNotBe(nodes[matchIndex]);
@@ -74,7 +76,7 @@ namespace AngleSharp.Diffing.Core
             var nodes = ToNodeList(html);
             var sut = CreateHtmlDiffEngine(nodeMatcher: NoneNodeMatcher, nodeFilter: RemoveCommentNodeFilter);
 
-            var results = sut.Compare(nodes, nodes);
+            var results = sut.Compare(nodes, nodes).ToList();
 
             results.ShouldNotContain(diff => diff.Target == DiffTarget.Comment);
         }
@@ -86,7 +88,7 @@ namespace AngleSharp.Diffing.Core
             var nodes2 = ToNodeList("<p></p><!--removed comment--><span></span>");
             var sut = CreateHtmlDiffEngine(nodeMatcher: NoneNodeMatcher, nodeFilter: RemoveCommentNodeFilter);
 
-            var results = sut.Compare(nodes, nodes);
+            var results = sut.Compare(nodes, nodes).ToList();
 
             results.Count.ShouldBe(4);
             results[0].ShouldBeOfType<MissingNodeDiff>().Control.Index.ShouldBe(0);
@@ -104,7 +106,7 @@ namespace AngleSharp.Diffing.Core
                 nodeFilter: NoneNodeFilter,
                 nodeComparer: DiffResultNodeComparer);
 
-            var results = sut.Compare(nodes, nodes);
+            var results = sut.Compare(nodes, nodes).ToList();
 
             results.Count.ShouldBe(3);
             results[0].ShouldBeOfType<Diff>().ShouldSatisfyAllConditions(
@@ -133,7 +135,7 @@ namespace AngleSharp.Diffing.Core
                 nodeFilter: NoneNodeFilter,
                 nodeComparer: SameResultNodeComparer);
 
-            var results = sut.Compare(nodes, nodes);
+            var results = sut.Compare(nodes, nodes).ToList();
 
             results.ShouldBeEmpty();
         }
@@ -151,7 +153,7 @@ namespace AngleSharp.Diffing.Core
                 attrFilter: NoneAttrFilter,
                 attrComparer: SameResultAttrComparer);
 
-            var results = sut.Compare(nodes, nodes);
+            var results = sut.Compare(nodes, nodes).ToList();
 
             results.Count.ShouldBe(2);
             results[0].ShouldBeOfType<MissingAttrDiff>().ShouldSatisfyAllConditions(
@@ -183,7 +185,7 @@ namespace AngleSharp.Diffing.Core
                 attrFilter: NoneAttrFilter,
                 attrComparer: SameResultAttrComparer);
 
-            var results = sut.Compare(nodes, nodes);
+            var results = sut.Compare(nodes, nodes).ToList();
 
             results.Count.ShouldBe(4);
             results[0].ShouldBeOfType<MissingAttrDiff>().Control.Attribute.Name.ShouldNotBe(matchedAttr);
@@ -208,7 +210,7 @@ namespace AngleSharp.Diffing.Core
                 attrFilter: SpecificAttrFilter(filterOutAttrName),
                 attrComparer: SameResultAttrComparer);
 
-            var results = sut.Compare(nodes, nodes);
+            var results = sut.Compare(nodes, nodes).ToList();
 
             results.Count.ShouldBe(4);
             results[0].ShouldBeOfType<MissingAttrDiff>().Control.Attribute.Name.ShouldNotBe(filterOutAttrName);
@@ -230,7 +232,7 @@ namespace AngleSharp.Diffing.Core
                 attrFilter: NoneAttrFilter,
                 attrComparer: DiffResultAttrComparer);
 
-            var results = sut.Compare(nodes, nodes);
+            var results = sut.Compare(nodes, nodes).ToList();
 
             results.Count.ShouldBe(1);
             results[0].ShouldBeOfType<AttrDiff>().ShouldSatisfyAllConditions(
@@ -269,7 +271,7 @@ namespace AngleSharp.Diffing.Core
                 nodeFilter: NoneNodeFilter,
                 nodeComparer: DiffResultNodeComparer);
 
-            var results = sut.Compare(nodes, nodes);
+            var results = sut.Compare(nodes, nodes).ToList();
 
             results.Count.ShouldBe(5);
             results[0].ShouldBeOfType<Diff>().Control.Node.NodeName.ShouldBe("MAIN");
@@ -289,7 +291,7 @@ namespace AngleSharp.Diffing.Core
                 nodeFilter: NoneNodeFilter,
                 nodeComparer: DiffResultNodeComparer);
 
-            var results = sut.Compare(ToNodeList(control), ToNodeList(test));
+            var results = sut.Compare(ToNodeList(control), ToNodeList(test)).ToList();
 
             results.Count.ShouldBe(2);
             results[0].ShouldBeOfType<Diff>();
@@ -307,7 +309,7 @@ namespace AngleSharp.Diffing.Core
                 nodeFilter: RemoveCommentNodeFilter,
                 nodeComparer: DiffResultNodeComparer);
 
-            var results = sut.Compare(ctrlNodes, testNodes);
+            var results = sut.Compare(ctrlNodes, testNodes).ToList();
 
             results.Count.ShouldBe(4);
             results[0].ShouldBeOfType<Diff>().Control.Path.ShouldBe("main(0)");
@@ -333,7 +335,7 @@ namespace AngleSharp.Diffing.Core
                 attrFilter: NoneAttrFilter,
                 attrComparer: DiffResultAttrComparer);
 
-            var results = sut.Compare(nodes, nodes);
+            var results = sut.Compare(nodes, nodes).ToList();
 
             results.Count.ShouldBe(1);
             results[0].ShouldBeOfType<AttrDiff>().Control.Path.ShouldBe("p(0)[id]");
@@ -352,7 +354,7 @@ namespace AngleSharp.Diffing.Core
                 attrFilter: NoneAttrFilter,
                 attrComparer: DiffResultAttrComparer);
 
-            var results = sut.Compare(nodes, nodes);
+            var results = sut.Compare(nodes, nodes).ToList();
 
             results.Count.ShouldBe(2);
 

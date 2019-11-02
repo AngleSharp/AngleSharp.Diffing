@@ -11,3 +11,6 @@ trim_trailing_whitespace = true
 [*.csproj]
 indent_style = space
 indent_size = 2
+
+# CS1591: Missing XML comment for publicly visible type or member
+dotnet_diagnostic.CS1591.severity = suggestion

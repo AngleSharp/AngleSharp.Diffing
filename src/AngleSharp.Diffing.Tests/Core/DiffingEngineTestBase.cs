@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace AngleSharp.Diffing.Core
@@ -19,24 +19,44 @@ namespace AngleSharp.Diffing.Core
             )
         {
             return new HtmlDifferenceEngine(
-                new MockFilterStrategy(nodeFilter, attrFilter),
-                new MockMatcherStrategy(nodeMatcher, attrMatcher),
-                new MockCompareStrategy(nodeComparer, attrComparer)
+                new MockDiffingStrategy(
+                    nodeFilter, attrFilter,
+                    nodeMatcher, attrMatcher,
+                    nodeComparer, attrComparer
+                )
             );
         }
 
-        class MockMatcherStrategy : IMatcherStrategy
+        class MockDiffingStrategy : IDiffingStrategy
         {
+            private readonly Func<ComparisonSource, FilterDecision>? _nodeFilter;
+            private readonly Func<AttributeComparisonSource, FilterDecision>? _attrFilter;
             private readonly Func<DiffContext, SourceCollection, SourceCollection, IEnumerable<Comparison>>? _nodeMatcher;
             private readonly Func<DiffContext, SourceMap, SourceMap, IEnumerable<AttributeComparison>>? _attrMatcher;
+            private readonly Func<Comparison, CompareResult>? _nodeCompare;
+            private readonly Func<AttributeComparison, CompareResult>? _attrCompare;
 
-            public MockMatcherStrategy(
+            public MockDiffingStrategy(
+                Func<ComparisonSource, FilterDecision>? nodeFilter = null,
+                Func<AttributeComparisonSource, FilterDecision>? attrFilter = null,
                 Func<DiffContext, SourceCollection, SourceCollection, IEnumerable<Comparison>>? nodeMatcher = null,
-                Func<DiffContext, SourceMap, SourceMap, IEnumerable<AttributeComparison>>? attrMatcher = null)
+                Func<DiffContext, SourceMap, SourceMap, IEnumerable<AttributeComparison>>? attrMatcher = null,
+                Func<Comparison, CompareResult>? nodeCompare = null,
+                Func<AttributeComparison, CompareResult>? attrCompare = null)
             {
+                _nodeFilter = nodeFilter;
+                _attrFilter = attrFilter;
                 _nodeMatcher = nodeMatcher;
                 _attrMatcher = attrMatcher;
+                _nodeCompare = nodeCompare;
+                _attrCompare = attrCompare;
             }
+
+            public FilterDecision Filter(in AttributeComparisonSource attributeComparisonSource)
+                => _attrFilter!(attributeComparisonSource);
+
+            public FilterDecision Filter(in ComparisonSource comparisonSource)
+                => _nodeFilter!(comparisonSource);
 
             public IEnumerable<Comparison> Match(
                 DiffContext context,
@@ -47,36 +67,6 @@ namespace AngleSharp.Diffing.Core
                 DiffContext context,
                 SourceMap controlAttributes,
                 SourceMap testAttributes) => _attrMatcher!(context, controlAttributes, testAttributes);
-        }
-
-        class MockFilterStrategy : IFilterStrategy
-        {
-            private readonly Func<ComparisonSource, FilterDecision>? _nodeFilter;
-            private readonly Func<AttributeComparisonSource, FilterDecision>? _attrFilter;
-
-            public MockFilterStrategy(Func<ComparisonSource, FilterDecision>? nodeFilter = null, Func<AttributeComparisonSource, FilterDecision>? attrFilter = null)
-            {
-                _nodeFilter = nodeFilter;
-                _attrFilter = attrFilter;
-            }
-
-            public FilterDecision Filter(in AttributeComparisonSource attributeComparisonSource)
-                => _attrFilter!(attributeComparisonSource);
-
-            public FilterDecision Filter(in ComparisonSource comparisonSource)
-                => _nodeFilter!(comparisonSource);
-        }
-
-        class MockCompareStrategy : ICompareStrategy
-        {
-            private readonly Func<Comparison, CompareResult>? _nodeCompare;
-            private readonly Func<AttributeComparison, CompareResult>? _attrCompare;
-
-            public MockCompareStrategy(Func<Comparison, CompareResult>? nodeCompare = null, Func<AttributeComparison, CompareResult>? attrCompare = null)
-            {
-                _nodeCompare = nodeCompare;
-                _attrCompare = attrCompare;
-            }
 
             public CompareResult Compare(in Comparison comparison)
                 => _nodeCompare!(comparison);

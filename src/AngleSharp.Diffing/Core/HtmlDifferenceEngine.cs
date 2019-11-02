@@ -9,18 +9,14 @@ namespace AngleSharp.Diffing.Core
     // TODO: Create a class that holds all working data for a diff, and all the diffing logic itself. A mix between DiffContext and HtmlDifferenceEngine.
     public class HtmlDifferenceEngine
     {
-        private readonly IFilterStrategy _filterStrategy;
-        private readonly IMatcherStrategy _matcherStrategy;
-        private readonly ICompareStrategy _compareStrategy;
+        private readonly IDiffingStrategy _diffingStrategy;
 
-        public HtmlDifferenceEngine(IFilterStrategy filterStrategy, IMatcherStrategy matcherStrategy, ICompareStrategy compareStrategy)
+        public HtmlDifferenceEngine(IDiffingStrategy diffingStrategy)
         {
-            _filterStrategy = filterStrategy ?? throw new ArgumentNullException(nameof(filterStrategy));
-            _matcherStrategy = matcherStrategy ?? throw new ArgumentNullException(nameof(matcherStrategy));
-            _compareStrategy = compareStrategy ?? throw new ArgumentNullException(nameof(compareStrategy));
+            _diffingStrategy = diffingStrategy ?? throw new ArgumentNullException(nameof(diffingStrategy));
         }
 
-        public IList<IDiff> Compare(INodeList controlNodes, INodeList testNodes)
+        public IEnumerable<IDiff> Compare(INodeList controlNodes, INodeList testNodes)
         {
             if (controlNodes is null) throw new ArgumentNullException(nameof(controlNodes));
             if (testNodes is null) throw new ArgumentNullException(nameof(testNodes));
@@ -33,7 +29,7 @@ namespace AngleSharp.Diffing.Core
             var diffs = CompareNodeLists(context, controlSources, testSources);
             var unmatchedDiffs = context.GetDiffsFromUnmatched();
 
-            return diffs.Concat(unmatchedDiffs).ToList();
+            return diffs.Concat(unmatchedDiffs);
         }
 
         private static DiffContext CreateDiffContext(INodeList controlNodes, INodeList testNodes)
@@ -59,12 +55,12 @@ namespace AngleSharp.Diffing.Core
 
         private void ApplyNodeFilter(SourceCollection sources)
         {
-            sources.Remove(_filterStrategy.Filter);
+            sources.Remove(_diffingStrategy.Filter);
         }
 
         private IEnumerable<Comparison> MatchNodes(DiffContext context, SourceCollection controls, SourceCollection tests)
         {
-            foreach (var comparison in _matcherStrategy.Match(context, controls, tests))
+            foreach (var comparison in _diffingStrategy.Match(context, controls, tests))
             {
                 UpdateMatchedTracking(comparison);
                 yield return comparison;
@@ -101,7 +97,7 @@ namespace AngleSharp.Diffing.Core
                 return CompareElement(context, comparison);
             }
 
-            var compareRes = _compareStrategy.Compare(comparison);
+            var compareRes = _diffingStrategy.Compare(comparison);
             if (compareRes == CompareResult.Different)
             {
                 IDiff diff = new Diff(comparison);
@@ -115,7 +111,7 @@ namespace AngleSharp.Diffing.Core
         {
             var result = new List<IDiff>();
 
-            var compareRes = _compareStrategy.Compare(comparison);
+            var compareRes = _diffingStrategy.Compare(comparison);
             if (compareRes == CompareResult.Different)
             {
                 result.Add(new Diff(comparison));
@@ -147,12 +143,12 @@ namespace AngleSharp.Diffing.Core
 
         private void ApplyFilterAttributes(SourceMap controlAttrs)
         {
-            controlAttrs.Remove(_filterStrategy.Filter);
+            controlAttrs.Remove(_diffingStrategy.Filter);
         }
 
         private IEnumerable<AttributeComparison> MatchAttributes(DiffContext context, SourceMap controls, SourceMap tests)
         {
-            foreach (var comparison in _matcherStrategy.Match(context, controls, tests))
+            foreach (var comparison in _diffingStrategy.Match(context, controls, tests))
             {
                 MarkSelectedSourcesAsMatched(comparison);
                 yield return comparison;
@@ -198,7 +194,7 @@ namespace AngleSharp.Diffing.Core
         {
             foreach (var comparison in comparisons)
             {
-                var compareRes = _compareStrategy.Compare(comparison);
+                var compareRes = _diffingStrategy.Compare(comparison);
                 if (compareRes == CompareResult.Different)
                     yield return new AttrDiff(comparison);
             }
