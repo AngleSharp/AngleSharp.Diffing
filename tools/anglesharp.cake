@@ -76,7 +76,7 @@ Task("Run-Unit-Tests")
         var settings = new DotNetCoreTestSettings
         {
             Configuration = configuration,
-            NoBuild = true
+            NoBuild = false
         };
 
         if (isRunningOnAppVeyor)
