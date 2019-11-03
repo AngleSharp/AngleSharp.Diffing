@@ -112,7 +112,7 @@ Task("Create-Package")
         var settings = new DotNetCorePackSettings
         {
             Configuration = configuration,
-		    NoBuild = true,
+		    NoBuild = false,
             OutputDirectory =  nugetRoot,
 		    ArgumentCustomization = args => args.Append("--include-symbols").Append("-p:SymbolPackageFormat=snupkg")
         };
