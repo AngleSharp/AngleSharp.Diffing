@@ -1,4 +1,4 @@
-﻿using AngleSharp.Dom;
+using AngleSharp.Dom;
 
 namespace AngleSharp.Diffing.Core
 {

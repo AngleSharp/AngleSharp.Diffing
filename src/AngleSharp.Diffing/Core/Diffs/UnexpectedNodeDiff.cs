@@ -1,8 +1,8 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 
 namespace AngleSharp.Diffing.Core
 {
-    [DebuggerDisplay("Diff={Target} {Result} Test={Test.Node.NodeName}[{Test.Index}]")]
+    [DebuggerDisplay("Unexpected {Target}: Test = {Test.Path}")]
     public class UnexpectedNodeDiff : UnexpectedDiffBase<ComparisonSource>
     {
         public UnexpectedNodeDiff(in ComparisonSource test) : base(test, test.Node.NodeType.ToDiffTarget())

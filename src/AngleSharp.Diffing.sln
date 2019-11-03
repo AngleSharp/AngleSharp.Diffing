@@ -22,6 +22,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{166F21F6-7
 		..\CHANGELOG.md = ..\CHANGELOG.md
 		..\docs\CustomOptions.md = ..\docs\CustomOptions.md
 		..\docs\DiffingEngineInternals.md = ..\docs\DiffingEngineInternals.md
+		..\docs\header.png = ..\docs\header.png
+		..\docs\logo.png = ..\docs\logo.png
 		..\docs\Options.md = ..\docs\Options.md
 		..\README.md = ..\README.md
 	EndProjectSection

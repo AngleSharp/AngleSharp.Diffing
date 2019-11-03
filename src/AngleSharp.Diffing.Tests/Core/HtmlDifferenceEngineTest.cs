@@ -109,17 +109,17 @@ namespace AngleSharp.Diffing.Core
             var results = sut.Compare(nodes, nodes).ToList();
 
             results.Count.ShouldBe(3);
-            results[0].ShouldBeOfType<Diff>().ShouldSatisfyAllConditions(
+            results[0].ShouldBeOfType<NodeDiff>().ShouldSatisfyAllConditions(
                 diff => diff.Control.Node.NodeName.ShouldBe("P"),
                 diff => diff.Result.ShouldBe(DiffResult.Different),
                 diff => diff.Target.ShouldBe(DiffTarget.Element)
             );
-            results[1].ShouldBeOfType<Diff>().ShouldSatisfyAllConditions(
+            results[1].ShouldBeOfType<NodeDiff>().ShouldSatisfyAllConditions(
                 diff => diff.Control.Node.NodeName.ShouldBe("#comment"),
                 diff => diff.Result.ShouldBe(DiffResult.Different),
                 diff => diff.Target.ShouldBe(DiffTarget.Comment)
             );
-            results[2].ShouldBeOfType<Diff>().ShouldSatisfyAllConditions(
+            results[2].ShouldBeOfType<NodeDiff>().ShouldSatisfyAllConditions(
                 diff => diff.Control.Node.NodeName.ShouldBe("#text"),
                 diff => diff.Result.ShouldBe(DiffResult.Different),
                 diff => diff.Target.ShouldBe(DiffTarget.Text)
@@ -274,11 +274,11 @@ namespace AngleSharp.Diffing.Core
             var results = sut.Compare(nodes, nodes).ToList();
 
             results.Count.ShouldBe(5);
-            results[0].ShouldBeOfType<Diff>().Control.Node.NodeName.ShouldBe("MAIN");
-            results[1].ShouldBeOfType<Diff>().Control.Node.NodeName.ShouldBe("H1");
-            results[2].ShouldBeOfType<Diff>().Control.Node.NodeValue.ShouldBe("foobar");
-            results[3].ShouldBeOfType<Diff>().Control.Node.NodeName.ShouldBe("P");
-            results[4].ShouldBeOfType<Diff>().Control.Node.NodeName.ShouldBe("#text");
+            results[0].ShouldBeOfType<NodeDiff>().Control.Node.NodeName.ShouldBe("MAIN");
+            results[1].ShouldBeOfType<NodeDiff>().Control.Node.NodeName.ShouldBe("H1");
+            results[2].ShouldBeOfType<NodeDiff>().Control.Node.NodeValue.ShouldBe("foobar");
+            results[3].ShouldBeOfType<NodeDiff>().Control.Node.NodeName.ShouldBe("P");
+            results[4].ShouldBeOfType<NodeDiff>().Control.Node.NodeName.ShouldBe("#text");
         }
 
         [Theory(DisplayName = "When only one of the control or test node in a comparison has child nodes, a missing/unexpected diff is returned")]
@@ -294,7 +294,7 @@ namespace AngleSharp.Diffing.Core
             var results = sut.Compare(ToNodeList(control), ToNodeList(test)).ToList();
 
             results.Count.ShouldBe(2);
-            results[0].ShouldBeOfType<Diff>();
+            results[0].ShouldBeOfType<NodeDiff>();
             results[1].ShouldBeOfType(expectedDiffType);
         }
 
@@ -312,14 +312,14 @@ namespace AngleSharp.Diffing.Core
             var results = sut.Compare(ctrlNodes, testNodes).ToList();
 
             results.Count.ShouldBe(4);
-            results[0].ShouldBeOfType<Diff>().Control.Path.ShouldBe("main(0)");
-            results[0].ShouldBeOfType<Diff>().Test.Path.ShouldBe("main(1)");
-            results[1].ShouldBeOfType<Diff>().Control.Path.ShouldBe("main(0) > h1(0)");
-            results[1].ShouldBeOfType<Diff>().Test.Path.ShouldBe("main(1) > h1(0)");
-            results[2].ShouldBeOfType<Diff>().Control.Path.ShouldBe("main(0) > h1(0) > p(1)");
-            results[2].ShouldBeOfType<Diff>().Test.Path.ShouldBe("main(1) > h1(0) > p(0)");
-            results[3].ShouldBeOfType<Diff>().Control.Path.ShouldBe("main(0) > h1(0) > p(1) > #text(0)");
-            results[3].ShouldBeOfType<Diff>().Test.Path.ShouldBe("main(1) > h1(0) > p(0) > #text(0)");
+            results[0].ShouldBeOfType<NodeDiff>().Control.Path.ShouldBe("main(0)");
+            results[0].ShouldBeOfType<NodeDiff>().Test.Path.ShouldBe("main(1)");
+            results[1].ShouldBeOfType<NodeDiff>().Control.Path.ShouldBe("main(0) > h1(0)");
+            results[1].ShouldBeOfType<NodeDiff>().Test.Path.ShouldBe("main(1) > h1(0)");
+            results[2].ShouldBeOfType<NodeDiff>().Control.Path.ShouldBe("main(0) > h1(0) > p(1)");
+            results[2].ShouldBeOfType<NodeDiff>().Test.Path.ShouldBe("main(1) > h1(0) > p(0)");
+            results[3].ShouldBeOfType<NodeDiff>().Control.Path.ShouldBe("main(0) > h1(0) > p(1) > #text(0)");
+            results[3].ShouldBeOfType<NodeDiff>().Test.Path.ShouldBe("main(1) > h1(0) > p(0) > #text(0)");
         }
 
         [Fact(DisplayName = "Attribute path in comparison sources are based on nodes tree structure")]
@@ -339,6 +339,7 @@ namespace AngleSharp.Diffing.Core
 
             results.Count.ShouldBe(1);
             results[0].ShouldBeOfType<AttrDiff>().Control.Path.ShouldBe("p(0)[id]");
+            results[0].ShouldBeOfType<AttrDiff>().Test.Path.ShouldBe("p(0)[id]");
         }
 
         [Fact(DisplayName = "Comparison sources have their type set correctly")]
@@ -358,8 +359,8 @@ namespace AngleSharp.Diffing.Core
 
             results.Count.ShouldBe(2);
 
-            results[0].ShouldBeOfType<Diff>().Control.SourceType.ShouldBe(ComparisonSourceType.Control);
-            results[0].ShouldBeOfType<Diff>().Test.SourceType.ShouldBe(ComparisonSourceType.Test);
+            results[0].ShouldBeOfType<NodeDiff>().Control.SourceType.ShouldBe(ComparisonSourceType.Control);
+            results[0].ShouldBeOfType<NodeDiff>().Test.SourceType.ShouldBe(ComparisonSourceType.Test);
             results[1].ShouldBeOfType<AttrDiff>().Control.SourceType.ShouldBe(ComparisonSourceType.Control);
             results[1].ShouldBeOfType<AttrDiff>().Test.SourceType.ShouldBe(ComparisonSourceType.Test);
         }

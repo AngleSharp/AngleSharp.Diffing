@@ -1,5 +1,5 @@
-# 0.13.0
+# 0.13.0-preview-1
 
-Released on Thursday, October 31 2019.
+Released on Sunday, November 3, 2019.
 
-- Initial release
+This is the initial preview release of AngleSharp.Diffing. 

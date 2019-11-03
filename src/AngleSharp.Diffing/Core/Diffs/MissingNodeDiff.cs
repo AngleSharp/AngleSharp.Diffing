@@ -1,9 +1,8 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 
 namespace AngleSharp.Diffing.Core
 {
-
-    [DebuggerDisplay("Diff={Target} {Result} Control={Control.Node.NodeName}[{Control.Index}]")]
+    [DebuggerDisplay("Missing {Target}: Control = {Control.Path}")]
     public class MissingNodeDiff : MissingDiffBase<ComparisonSource>
     {
         public MissingNodeDiff(in ComparisonSource control) : base(control, control.Node.NodeType.ToDiffTarget())

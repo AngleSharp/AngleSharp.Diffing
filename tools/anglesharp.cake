@@ -9,7 +9,7 @@ var isRunningOnAppVeyor = AppVeyor.IsRunningOnAppVeyor;
 var isPullRequest = AppVeyor.Environment.PullRequest.IsPullRequest;
 var buildNumber = AppVeyor.Environment.Build.Number;
 var releaseNotes = ParseReleaseNotes("./CHANGELOG.md");
-var version = releaseNotes.Version.ToString();
+var version = releaseNotes.RawVersionLine.Substring(2);
 var buildDir = Directory($"./src/{projectName}/bin") + Directory(configuration);
 var buildResultDir = Directory("./bin") + Directory(version);
 var nugetRoot = buildResultDir + Directory("nuget");
@@ -58,10 +58,14 @@ Task("Build")
     .IsDependentOn("Restore-Packages")
     .Does(() =>
     {
+        var settings = new DotNetCoreMSBuildSettings();
+        settings.WarningCodesAsMessage.Add("CS1591"); // During CI builds we don't want the output polluted by "warning CS1591: Missing XML comment" warnings
+
         ReplaceRegexInFiles("./src/Directory.Build.props", "(?<=<Version>)(.+?)(?=</Version>)", version);
         DotNetCoreBuild($"./src/{solutionName}.sln", new DotNetCoreBuildSettings
         {
            Configuration = configuration,
+           MSBuildSettings = settings
         });
     });
 
@@ -72,15 +76,12 @@ Task("Run-Unit-Tests")
         var settings = new DotNetCoreTestSettings
         {
             Configuration = configuration,
+            NoBuild = true
         };
 
         if (isRunningOnAppVeyor)
         {
             settings.TestAdapterPath = Directory(".");
-            //settings.Logger = "Appveyor";
-            // TODO Finds a way to exclude tests not allowed to run on appveyor
-            // Not used in current code
-            //settings.Where = "cat != ExcludeFromAppVeyor";
         }
 
         DotNetCoreTest($"./src/{solutionName}.Tests/", settings);
@@ -105,26 +106,40 @@ Task("Copy-Files")
     });
 
 Task("Create-Package")
-    .IsDependentOn("Copy-Files")
+    .IsDependentOn("Build")
     .Does(() =>
     {
-        var nugetExe = GetFiles("./tools/**/nuget.exe").FirstOrDefault()
-            ?? (isRunningOnAppVeyor ? GetFiles("C:\\Tools\\NuGet3\\nuget.exe").FirstOrDefault() : null)
-            ?? throw new InvalidOperationException("Could not find nuget.exe.");
-
-        var nuspec = nugetRoot + File($"{projectName}.nuspec");
-
-        NuGetPack(nuspec, new NuGetPackSettings
+        var settings = new DotNetCorePackSettings
         {
-            Version = version,
-            OutputDirectory = nugetRoot,
-            Symbols = false,
-            Properties = new Dictionary<String, String>
-            {
-                { "Configuration", configuration },
-            },
-        });
+            Configuration = configuration,
+		    NoBuild = true,
+            OutputDirectory =  nugetRoot,
+		    ArgumentCustomization = args => args.Append("--include-symbols").Append("-p:SymbolPackageFormat=snupkg")
+        };
+
+        DotNetCorePack($"./src/{solutionName}/", settings);
     });
+//    .IsDependentOn("Copy-Files")
+//    .Does(() =>
+//    {
+//        var nugetExe = GetFiles("./tools/**/nuget.exe").FirstOrDefault()
+//            ?? (isRunningOnAppVeyor ? GetFiles("C:\\Tools\\NuGet3\\nuget.exe").FirstOrDefault() : null)
+//            ?? throw new InvalidOperationException("Could not find nuget.exe.");
+//
+//        var nuspec = nugetRoot + File($"{projectName}.nuspec");
+//
+//        NuGetPack(nuspec, new NuGetPackSettings
+//        {
+//            Version = version,
+//            OutputDirectory = nugetRoot,
+//            Symbols = true,
+//
+//            Properties = new Dictionary<String, String>
+//            {
+//                { "Configuration", configuration },
+//            },
+//        });
+//    });
 
 Task("Publish-Package")
     .IsDependentOn("Create-Package")
@@ -170,7 +185,7 @@ Task("Publish-Release")
         {
             Name = version,
             Body = String.Join(Environment.NewLine, releaseNotes.Notes),
-            Prerelease = false,
+            Prerelease = releaseNotes.Version.ToString() == version,
             TargetCommitish = "master",
         }).Wait();
     });

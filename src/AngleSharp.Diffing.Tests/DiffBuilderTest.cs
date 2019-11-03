@@ -34,15 +34,22 @@ namespace AngleSharp.Diffing
         [Fact(DisplayName = "Calling Build() with DefaultOptions() returns expected diffs")]
         public void Test003()
         {
-            var control = "<p>hello <em>world</em></p>";
-            var test = "<p>world says <strong>hello</strong></p>";
+            var control = @"<p attr=""foo"" missing>hello <em>world</em></p>";
+            var test = @"<p attr=""bar"" unexpected>world says <strong>hello</strong></p>";
 
             var diffs = DiffBuilder
                 .Compare(control)
                 .WithTest(test)
-                .Build();
+                .Build()
+                .ToList();
 
-            diffs.Count().ShouldBe(3);
+            diffs.Count.ShouldBe(6);
+            diffs.SingleOrDefault(x => x is AttrDiff).ShouldNotBeNull();
+            diffs.SingleOrDefault(x => x is MissingAttrDiff).ShouldNotBeNull();
+            diffs.SingleOrDefault(x => x is UnexpectedAttrDiff).ShouldNotBeNull();
+            diffs.SingleOrDefault(x => x is NodeDiff).ShouldNotBeNull();
+            diffs.SingleOrDefault(x => x is MissingNodeDiff).ShouldNotBeNull();
+            diffs.SingleOrDefault(x => x is UnexpectedNodeDiff).ShouldNotBeNull();
         }
 
         [Fact(DisplayName = "Setting options works")]

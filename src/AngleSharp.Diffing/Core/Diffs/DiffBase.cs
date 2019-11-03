@@ -1,8 +1,5 @@
-﻿using System.Diagnostics;
-
 namespace AngleSharp.Diffing.Core
 {
-    [DebuggerDisplay("Diff={Target} {Result}")]
     public abstract class DiffBase<T> : IDiff where T : struct
     {
         public T Control { get; }
