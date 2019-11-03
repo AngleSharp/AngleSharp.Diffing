@@ -19,7 +19,7 @@
     <PackageIconUrl>https://raw.github.com/AngleSharp/AngleSharp.Diffing/master/docs/logo.png</PackageIconUrl>
     <PackageTags>html html5 css css3 dom library diffing anglesharp diff difference compare comparison testing</PackageTags>
     <Copyright>Copyright 2019, Egil Hansen</Copyright>
-    <RepositoryUrl>https://github.com/egil/razor-components-testing-library</RepositoryUrl>
+    <RepositoryUrl>https://github.com/AngleSharp/AngleSharp.Diffing</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>
