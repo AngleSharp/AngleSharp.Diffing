@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using AngleSharp.Dom;
 using AngleSharp.Diffing.Core;
@@ -7,18 +7,20 @@ namespace AngleSharp.Diffing
 {
     public static class AngleSharpDomExtensions
     {
-        public static SourceCollection ToSourceCollection(this INodeList nodelist, ComparisonSourceType sourceType, string path = "")
+        public static SourceCollection ToSourceCollection(this IEnumerable<INode> nodelist, ComparisonSourceType sourceType, string path = "")
         {
             return new SourceCollection(sourceType, nodelist.ToComparisonSourceList(sourceType, path));
         }
 
-        public static IEnumerable<ComparisonSource> ToComparisonSourceList(this INodeList nodes, ComparisonSourceType sourceType, string path = "")
+        public static IEnumerable<ComparisonSource> ToComparisonSourceList(this IEnumerable<INode> nodes, ComparisonSourceType sourceType, string path = "")
         {
             if (nodes is null) throw new ArgumentNullException(nameof(nodes));
 
-            for (int index = 0; index < nodes.Length; index++)
+            var index = 0;
+            foreach (var node in nodes)
             {
-                yield return nodes[index].ToComparisonSource(index, sourceType, path);
+                yield return node.ToComparisonSource(index, sourceType, path);
+                index += 1;
             }
             yield break;
         }

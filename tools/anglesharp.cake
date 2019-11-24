@@ -58,14 +58,14 @@ Task("Build")
     .IsDependentOn("Restore-Packages")
     .Does(() =>
     {
-        var settings = new DotNetCoreMSBuildSettings();
-        settings.WarningCodesAsMessage.Add("CS1591"); // During CI builds we don't want the output polluted by "warning CS1591: Missing XML comment" warnings
+        var buildSettings = new DotNetCoreMSBuildSettings();
+        buildSettings.WarningCodesAsMessage.Add("CS1591"); // During CI builds we don't want the output polluted by "warning CS1591: Missing XML comment" warnings
 
         ReplaceRegexInFiles("./src/Directory.Build.props", "(?<=<Version>)(.+?)(?=</Version>)", version);
         DotNetCoreBuild($"./src/{solutionName}.sln", new DotNetCoreBuildSettings
         {
            Configuration = configuration,
-           MSBuildSettings = settings
+           MSBuildSettings = buildSettings
         });
     });
 
@@ -76,7 +76,7 @@ Task("Run-Unit-Tests")
         var settings = new DotNetCoreTestSettings
         {
             Configuration = configuration,
-            NoBuild = false
+            NoBuild = false,
         };
 
         if (isRunningOnAppVeyor)
@@ -185,7 +185,7 @@ Task("Publish-Release")
         {
             Name = version,
             Body = String.Join(Environment.NewLine, releaseNotes.Notes),
-            Prerelease = releaseNotes.Version.ToString() == version,
+            Prerelease = releaseNotes.Version.ToString() != version,
             TargetCommitish = "master",
         }).Wait();
     });

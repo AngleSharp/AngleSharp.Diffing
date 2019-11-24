@@ -16,7 +16,15 @@ namespace AngleSharp.Diffing.Core
             _diffingStrategy = diffingStrategy ?? throw new ArgumentNullException(nameof(diffingStrategy));
         }
 
-        public IEnumerable<IDiff> Compare(INodeList controlNodes, INodeList testNodes)
+        public IEnumerable<IDiff> Compare(INode controlNode, INode testNode)
+        {
+            if (controlNode is null) throw new ArgumentNullException(nameof(controlNode));
+            if (testNode is null) throw new ArgumentNullException(nameof(testNode));
+
+            return Compare(new[] { controlNode }, new[] { testNode });
+        }
+
+        public IEnumerable<IDiff> Compare(IEnumerable<INode> controlNodes, IEnumerable<INode> testNodes)
         {
             if (controlNodes is null) throw new ArgumentNullException(nameof(controlNodes));
             if (testNodes is null) throw new ArgumentNullException(nameof(testNodes));
@@ -24,7 +32,7 @@ namespace AngleSharp.Diffing.Core
             var controlSources = controlNodes.ToSourceCollection(ComparisonSourceType.Control);
             var testSources = testNodes.ToSourceCollection(ComparisonSourceType.Test);
 
-            var context = CreateDiffContext(controlNodes, testNodes);
+            var context = CreateDiffContext(controlSources, testSources);
 
             var diffs = CompareNodeLists(context, controlSources, testSources);
             var unmatchedDiffs = context.GetDiffsFromUnmatched();
@@ -32,13 +40,13 @@ namespace AngleSharp.Diffing.Core
             return diffs.Concat(unmatchedDiffs);
         }
 
-        private static DiffContext CreateDiffContext(INodeList controlNodes, INodeList testNodes)
+        private static DiffContext CreateDiffContext(SourceCollection controlNodes, SourceCollection testNodes)
         {
             IElement? controlRoot = null;
             IElement? testRoot = null;
 
-            if (controlNodes.Length > 0 && controlNodes[0].GetRoot() is IElement r1) { controlRoot = r1; }
-            if (testNodes.Length > 0 && testNodes[0].GetRoot() is IElement r2) { testRoot = r2; }
+            if (controlNodes.Count > 0 && controlNodes.First().Node.GetRoot() is IElement r1) { controlRoot = r1; }
+            if (testNodes.Count > 0 && testNodes.First().Node.GetRoot() is IElement r2) { testRoot = r2; }
 
             return new DiffContext(controlRoot, testRoot);
         }
