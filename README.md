@@ -1,4 +1,7 @@
-![AngleSharp Diffing](/docs/header.png)
+<p align="center">
+  <img width="300" height="200" src="/docs/header.png">
+</p>
+
 # AngleSharp Diffing - A diff/compare library for AngleSharp
 [![Build status](https://ci.appveyor.com/api/projects/status/8awr3r4ylwy9habm?svg=true)](https://ci.appveyor.com/project/FlorianRappl/anglesharp-diffing)
 [![GitHub Tag](https://img.shields.io/github/tag/AngleSharp/AngleSharp.Diffing.svg?style=flat-square)](https://github.com/AngleSharp/AngleSharp.Diffing/releases)
