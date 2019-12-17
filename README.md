@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="300" height="200" src="/docs/header.png">
+  <img width="400" src="/docs/header.png">
 </p>
 
 # AngleSharp Diffing - A diff/compare library for AngleSharp
