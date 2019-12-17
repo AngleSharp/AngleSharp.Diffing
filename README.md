@@ -5,7 +5,6 @@
 [![NuGet Count](https://img.shields.io/nuget/dt/AngleSharp.Diffing.svg?style=flat-square)](https://www.nuget.org/packages/AngleSharp.Diffing/)
 [![Issues Open](https://img.shields.io/github/issues/AngleSharp/AngleSharp.Diffing.svg?style=flat-square)](https://github.com/AngleSharp/AngleSharp.Diffing/issues)
 [![Gitter Chat](http://img.shields.io/badge/gitter-AngleSharp/AngleSharp-blue.svg?style=flat-square)](https://gitter.im/AngleSharp/AngleSharp)
-[![StackOverflow Questions](https://img.shields.io/stackexchange/stackoverflow/t/anglesharp.svg?style=flat-square)](https://stackoverflow.com/tags/anglesharp)
 [![CLA Assistant](https://cla-assistant.io/readme/badge/AngleSharp/AngleSharp.Diffing?style=flat-square)](https://cla-assistant.io/AngleSharp/AngleSharp.Diffing)
 
 AngleSharp Diffing makes it possible to compare AngleSharp _control_ nodes and _test_ nodes and get a list of differences between them.
