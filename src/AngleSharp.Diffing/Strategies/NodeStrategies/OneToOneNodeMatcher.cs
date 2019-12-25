@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using AngleSharp.Diffing.Core;
 
@@ -6,7 +6,7 @@ namespace AngleSharp.Diffing.Strategies.NodeStrategies
 {
     public static class OneToOneNodeMatcher
     {
-        public static IEnumerable<Comparison> Match(DiffContext context,
+        public static IEnumerable<Comparison> Match(IDiffContext context,
                                                     SourceCollection controlSources,
                                                     SourceCollection testSources)
         {

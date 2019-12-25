@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using AngleSharp.Diffing.Core;
 using AngleSharp.Diffing.Extensions;
@@ -7,7 +7,7 @@ namespace AngleSharp.Diffing.Strategies.NodeStrategies
 {
     public static class ForwardSearchingNodeMatcher
     {
-        public static IEnumerable<Comparison> Match(DiffContext context,
+        public static IEnumerable<Comparison> Match(IDiffContext context,
                                              SourceCollection controlSources,
                                              SourceCollection testSources)
         {

@@ -1,30 +1,32 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using AngleSharp.Dom;
 using AngleSharp.Diffing.Extensions;
 
 namespace AngleSharp.Diffing.Core
 {
-    public class DiffContext
+    internal class DiffContext : IDiffContext
     {
         private readonly IElement? _controlRoot;
         private readonly IElement? _testRoot;
 
-        internal HashSet<ComparisonSource> MissingSources { get; }
+        internal HashSet<ComparisonSource> MissingSources { get; } = new HashSet<ComparisonSource>();
 
-        internal HashSet<ComparisonSource> UnexpectedSources { get; }
+        internal HashSet<ComparisonSource> UnexpectedSources { get; } = new HashSet<ComparisonSource>();
 
-        internal HashSet<AttributeComparisonSource> MissingAttributeSources { get; }
+        internal HashSet<AttributeComparisonSource> MissingAttributeSources { get; } = new HashSet<AttributeComparisonSource>();
 
-        internal HashSet<AttributeComparisonSource> UnexpectedAttributeSources { get; }
+        internal HashSet<AttributeComparisonSource> UnexpectedAttributeSources { get; } = new HashSet<AttributeComparisonSource>();
+
+        public DiffContext(SourceCollection controlSources, SourceCollection testSources)
+        {
+            if (controlSources.Count > 0 && controlSources[0].Node.GetRoot() is IElement r1) { _controlRoot = r1; }
+            if (testSources.Count > 0 && testSources[0].Node.GetRoot() is IElement r2) { _testRoot = r2; }
+        }
 
         public DiffContext(IElement? controlRoot, IElement? testRoot)
         {
             _controlRoot = controlRoot;
             _testRoot = testRoot;
-            MissingSources = new HashSet<ComparisonSource>();
-            UnexpectedSources = new HashSet<ComparisonSource>();
-            MissingAttributeSources = new HashSet<AttributeComparisonSource>();
-            UnexpectedAttributeSources = new HashSet<AttributeComparisonSource>();
         }
 
         public IHtmlCollection<IElement> QueryControlRoot(string selector)

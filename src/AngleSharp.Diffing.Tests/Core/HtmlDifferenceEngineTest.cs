@@ -360,17 +360,17 @@ namespace AngleSharp.Diffing.Core
         #endregion
 
         #region NodeMatchers
-        private static IEnumerable<Comparison> NoneNodeMatcher(DiffContext ctx, SourceCollection controlNodes, SourceCollection testNodes)
+        private static IEnumerable<Comparison> NoneNodeMatcher(IDiffContext ctx, SourceCollection controlNodes, SourceCollection testNodes)
             => Array.Empty<Comparison>();
 
-        private static Func<DiffContext, SourceCollection, SourceCollection, IEnumerable<Comparison>> SpecificIndexNodeMatcher(int index)
+        private static Func<IDiffContext, SourceCollection, SourceCollection, IEnumerable<Comparison>> SpecificIndexNodeMatcher(int index)
             => (ctx, controlNodes, testNodes) =>
             {
                 return new List<Comparison> { new Comparison(controlNodes[index], testNodes[index]) };
             };
 
         private static IEnumerable<Comparison> OneToOneNodeListMatcher(
-            DiffContext context,
+            IDiffContext context,
             SourceCollection controlNodes,
             SourceCollection testNodes) => OneToOneNodeMatcher.Match(context, controlNodes, testNodes);
 
@@ -383,11 +383,11 @@ namespace AngleSharp.Diffing.Core
 
         #region AttributeMatchers
         private static IReadOnlyList<AttributeComparison> NoneAttributeMatcher(
-            DiffContext context,
+            IDiffContext context,
             SourceMap controlAttributes,
             SourceMap testAttributes) => Array.Empty<AttributeComparison>();
 
-        private static Func<DiffContext, SourceMap, SourceMap, IEnumerable<AttributeComparison>> SpecificAttributeMatcher(string matchAttrName)
+        private static Func<IDiffContext, SourceMap, SourceMap, IEnumerable<AttributeComparison>> SpecificAttributeMatcher(string matchAttrName)
         {
             return (ctx, ctrlAttrs, testAttrs) => new List<AttributeComparison>
             {
@@ -395,7 +395,7 @@ namespace AngleSharp.Diffing.Core
             };
         }
 
-        private static IEnumerable<AttributeComparison> AttributeNameMatcher(DiffContext context, SourceMap controlAttrs, SourceMap testAttrs)
+        private static IEnumerable<AttributeComparison> AttributeNameMatcher(IDiffContext context, SourceMap controlAttrs, SourceMap testAttrs)
         {
             foreach (var ctrlAttrSrc in controlAttrs)
             {

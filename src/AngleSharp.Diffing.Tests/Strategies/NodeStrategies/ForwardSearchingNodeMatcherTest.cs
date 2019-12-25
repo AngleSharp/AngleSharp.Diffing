@@ -8,8 +8,6 @@ namespace AngleSharp.Diffing.Strategies.NodeStrategies
 {
     public class ForwardSearchingNodeMatcherTest : DiffingTestBase
     {
-        private readonly DiffContext _context = new DiffContext(null, null);
-
         public ForwardSearchingNodeMatcherTest(DiffingTestFixture fixture) : base(fixture)
         {
         }
@@ -23,7 +21,7 @@ namespace AngleSharp.Diffing.Strategies.NodeStrategies
             var controls = ToSourceCollection(controlHtml, ComparisonSourceType.Control);
             var tests = ToSourceCollection(testHtml, ComparisonSourceType.Test);
 
-            var actual = ForwardSearchingNodeMatcher.Match(_context, controls, tests).ToList();
+            var actual = ForwardSearchingNodeMatcher.Match(DummyContext, controls, tests).ToList();
 
             actual.Count.ShouldBe(1);
             actual.ShouldAllBe((c, idx) => c.Control == controls[idx] && c.Test == tests[idx]);
@@ -38,7 +36,7 @@ namespace AngleSharp.Diffing.Strategies.NodeStrategies
             controls.Remove((in ComparisonSource x) => x.Node is IElement ? FilterDecision.Keep : FilterDecision.Exclude);
             tests.Remove((in ComparisonSource x) => x.Node is IElement ? FilterDecision.Keep : FilterDecision.Exclude);
 
-            var actual = ForwardSearchingNodeMatcher.Match(_context, controls, tests).ToList();
+            var actual = ForwardSearchingNodeMatcher.Match(DummyContext, controls, tests).ToList();
 
             actual.Count.ShouldBe(2);
             actual.ShouldAllBe(c => c.Control == controls[c.Control.Index] && c.Test == tests[c.Test.Index]);
@@ -56,7 +54,7 @@ namespace AngleSharp.Diffing.Strategies.NodeStrategies
             var controls = ToSourceCollection(controlHtml, ComparisonSourceType.Control);
             var tests = ToSourceCollection(testHtml, ComparisonSourceType.Test);
 
-            var actual = ForwardSearchingNodeMatcher.Match(_context, controls, tests).ToList();
+            var actual = ForwardSearchingNodeMatcher.Match(DummyContext, controls, tests).ToList();
 
             actual.ShouldBeEmpty();
         }
@@ -68,7 +66,7 @@ namespace AngleSharp.Diffing.Strategies.NodeStrategies
             var controls = ToSourceCollection("<h1></h1><div></div>", ComparisonSourceType.Control);
             var tests = ToSourceCollection("<p></p><h1></h1><div></div>", ComparisonSourceType.Test);
 
-            var actual = ForwardSearchingNodeMatcher.Match(_context, controls, tests).ToList();
+            var actual = ForwardSearchingNodeMatcher.Match(DummyContext, controls, tests).ToList();
 
             actual.Count.ShouldBe(2);
             actual[0].ShouldSatisfyAllConditions(
@@ -89,7 +87,7 @@ namespace AngleSharp.Diffing.Strategies.NodeStrategies
             var controls = ToSourceCollection("<foo></foo><div></div>", ComparisonSourceType.Control);
             var tests = ToSourceCollection("<div></div>", ComparisonSourceType.Test);
 
-            var actual = ForwardSearchingNodeMatcher.Match(_context, controls, tests).ToList();
+            var actual = ForwardSearchingNodeMatcher.Match(DummyContext, controls, tests).ToList();
 
             actual.Count.ShouldBe(1);
             actual[0].ShouldSatisfyAllConditions(
@@ -106,7 +104,7 @@ namespace AngleSharp.Diffing.Strategies.NodeStrategies
             controls.MarkAsMatched(controls[0]); // mark <p> as matched
             tests.MarkAsMatched(tests[2]); // mark text as matched
 
-            var actual = ForwardSearchingNodeMatcher.Match(_context, controls, tests).ToList();
+            var actual = ForwardSearchingNodeMatcher.Match(DummyContext, controls, tests).ToList();
 
             actual.Count.ShouldBe(1);
             actual[0].ShouldSatisfyAllConditions(

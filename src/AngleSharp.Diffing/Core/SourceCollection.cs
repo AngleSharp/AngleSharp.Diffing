@@ -14,7 +14,7 @@ namespace AngleSharp.Diffing.Core
         private const int SOURCE_MATCHED = 1;
 
         private readonly int[] _status;
-        private ComparisonSource[] _sources;
+        private IReadOnlyList<ComparisonSource> _sources;
 
         public ComparisonSourceType SourceType { get; }
 
@@ -30,18 +30,20 @@ namespace AngleSharp.Diffing.Core
             }
         }
 
-        public SourceCollection(ComparisonSourceType sourceType, IEnumerable<ComparisonSource> sources)
+        public SourceCollection(ComparisonSourceType sourceType, IEnumerable<ComparisonSource> sources) : this(sourceType, sources.ToArray()) { }
+        
+        public SourceCollection(ComparisonSourceType sourceType, IReadOnlyList<ComparisonSource> sources)
         {
             SourceType = sourceType;
-            _sources = sources.ToArray();
-            _status = new int[_sources.Length];
-            Count = _sources.Length;
-            EnsureSourcesAreInCorrectOrder();
+            _sources = sources;
+            _status = new int[_sources.Count];
+            Count = _sources.Count;
+            //EnsureSourcesAreInCorrectOrder();
         }
 
         public IEnumerable<ComparisonSource> GetUnmatched(int startIndex = 0)
         {
-            for (int i = startIndex; i < _sources.Length; i++)
+            for (int i = startIndex; i < _sources.Count; i++)
             {
                 if (_status[_sources[i].Index] == SOURCE_UNMATCHED)
                 {
@@ -53,11 +55,14 @@ namespace AngleSharp.Diffing.Core
 
         public IEnumerator<ComparisonSource> GetEnumerator()
         {
-            for (int i = 0; i < _sources.Length; i++)
+            for (int i = 0; i < _sources.Count; i++)
             {
-                if (_status[_sources[i].Index] != SOURCE_REMOVED)
+                var source = _sources[i];
+                EnsureSourceAtExpectedIndex(i, source);
+
+                if (_status[source.Index] != SOURCE_REMOVED)
                 {
-                    yield return _sources[i];
+                    yield return source;
                 }
             }
             yield break;
@@ -68,7 +73,16 @@ namespace AngleSharp.Diffing.Core
         /// <summary>
         /// Gets all the sources originally in the collection, even those removed and those marked as matched.
         /// </summary>
-        public IEnumerable<ComparisonSource> GetAllSources() => _sources;
+        public IEnumerable<ComparisonSource> GetAllSources()
+        {
+            for (int i = 0; i < _sources.Count; i++)
+            {
+                var source = _sources[i];
+                EnsureSourceAtExpectedIndex(i, source);
+
+                yield return source;
+            }
+        }
 
         /// <summary>
         /// Mark a source as matched. After it has been marked, it will not be returned by <see cref="GetUnmatched(int)"/>.
@@ -88,7 +102,7 @@ namespace AngleSharp.Diffing.Core
         /// <param name="predicate"></param>
         public void Remove(SourceCollectionRemovePredicate predicate)
         {
-            for (int i = 0; i < _sources.Length; i++)
+            for (int i = 0; i < _sources.Count; i++)
             {
                 var source = _sources[i];
                 if (predicate(source) == FilterDecision.Exclude)
@@ -99,17 +113,11 @@ namespace AngleSharp.Diffing.Core
             }
         }
 
-        private void EnsureSourcesAreInCorrectOrder()
+        private static void EnsureSourceAtExpectedIndex(int expectedIndex, ComparisonSource source)
         {
-            for (int i = 0; i < _sources.Length; i++)
-            {
-                while (_sources[i].Index != i)
-                {
-                    var tmp = _sources[i];
-                    _sources[i] = _sources[tmp.Index];
-                    _sources[tmp.Index] = tmp;
-                }
-            }
+            if (source.Index != expectedIndex)
+                throw new InvalidOperationException($"The source {source} with index {source.Index} was not in the expected position in the collection. " +
+                    $"Ensure that the sources passed to this collection when constructed are ordered by their Index.");
         }
     }
 }

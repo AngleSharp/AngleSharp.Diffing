@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AngleSharp.Diffing;
 using AngleSharp.Diffing.Core;
+using AngleSharp.Dom;
 using Shouldly;
 using Xunit;
 
@@ -12,8 +13,6 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
 {
     public class AttributeNameMatcherTest : DiffingTestBase
     {
-        private readonly DiffContext _context = new DiffContext(null, null);
-
         public AttributeNameMatcherTest(DiffingTestFixture fixture) : base(fixture)
         {
         }
@@ -24,7 +23,7 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
             var controls = ToSourceMap("<p>", ComparisonSourceType.Control);
             var tests = ToSourceMap("<p>", ComparisonSourceType.Test);
 
-            var actual = AttributeNameMatcher.Match(_context, controls, tests).ToList();
+            var actual = AttributeNameMatcher.Match(DummyContext, controls, tests).ToList();
 
             actual.ShouldBeEmpty();
         }
@@ -38,7 +37,7 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
             var controls = ToSourceMap(controlHtml, ComparisonSourceType.Control);
             var tests = ToSourceMap(testHtml, ComparisonSourceType.Test);
 
-            var actual = AttributeNameMatcher.Match(_context, controls, tests).ToList();
+            var actual = AttributeNameMatcher.Match(DummyContext, controls, tests).ToList();
 
             actual.Count.ShouldBe(expectedMatches);
             actual.ShouldAllBe(c => c.Control.Attribute.Name == c.Test.Attribute.Name);
@@ -53,7 +52,7 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
             var controls = ToSourceMap(controlHtml, ComparisonSourceType.Control);
             var tests = ToSourceMap(testHtml, ComparisonSourceType.Test);
 
-            var actual = AttributeNameMatcher.Match(_context, controls, tests).ToList();
+            var actual = AttributeNameMatcher.Match(DummyContext, controls, tests).ToList();
 
             actual.Count.ShouldBe(expectedMatches);
             actual.ShouldAllBe(c => c.Control.Attribute.Name == c.Test.Attribute.Name);
@@ -66,7 +65,7 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
             var tests = ToSourceMap(@"<p foo=""bar"">", ComparisonSourceType.Test);
             controls.MarkAsMatched(controls["foo"]);
 
-            var actual = AttributeNameMatcher.Match(_context, controls, tests).ToList();
+            var actual = AttributeNameMatcher.Match(DummyContext, controls, tests).ToList();
 
             actual.ShouldBeEmpty();
         }
@@ -78,7 +77,7 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
             var tests = ToSourceMap(@"<p foo=""bar"">", ComparisonSourceType.Test);
             tests.MarkAsMatched(tests["foo"]);
 
-            var actual = AttributeNameMatcher.Match(_context, controls, tests).ToList();
+            var actual = AttributeNameMatcher.Match(DummyContext, controls, tests).ToList();
 
             actual.ShouldBeEmpty();
         }

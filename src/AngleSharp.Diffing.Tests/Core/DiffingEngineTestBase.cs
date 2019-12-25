@@ -9,16 +9,16 @@ namespace AngleSharp.Diffing.Core
         {
         }
 
-        protected static HtmlDifferenceEngine CreateHtmlDiffEngine(
-                Func<DiffContext, SourceCollection, SourceCollection, IEnumerable<Comparison>>? nodeMatcher = null,
-                Func<DiffContext, SourceMap, SourceMap, IEnumerable<AttributeComparison>>? attrMatcher = null,
+        protected static HtmlDiffer CreateHtmlDiffEngine(
+                Func<IDiffContext, SourceCollection, SourceCollection, IEnumerable<Comparison>>? nodeMatcher = null,
+                Func<IDiffContext, SourceMap, SourceMap, IEnumerable<AttributeComparison>>? attrMatcher = null,
                 Func<ComparisonSource, FilterDecision>? nodeFilter = null,
                 Func<AttributeComparisonSource, FilterDecision>? attrFilter = null,
                 Func<Comparison, CompareResult>? nodeComparer = null,
                 Func<AttributeComparison, CompareResult>? attrComparer = null
             )
         {
-            return new HtmlDifferenceEngine(
+            return new HtmlDiffer(
                 new MockDiffingStrategy(
                     nodeFilter, attrFilter,
                     nodeMatcher, attrMatcher,
@@ -31,16 +31,16 @@ namespace AngleSharp.Diffing.Core
         {
             private readonly Func<ComparisonSource, FilterDecision>? _nodeFilter;
             private readonly Func<AttributeComparisonSource, FilterDecision>? _attrFilter;
-            private readonly Func<DiffContext, SourceCollection, SourceCollection, IEnumerable<Comparison>>? _nodeMatcher;
-            private readonly Func<DiffContext, SourceMap, SourceMap, IEnumerable<AttributeComparison>>? _attrMatcher;
+            private readonly Func<IDiffContext, SourceCollection, SourceCollection, IEnumerable<Comparison>>? _nodeMatcher;
+            private readonly Func<IDiffContext, SourceMap, SourceMap, IEnumerable<AttributeComparison>>? _attrMatcher;
             private readonly Func<Comparison, CompareResult>? _nodeCompare;
             private readonly Func<AttributeComparison, CompareResult>? _attrCompare;
 
             public MockDiffingStrategy(
                 Func<ComparisonSource, FilterDecision>? nodeFilter = null,
                 Func<AttributeComparisonSource, FilterDecision>? attrFilter = null,
-                Func<DiffContext, SourceCollection, SourceCollection, IEnumerable<Comparison>>? nodeMatcher = null,
-                Func<DiffContext, SourceMap, SourceMap, IEnumerable<AttributeComparison>>? attrMatcher = null,
+                Func<IDiffContext, SourceCollection, SourceCollection, IEnumerable<Comparison>>? nodeMatcher = null,
+                Func<IDiffContext, SourceMap, SourceMap, IEnumerable<AttributeComparison>>? attrMatcher = null,
                 Func<Comparison, CompareResult>? nodeCompare = null,
                 Func<AttributeComparison, CompareResult>? attrCompare = null)
             {
@@ -59,12 +59,12 @@ namespace AngleSharp.Diffing.Core
                 => _nodeFilter!(comparisonSource);
 
             public IEnumerable<Comparison> Match(
-                DiffContext context,
+                IDiffContext context,
                 SourceCollection controlNodes,
                 SourceCollection testNodes) => _nodeMatcher!(context, controlNodes, testNodes);
 
             public IEnumerable<AttributeComparison> Match(
-                DiffContext context,
+                IDiffContext context,
                 SourceMap controlAttributes,
                 SourceMap testAttributes) => _attrMatcher!(context, controlAttributes, testAttributes);
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using AngleSharp.Dom;
@@ -11,7 +11,7 @@ namespace AngleSharp.Diffing.Strategies.ElementStrategies
     {
         private const string DIFF_MATCH_ATTR_NAME = "diff:match";
 
-        public static IEnumerable<Comparison> Match(DiffContext context,
+        public static IEnumerable<Comparison> Match(IDiffContext context,
                                                     SourceCollection controlSources,
                                                     SourceCollection testSources)
         {
@@ -34,7 +34,7 @@ namespace AngleSharp.Diffing.Strategies.ElementStrategies
             yield break;
         }
 
-        private static bool TryGetTestNode(DiffContext context, string cssSelector, [NotNullWhen(true)]out INode? testNode)
+        private static bool TryGetTestNode(IDiffContext context, string cssSelector, [NotNullWhen(true)]out INode? testNode)
         {
             var searchResult = context.QueryTestRoot(cssSelector);
 

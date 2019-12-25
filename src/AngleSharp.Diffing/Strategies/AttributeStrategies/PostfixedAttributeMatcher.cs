@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AngleSharp.Diffing.Core;
@@ -13,7 +13,7 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
             ":regex"
         };
 
-        public static IEnumerable<AttributeComparison> Match(DiffContext context, SourceMap controlSources, SourceMap testSources)
+        public static IEnumerable<AttributeComparison> Match(IDiffContext context, SourceMap controlSources, SourceMap testSources)
         {
             if (controlSources is null) throw new ArgumentNullException(nameof(controlSources));
             if (testSources is null) throw new ArgumentNullException(nameof(testSources));
