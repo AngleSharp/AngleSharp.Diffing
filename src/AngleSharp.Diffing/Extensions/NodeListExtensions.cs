@@ -25,6 +25,7 @@ namespace AngleSharp.Diffing
             yield break;
         }
 
-        public static ComparisonSource ToComparisonSource(this INode node, int index, ComparisonSourceType sourceType, string path = "") => new ComparisonSource(node, index, path, sourceType);
+        public static ComparisonSource ToComparisonSource(this INode node, int index, ComparisonSourceType sourceType, string path = "")
+            => new ComparisonSource(node, index, path, sourceType);
     }
 }

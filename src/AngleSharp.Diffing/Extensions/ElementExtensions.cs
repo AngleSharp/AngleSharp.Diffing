@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using AngleSharp.Dom;
 
@@ -75,7 +76,7 @@ namespace AngleSharp.Diffing.Extensions
         {
             index = -1;
 
-            if(node.ParentElement is null) return false;
+            if (node.ParentElement is null) return false;
 
             var parentElement = node.ParentElement;
 
@@ -89,6 +90,16 @@ namespace AngleSharp.Diffing.Extensions
             }
 
             return false;
+        }
+
+        public static IEnumerable<INode> GetParents(this INode node)
+        {
+            var parent = node.Parent;
+            while (parent is { })
+            {
+                yield return parent;
+                parent = parent.Parent;
+            }
         }
     }
 }

@@ -40,6 +40,5 @@ Read more about the available options on the [Options](/docs/Options.md) page.
 - [Difference engine internals](/docs/DiffingEngineInternals.md)
 
 ## Acknowledgments
-Big thanks to [Florian Rappl](https://github.com/FlorianRappl) from the AngleSharp team for providing ideas, input and sample code for working with AngleSharp. 
-
-Another shout-out goes to [XMLUnit](https://www.xmlunit.org). It is a great XML diffing library, and it has been a great inspiration for creating this library.
+- [Florian Rappl](https://github.com/FlorianRappl) from the AngleSharp team for providing ideas, input and sample code for working with AngleSharp. 
+- [XMLUnit](https://www.xmlunit.org) has been a great inspiration for creating this library.

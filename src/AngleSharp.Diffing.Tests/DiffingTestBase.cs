@@ -11,6 +11,8 @@ namespace AngleSharp.Diffing
     {
         private readonly DiffingTestFixture _testFixture;
 
+        protected IDiffContext DummyContext { get; } = new DiffContext(default(IElement), default(IElement));
+
         protected INodeList EmptyNodeList => ToNodeList("");
 
         public DiffingTestBase(DiffingTestFixture fixture)

@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using AngleSharp.Diffing.Core;
+using AngleSharp.Dom;
 using Shouldly;
 using Xunit;
 
@@ -8,8 +9,6 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
 {
     public class PostfixedAttributeMatcherTest : DiffingTestBase
     {
-        private readonly DiffContext _context = new DiffContext(null, null);
-
         public PostfixedAttributeMatcherTest(DiffingTestFixture fixture) : base(fixture)
         {
         }
@@ -29,7 +28,7 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
             var controls = ToSourceMap(@"<p foo>", ComparisonSourceType.Control);
             var tests = ToSourceMap(@"<p foo>", ComparisonSourceType.Test);
 
-            var actual = PostfixedAttributeMatcher.Match(_context, controls, tests).ToList();
+            var actual = PostfixedAttributeMatcher.Match(DummyContext, controls, tests).ToList();
 
             actual.ShouldBeEmpty();
         }
@@ -42,7 +41,7 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
             var tests = ToSourceMap(@"<p foo>", ComparisonSourceType.Test);
             controls.MarkAsMatched(controls[$"foo{diffPostfix}"]);
 
-            var actual = PostfixedAttributeMatcher.Match(_context, controls, tests).ToList();
+            var actual = PostfixedAttributeMatcher.Match(DummyContext, controls, tests).ToList();
 
             actual.ShouldBeEmpty();
         }
@@ -55,7 +54,7 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
             var tests = ToSourceMap(@"<p foo>", ComparisonSourceType.Test);
             tests.MarkAsMatched(tests["foo"]);
 
-            var actual = PostfixedAttributeMatcher.Match(_context, controls, tests).ToList();
+            var actual = PostfixedAttributeMatcher.Match(DummyContext, controls, tests).ToList();
 
             actual.ShouldBeEmpty();
         }
@@ -67,7 +66,7 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
             var controls = ToSourceMap($@"<p foo{diffPostfix}>", ComparisonSourceType.Control);
             var tests = ToSourceMap(@"<p foo>", ComparisonSourceType.Test);
 
-            var actual = PostfixedAttributeMatcher.Match(_context, controls, tests).ToList();
+            var actual = PostfixedAttributeMatcher.Match(DummyContext, controls, tests).ToList();
 
             actual.Count.ShouldBe(1);
             actual[0].ShouldSatisfyAllConditions(

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Shouldly;
 using Xunit;
@@ -49,22 +49,17 @@ namespace AngleSharp.Diffing.Core
             sut.Count.ShouldBe(2);
         }
 
-        [Fact(DisplayName = "Collection should make sources accessible on the index they specify")]
+        [Fact(DisplayName = "Collection throws if sources is not ordered source-index when enumerated")]
         public void Test3()
         {
             var sources = ToNodeList("<span></span><p></p><main></main><h1></h1><ul></ul><ol></ol><em></em>")
                 .ToComparisonSourceList(ComparisonSourceType.Control)
                 .OrderBy(x => x.Node.NodeName);
 
-            var sut = new SourceCollection(ComparisonSourceType.Control, sources);
+            var cut = new SourceCollection(ComparisonSourceType.Control, sources);
 
-            sut[0].Index.ShouldBe(0);
-            sut[1].Index.ShouldBe(1);
-            sut[2].Index.ShouldBe(2);
-            sut[3].Index.ShouldBe(3);
-            sut[4].Index.ShouldBe(4);
-            sut[5].Index.ShouldBe(5);
-            sut[6].Index.ShouldBe(6);
+            Should.Throw<InvalidOperationException>(() => cut.ToList());
+            Should.Throw<InvalidOperationException>(() => cut.GetAllSources().ToList());
         }
 
         [Fact(DisplayName = "When an source is removed from the list, it does not add to the count nor is it returned when iterating")]

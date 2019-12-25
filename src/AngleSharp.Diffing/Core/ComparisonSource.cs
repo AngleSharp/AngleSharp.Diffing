@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using AngleSharp.Dom;
 using AngleSharp.Diffing.Extensions;
+using System.Linq;
 
 namespace AngleSharp.Diffing.Core
 {
@@ -11,6 +12,8 @@ namespace AngleSharp.Diffing.Core
     public readonly struct ComparisonSource : IEquatable<ComparisonSource>, IComparisonSource
     {
         private readonly int _hashCode;
+
+        public const char PathSeparatorChar = '>';
 
         public INode Node { get; }
 
@@ -21,23 +24,18 @@ namespace AngleSharp.Diffing.Core
         public ComparisonSourceType SourceType { get; }
 
         public ComparisonSource(INode node, ComparisonSourceType sourceType)
-        {
-            Node = node;
-            Index = GetNodeIndex(node);
-            Path = CalculateNodePath(node, Index);
-            SourceType = sourceType;
-            _hashCode = (Node, Index, Path, SourceType).GetHashCode();
-        }
+            : this(node, GetNodeIndex(node), CalculateParentPath(node), sourceType) { }
 
-        public ComparisonSource(INode node, int index, string path, ComparisonSourceType sourceType)
+        public ComparisonSource(INode node, int index, string parentsPath, ComparisonSourceType sourceType)
         {
             if (node is null) throw new ArgumentNullException(nameof(node));
 
+            var pathSegment = GetNodePathSegment(node);
             Node = node;
             Index = index;
-            Path = string.IsNullOrEmpty(path)
-                ? $"{Node.NodeName.ToLowerInvariant()}({Index})"
-                : $"{path} > {Node.NodeName.ToLowerInvariant()}({Index})";
+            Path = string.IsNullOrEmpty(parentsPath)
+                ? pathSegment
+                : CombinePath(parentsPath, pathSegment);
 
             SourceType = sourceType;
             _hashCode = (Node, Index, Path, SourceType).GetHashCode();
@@ -55,16 +53,46 @@ namespace AngleSharp.Diffing.Core
             }
         }
 
-        private static string CalculateNodePath(INode node, int index)
+        private static string CalculateParentPath(INode node)
         {
-            var path = $"{node.NodeName.ToLowerInvariant()}({index})";
-            var parent = node.Parent;
-            while (parent is { } && parent.TryGetNodeIndex(out var parentIndex))
+            var result = string.Empty;
+            foreach (var parent in node.GetParents().TakeWhile(x => x.Parent is { }))
             {
-                path = $"{parent.NodeName.ToLowerInvariant()}({parentIndex}) > {path}";
-                parent = parent.Parent;
+                var pathSegment = GetNodePathSegment(parent);
+                if (pathSegment is { })
+                    result = CombinePath(pathSegment, result);
             }
-            return path;
+            return result;
+        }
+
+        private static int GetPathIndex(INode node)
+        {
+            var result = 0;
+            var parent = node.Parent;
+            var childNodes = parent.ChildNodes;
+            for (int index = 0; index < childNodes.Length; index++)
+            {
+                if (ReferenceEquals(childNodes[index], node))
+                    return result;
+                if(childNodes[index] is IParentNode)
+                    result += 1;
+            }
+            throw new InvalidOperationException("Unexpected node tree state. The node was not found in its parents child nodes collection.");
+        }
+
+        public static string GetNodePathSegment(INode node)
+        {
+            var index = GetPathIndex(node);
+            return $"{node.NodeName.ToLowerInvariant()}({index})";
+        }
+
+        public static string CombinePath(string parentPath, string path)
+        {
+            if(string.IsNullOrWhiteSpace(parentPath))
+                return path;
+            if(string.IsNullOrWhiteSpace(path))
+                return parentPath;
+            return $"{parentPath} {PathSeparatorChar} {path}";
         }
 
         #region Equals and HashCode

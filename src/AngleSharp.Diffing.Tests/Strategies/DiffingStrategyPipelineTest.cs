@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Linq;
 using AngleSharp.Diffing.Core;
+using AngleSharp.Dom;
 using Shouldly;
 using Xunit;
 
@@ -8,8 +9,6 @@ namespace AngleSharp.Diffing.Strategies
 {
     public class DiffingStrategyPipelineTest : DiffingTestBase
     {
-        private readonly DiffContext _dummyContext = new DiffContext(null, null);
-
         public DiffingStrategyPipelineTest(DiffingTestFixture fixture) : base(fixture)
         {
         }
@@ -100,7 +99,7 @@ namespace AngleSharp.Diffing.Strategies
             sut.AddMatcher((ctx, s, t) => new[] { new Comparison(s[0], t[0]) }, isSpecializedMatcher: true);
             sut.AddMatcher((ctx, s, t) => new[] { new Comparison(s[1], t[1]) }, isSpecializedMatcher: true);
 
-            var result = sut.Match(_dummyContext, sourceColllection, sourceColllection).ToList();
+            var result = sut.Match(DummyContext, sourceColllection, sourceColllection).ToList();
 
             result[0].Control.ShouldBe(sourceColllection[1]);
             result[1].Control.ShouldBe(sourceColllection[0]);
@@ -114,7 +113,7 @@ namespace AngleSharp.Diffing.Strategies
             sut.AddMatcher((ctx, s, t) => new[] { new AttributeComparison(s["foo"], t["foo"]) }, isSpecializedMatcher: true);
             sut.AddMatcher((ctx, s, t) => new[] { new AttributeComparison(s["baz"], t["baz"]) }, isSpecializedMatcher: true);
 
-            var result = sut.Match(_dummyContext, sourceMap, sourceMap).ToList();
+            var result = sut.Match(DummyContext, sourceMap, sourceMap).ToList();
 
             result[0].Control.ShouldBe(sourceMap["baz"]);
             result[1].Control.ShouldBe(sourceMap["foo"]);
@@ -128,7 +127,7 @@ namespace AngleSharp.Diffing.Strategies
             sut.AddMatcher((ctx, s, t) => new[] { new Comparison(s[0], t[0]) }, isSpecializedMatcher: false);
             sut.AddMatcher((ctx, s, t) => new[] { new Comparison(s[1], t[1]) }, isSpecializedMatcher: false);
 
-            var result = sut.Match(_dummyContext, sourceColllection, sourceColllection).ToList();
+            var result = sut.Match(DummyContext, sourceColllection, sourceColllection).ToList();
 
             result[0].Control.ShouldBe(sourceColllection[0]);
             result[1].Control.ShouldBe(sourceColllection[1]);
@@ -142,7 +141,7 @@ namespace AngleSharp.Diffing.Strategies
             sut.AddMatcher((ctx, s, t) => new[] { new AttributeComparison(s["foo"], t["foo"]) }, isSpecializedMatcher: false);
             sut.AddMatcher((ctx, s, t) => new[] { new AttributeComparison(s["baz"], t["baz"]) }, isSpecializedMatcher: false);
 
-            var result = sut.Match(_dummyContext, sourceMap, sourceMap).ToList();
+            var result = sut.Match(DummyContext, sourceMap, sourceMap).ToList();
 
             result[0].Control.ShouldBe(sourceMap["foo"]);
             result[1].Control.ShouldBe(sourceMap["baz"]);
@@ -156,7 +155,7 @@ namespace AngleSharp.Diffing.Strategies
             sut.AddMatcher((ctx, s, t) => new[] { new Comparison(s[0], t[0]) }, isSpecializedMatcher: false);
             sut.AddMatcher((ctx, s, t) => new[] { new Comparison(s[1], t[1]) }, isSpecializedMatcher: true);
 
-            var result = sut.Match(_dummyContext, sourceColllection, sourceColllection).ToList();
+            var result = sut.Match(DummyContext, sourceColllection, sourceColllection).ToList();
 
             result[0].Control.ShouldBe(sourceColllection[1]);
             result[1].Control.ShouldBe(sourceColllection[0]);
@@ -170,7 +169,7 @@ namespace AngleSharp.Diffing.Strategies
             sut.AddMatcher((ctx, s, t) => new[] { new AttributeComparison(s["foo"], t["foo"]) }, isSpecializedMatcher: false);
             sut.AddMatcher((ctx, s, t) => new[] { new AttributeComparison(s["baz"], t["baz"]) }, isSpecializedMatcher: true);
 
-            var result = sut.Match(_dummyContext, sourceMap, sourceMap).ToList();
+            var result = sut.Match(DummyContext, sourceMap, sourceMap).ToList();
 
             result[0].Control.ShouldBe(sourceMap["baz"]);
             result[1].Control.ShouldBe(sourceMap["foo"]);
@@ -237,13 +236,12 @@ namespace AngleSharp.Diffing.Strategies
         [Fact(DisplayName = "After two nodes has been matched, they are marked as matched in the source collection")]
         public void Test101()
         {
-            var context = new DiffContext(null, null);
             var controlSources = ToSourceCollection("<p></p>", ComparisonSourceType.Control);
             var testSources = ToSourceCollection("<p></p>", ComparisonSourceType.Test);
             var sut = new DiffingStrategyPipeline();
             sut.AddMatcher((ctx, s, t) => new[] { new Comparison(s[0], t[0]) }, isSpecializedMatcher: true);
 
-            var result = sut.Match(context, controlSources, testSources).ToList();
+            var result = sut.Match(DummyContext, controlSources, testSources).ToList();
 
             controlSources.GetUnmatched().ShouldBeEmpty();
             testSources.GetUnmatched().ShouldBeEmpty();
@@ -252,13 +250,12 @@ namespace AngleSharp.Diffing.Strategies
         [Fact(DisplayName = "After two attributes has been matched, they are marked as matched in the source map")]
         public void Test102()
         {
-            var context = new DiffContext(null, null);
             var controlSources = ToSourceMap(@"<p foo=""bar""></p>", ComparisonSourceType.Control);
             var testSources = ToSourceMap(@"<p foo=""bar""></p>", ComparisonSourceType.Test);
             var sut = new DiffingStrategyPipeline();
             sut.AddMatcher((ctx, s, t) => new[] { new AttributeComparison(s["foo"], t["foo"]) }, isSpecializedMatcher: true);
 
-            var result = sut.Match(context, controlSources, testSources).ToList();
+            var result = sut.Match(DummyContext, controlSources, testSources).ToList();
 
             controlSources.GetUnmatched().ShouldBeEmpty();
             testSources.GetUnmatched().ShouldBeEmpty();

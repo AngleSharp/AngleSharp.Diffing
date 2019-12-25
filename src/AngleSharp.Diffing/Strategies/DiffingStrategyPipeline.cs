@@ -5,7 +5,7 @@ namespace AngleSharp.Diffing.Strategies
 {
 
     public delegate FilterDecision FilterStrategy<TSource>(in TSource source, FilterDecision currentDecision);
-    public delegate IEnumerable<TComparison> MatchStrategy<in TSources, out TComparison>(DiffContext context, TSources controlSources, TSources testSources);
+    public delegate IEnumerable<TComparison> MatchStrategy<in TSources, out TComparison>(IDiffContext context, TSources controlSources, TSources testSources);
     public delegate CompareResult CompareStrategy<TComparison>(in TComparison comparison, CompareResult currentDecision);
 
     public class DiffingStrategyPipeline : IDiffingStrategy, IDiffingStrategyCollection
@@ -23,7 +23,7 @@ namespace AngleSharp.Diffing.Strategies
         public FilterDecision Filter(in ComparisonSource comparisonSource) => Filter(comparisonSource, _nodeFilters);
         public FilterDecision Filter(in AttributeComparisonSource attributeComparisonSource) => Filter(attributeComparisonSource, _attrsFilters);
 
-        public IEnumerable<Comparison> Match(DiffContext context, SourceCollection controlSources, SourceCollection testSources)
+        public IEnumerable<Comparison> Match(IDiffContext context, SourceCollection controlSources, SourceCollection testSources)
         {
             foreach (var matcher in _nodeMatchers)
             {
@@ -35,7 +35,7 @@ namespace AngleSharp.Diffing.Strategies
                 }
             }
         }
-        public IEnumerable<AttributeComparison> Match(DiffContext context, SourceMap controlAttrSources, SourceMap testAttrSources)
+        public IEnumerable<AttributeComparison> Match(IDiffContext context, SourceMap controlAttrSources, SourceMap testAttrSources)
         {
             foreach (var matcher in _attrsMatchers)
             {

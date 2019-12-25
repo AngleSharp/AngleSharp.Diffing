@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,11 +24,10 @@ namespace AngleSharp.Diffing.Strategies.ElementStrategies
         [InlineData("<p></p>")]
         public void Test001(string html)
         {
-            var context = new DiffContext(null, null);
             var controls = ToSourceCollection(html, ComparisonSourceType.Control);
             var tests = ToSourceCollection(html, ComparisonSourceType.Test);
 
-            var actual = CssSelectorElementMatcher.Match(context, controls, tests).ToList();
+            var actual = CssSelectorElementMatcher.Match(DummyContext, controls, tests).ToList();
 
             actual.ShouldBeEmpty();
         }

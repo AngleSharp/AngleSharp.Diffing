@@ -1,4 +1,5 @@
-﻿using Shouldly;
+using System;
+using Shouldly;
 using Xunit;
 
 namespace AngleSharp.Diffing.Core
@@ -64,6 +65,45 @@ namespace AngleSharp.Diffing.Core
             var otherSource = new ComparisonSource(ToNode("<p>"), 2, "path/other", ComparisonSourceType.Test);
 
             source.GetHashCode().ShouldNotBe(otherSource.GetHashCode());
+        }
+
+        [Theory(DisplayName = "The index in the source's path is based on its position in it's parents" +
+            "child node list, i.e. excluding other node types that does not contain children")]
+        [InlineData("<p>", 0, "p(0)")]
+        [InlineData("text<p>", 1, "p(0)")]
+        [InlineData("<!--x--><p>", 1, "p(0)")]
+        [InlineData("<i></i>text<p>", 2, "p(1)")]
+        [InlineData("<i></i><!--x--><p>", 2, "p(1)")]
+        public void Test005(string sourceMarkup, int nodeIndex, string expectedPath)
+        {
+            var node = ToNodeList(sourceMarkup)[nodeIndex];
+
+            var sut = new ComparisonSource(node, ComparisonSourceType.Control);
+
+            sut.Path.ShouldBe(expectedPath);
+        }
+
+        [Fact(DisplayName = "The parent path is calculated correctly when not provided")]
+        public void Test006()
+        {
+            var nodes = ToNodeList("<p>txt<br/><i>text</i></p>");
+            var textNode = nodes[0].ChildNodes[2].FirstChild;
+
+            var sut = new ComparisonSource(textNode, ComparisonSourceType.Control);
+
+            sut.Path.ShouldBe("p(0) > i(1) > #text(0)");
+        }
+
+        [Fact(DisplayName = "Source uses parent path if provided to construct own path")]
+        public void Test007()
+        {
+            var node = ToNode("<p>");
+            var parentPath = "SOME > PAHT";
+
+            var sut = new ComparisonSource(node, 0, parentPath, ComparisonSourceType.Control);
+
+            var expectedPath = ComparisonSource.CombinePath(parentPath, ComparisonSource.GetNodePathSegment(node));
+            sut.Path.ShouldBe(expectedPath);
         }
     }
 }

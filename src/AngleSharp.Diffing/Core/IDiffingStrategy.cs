@@ -28,7 +28,7 @@ namespace AngleSharp.Diffing.Core
         /// depending on whether they are control or test nodes.
         /// </summary>
         /// <returns></returns>
-        IEnumerable<Comparison> Match(DiffContext context, SourceCollection controlSources, SourceCollection testSources);
+        IEnumerable<Comparison> Match(IDiffContext context, SourceCollection controlSources, SourceCollection testSources);
 
         /// <summary>
         /// Matches up the control attributes with test attributes in the two input lists. The matched control and test attributes will be compared to each other.
@@ -36,7 +36,7 @@ namespace AngleSharp.Diffing.Core
         /// depending on whether they are control or test attributes.
         /// </summary>
         /// <returns></returns>
-        IEnumerable<AttributeComparison> Match(DiffContext context, SourceMap controlAttrSources, SourceMap testAttrSources);
+        IEnumerable<AttributeComparison> Match(IDiffContext context, SourceMap controlAttrSources, SourceMap testAttrSources);
 
         /// <summary>
         /// Compares the control and test nodes in the <see cref="Comparison"/> object and

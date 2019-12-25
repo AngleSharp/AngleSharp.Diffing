@@ -1,14 +1,13 @@
-﻿using System.Linq;
+using System.Linq;
 using AngleSharp.Diffing.Core;
 using Xunit;
 using Shouldly;
+using AngleSharp.Dom;
 
 namespace AngleSharp.Diffing.Strategies.NodeStrategies
 {
     public class OneToOneNodeMatcherTest : DiffingTestBase
     {
-        private readonly DiffContext _context = new DiffContext(null, null);
-
         public OneToOneNodeMatcherTest(DiffingTestFixture fixture) : base(fixture)
         {
         }
@@ -20,7 +19,7 @@ namespace AngleSharp.Diffing.Strategies.NodeStrategies
             var controls = ToSourceCollection("<p></p>text<!--comment-->", ComparisonSourceType.Control);
             var tests = ToSourceCollection("<!--comment--><p></p>text", ComparisonSourceType.Test);
 
-            var actual = OneToOneNodeMatcher.Match(_context, controls, tests).ToList();
+            var actual = OneToOneNodeMatcher.Match(DummyContext, controls, tests).ToList();
 
             actual.Count.ShouldBe(3);
             actual[0].ShouldSatisfyAllConditions(
@@ -51,7 +50,7 @@ namespace AngleSharp.Diffing.Strategies.NodeStrategies
             var controls = ToSourceCollection(controlHtml, ComparisonSourceType.Control);
             var tests = ToSourceCollection(testHtml, ComparisonSourceType.Test);
 
-            var actual = OneToOneNodeMatcher.Match(_context, controls, tests).ToList();
+            var actual = OneToOneNodeMatcher.Match(DummyContext, controls, tests).ToList();
 
             actual.Count.ShouldBe(matchCount);
             actual.ShouldAllBe((c, idx) => c.Control == controls[idx] && c.Test == tests[idx]);
@@ -64,7 +63,7 @@ namespace AngleSharp.Diffing.Strategies.NodeStrategies
             var tests = ToSourceCollection("<!--comment--><p></p>text", ComparisonSourceType.Test);
             controls.MarkAsMatched(controls[1]);
 
-            var actual = OneToOneNodeMatcher.Match(_context, controls, tests).ToList();
+            var actual = OneToOneNodeMatcher.Match(DummyContext, controls, tests).ToList();
 
             actual.Count.ShouldBe(2);
             actual[0].ShouldSatisfyAllConditions(
@@ -84,7 +83,7 @@ namespace AngleSharp.Diffing.Strategies.NodeStrategies
             var tests = ToSourceCollection("<!--comment--><p></p>text", ComparisonSourceType.Test);
             tests.MarkAsMatched(tests[1]);
 
-            var actual = OneToOneNodeMatcher.Match(_context, controls, tests).ToList();
+            var actual = OneToOneNodeMatcher.Match(DummyContext, controls, tests).ToList();
 
             actual.Count.ShouldBe(2);
             actual[0].ShouldSatisfyAllConditions(

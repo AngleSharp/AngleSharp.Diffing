@@ -3,7 +3,7 @@ The heart of the library is the `HtmlDifferenceEngine` class, which goes through
 
 The `HtmlDifferenceEngine` class depends on three _strategies_, the `IFilterStrategy`, `IMatcherStrategy`, and `ICompareStrategy` types. These are used in the highlighted activities in the diagram. With those, we can control what nodes and attributes take part in the comparison (filter strategy), how control and test nodes and attributes are matched up for comparison (matching strategy), and finally, how nodes and attributes are determined to be same or different (compare strategy).
 
-It starts with a call to the `Compare(INodeList controlNodes, INodeList testNodes)` and recursively calls itself when nodes have child nodes.
+It starts with a call to the `Compare()` and recursively calls itself when nodes have child nodes.
 
 ![img](HtmlDifferenceEngineFlow.svg)
 

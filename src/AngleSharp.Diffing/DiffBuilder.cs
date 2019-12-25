@@ -55,8 +55,10 @@ namespace AngleSharp.Diffing
                 _diffStrategy.AddDefaultOptions();
             }
 
-            return new HtmlDifferenceEngine(_diffStrategy)
-                .Compare(Parse(Control), Parse(Test));
+            var controls = Parse(Control).ToSourceCollection(ComparisonSourceType.Control);
+            var tests = Parse(Test).ToSourceCollection(ComparisonSourceType.Test);
+
+            return new HtmlDifferenceEngine(_diffStrategy, controls, tests).Compare();
         }
 
         protected INodeList Parse(string html)
