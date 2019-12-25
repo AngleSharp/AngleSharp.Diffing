@@ -1,3 +1,9 @@
+# 0.13.0
+
+Released on ddd, mmmm dd, yyyy.
+
+- Updated path's index' calculation in `ComparisonSource` to only include nodes that implement the IParentNode.
+
 # 0.13.0-preview-3
 
 Released on Sunday, November 24, 2019.

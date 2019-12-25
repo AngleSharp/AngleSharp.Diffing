@@ -296,51 +296,7 @@ namespace AngleSharp.Diffing.Core
             results.Count.ShouldBe(2);
             results[0].ShouldBeOfType<NodeDiff>();
             results[1].ShouldBeOfType(expectedDiffType);
-        }
-
-        [Fact(DisplayName = "Path in Diffs is set correctly when nested nodes are compared")]
-        public void PathIsSetCorrectly()
-        {
-            var ctrlNodes = ToNodeList(@"<main><h1><!--foo--><p>hello world</p></h1></main>");
-            var testNodes = ToNodeList(@"<!--foo--><main><h1><p>hello world</p></h1></main>");
-
-            var sut = CreateHtmlDiffEngine(
-                nodeMatcher: OneToOneNodeListMatcher,
-                nodeFilter: RemoveCommentNodeFilter,
-                nodeComparer: DiffResultNodeComparer);
-
-            var results = sut.Compare(ctrlNodes, testNodes).ToList();
-
-            results.Count.ShouldBe(4);
-            results[0].ShouldBeOfType<NodeDiff>().Control.Path.ShouldBe("main(0)");
-            results[0].ShouldBeOfType<NodeDiff>().Test.Path.ShouldBe("main(1)");
-            results[1].ShouldBeOfType<NodeDiff>().Control.Path.ShouldBe("main(0) > h1(0)");
-            results[1].ShouldBeOfType<NodeDiff>().Test.Path.ShouldBe("main(1) > h1(0)");
-            results[2].ShouldBeOfType<NodeDiff>().Control.Path.ShouldBe("main(0) > h1(0) > p(1)");
-            results[2].ShouldBeOfType<NodeDiff>().Test.Path.ShouldBe("main(1) > h1(0) > p(0)");
-            results[3].ShouldBeOfType<NodeDiff>().Control.Path.ShouldBe("main(0) > h1(0) > p(1) > #text(0)");
-            results[3].ShouldBeOfType<NodeDiff>().Test.Path.ShouldBe("main(1) > h1(0) > p(0) > #text(0)");
-        }
-
-        [Fact(DisplayName = "Attribute path in comparison sources are based on nodes tree structure")]
-        public void AttributeSourcePathisBasedOnParentElements()
-        {
-            var nodes = ToNodeList(@"<p id=""foo""></p>");
-
-            var sut = CreateHtmlDiffEngine(
-                nodeMatcher: OneToOneNodeListMatcher,
-                nodeFilter: NoneNodeFilter,
-                nodeComparer: SameResultNodeComparer,
-                attrMatcher: AttributeNameMatcher,
-                attrFilter: NoneAttrFilter,
-                attrComparer: DiffResultAttrComparer);
-
-            var results = sut.Compare(nodes, nodes).ToList();
-
-            results.Count.ShouldBe(1);
-            results[0].ShouldBeOfType<AttrDiff>().Control.Path.ShouldBe("p(0)[id]");
-            results[0].ShouldBeOfType<AttrDiff>().Test.Path.ShouldBe("p(0)[id]");
-        }
+        }      
 
         [Fact(DisplayName = "Comparison sources have their type set correctly")]
         public void ComparisonSourcesHaveCorrectType()

@@ -32,6 +32,14 @@ namespace AngleSharp.Diffing.Core
             var controlSources = controlNodes.ToSourceCollection(ComparisonSourceType.Control);
             var testSources = testNodes.ToSourceCollection(ComparisonSourceType.Test);
 
+            return Compare(controlSources, testSources);
+        }
+
+        public IEnumerable<IDiff> Compare(SourceCollection controlSources, SourceCollection testSources)
+        {
+            if (controlSources is null) throw new ArgumentNullException(nameof(controlSources));
+            if (testSources is null) throw new ArgumentNullException(nameof(testSources));
+
             var context = CreateDiffContext(controlSources, testSources);
 
             var diffs = CompareNodeLists(context, controlSources, testSources);
