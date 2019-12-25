@@ -1,8 +1,10 @@
 # 0.13.0
 
-Released on ddd, mmmm dd, yyyy.
+Released on Wednesday, December 25, 2019.
 
 - Updated path's index' calculation in `ComparisonSource` to only include nodes that implement the IParentNode.
+- Small change to HtmlDifferenceEngine. It now takes the control and test sources during construction. This makes it clear it is single use. For reusable differ, use `HtmlDiffer` going forward.
+- Added interface `IDiffContext` and made `DiffContext` internal.
 
 # 0.13.0-preview-3
 
