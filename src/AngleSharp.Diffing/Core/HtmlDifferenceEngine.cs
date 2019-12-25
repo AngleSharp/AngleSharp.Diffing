@@ -24,13 +24,13 @@ namespace AngleSharp.Diffing.Core
 
         public IEnumerable<IDiff> Compare()
         {
-            var diffs = CompareNodeLists(_controlSources, _testSources);
+            var diffs = Compare(_controlSources, _testSources);
             var unmatchedDiffs = Context.GetDiffsFromUnmatched();
 
             return diffs.Concat(unmatchedDiffs);
         }
 
-        private IEnumerable<IDiff> CompareNodeLists(SourceCollection controlSources, SourceCollection testSources)
+        private IEnumerable<IDiff> Compare(SourceCollection controlSources, SourceCollection testSources)
         {
             ApplyNodeFilter(controlSources);
             ApplyNodeFilter(testSources);
@@ -40,10 +40,7 @@ namespace AngleSharp.Diffing.Core
             return diffs;
         }
 
-        private void ApplyNodeFilter(SourceCollection sources)
-        {
-            sources.Remove(_diffingStrategy.Filter);
-        }
+        private void ApplyNodeFilter(SourceCollection sources) => sources.Remove(_diffingStrategy.Filter);
 
         private IEnumerable<Comparison> MatchNodes(SourceCollection controls, SourceCollection tests)
         {
@@ -170,7 +167,7 @@ namespace AngleSharp.Diffing.Core
             var ctrlPath = comparison.Control.Path;
             var testPath = comparison.Test.Path;
 
-            return CompareNodeLists(
+            return Compare(
                 ctrlChildNodes.ToSourceCollection(ComparisonSourceType.Control, ctrlPath),
                 testChildNodes.ToSourceCollection(ComparisonSourceType.Test, testPath)
             );
