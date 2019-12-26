@@ -14,6 +14,8 @@ AngleSharp Diffing makes it possible to compare AngleSharp _control_ nodes and _
 
 The _control_ nodes represents the expected HTML tree, i.e. how the nodes are expected to look, and the _test_ nodes represents the nodes that should be compared to the _control_ nodes.
 
+See the [Wiki for documentation](wiki) and more examples.
+
 **Differences:** There are three types off `IDiff` differences, that the library can return. 
 
 - `NodeDiff`/`AttrDiff`: Represents a difference between a control and test node or a control and test attribute.
