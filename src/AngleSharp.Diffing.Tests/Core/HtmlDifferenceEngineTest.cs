@@ -17,9 +17,9 @@ namespace AngleSharp.Diffing.Core
         [Fact(DisplayName = "Unmatched nodes in control/test are returned as missing/unexpected diffs")]
         public void UnmatchedNodesBecomesMissingUnexpectedDiffs()
         {
-            var sut = CreateHtmlDiffEngine(nodeMatcher: NoneNodeMatcher, nodeFilter: NoneNodeFilter);
+            var sut = CreateHtmlDiffer(nodeMatcher: NoneNodeMatcher, nodeFilter: NoneNodeFilter);
 
-            var results = sut.Compare(ToNodeList("<p></p><!--comment-->text"), ToNodeList("<p></p><!--comment-->text"))
+            var results = sut.Compare("<p></p><!--comment-->text", "<p></p><!--comment-->text")
                 .ToList();
 
             results.Count.ShouldBe(6);
@@ -55,7 +55,7 @@ namespace AngleSharp.Diffing.Core
         public void AnyUnmatchedNodesBecomesMissingUnexpectedDiffs(int matchIndex)
         {
             var nodes = ToNodeList("<p></p><span></span>");
-            var sut = CreateHtmlDiffEngine(
+            var sut = CreateHtmlDiffer(
                 nodeMatcher: SpecificIndexNodeMatcher(matchIndex),
                 nodeFilter: NoneNodeFilter,
                 nodeComparer: SameResultNodeComparer);
@@ -74,7 +74,7 @@ namespace AngleSharp.Diffing.Core
         public void FilteredOutNodesNotPartOfComparison(string html)
         {
             var nodes = ToNodeList(html);
-            var sut = CreateHtmlDiffEngine(nodeMatcher: NoneNodeMatcher, nodeFilter: RemoveCommentNodeFilter);
+            var sut = CreateHtmlDiffer(nodeMatcher: NoneNodeMatcher, nodeFilter: RemoveCommentNodeFilter);
 
             var results = sut.Compare(nodes, nodes).ToList();
 
@@ -86,7 +86,7 @@ namespace AngleSharp.Diffing.Core
         {
             var nodes = ToNodeList("<p></p><!--removed comment--><span></span>");
             var nodes2 = ToNodeList("<p></p><!--removed comment--><span></span>");
-            var sut = CreateHtmlDiffEngine(nodeMatcher: NoneNodeMatcher, nodeFilter: RemoveCommentNodeFilter);
+            var sut = CreateHtmlDiffer(nodeMatcher: NoneNodeMatcher, nodeFilter: RemoveCommentNodeFilter);
 
             var results = sut.Compare(nodes, nodes).ToList();
 
@@ -101,7 +101,7 @@ namespace AngleSharp.Diffing.Core
         public void WhenNodesAreDifferentADiffIsReturned()
         {
             var nodes = ToNodeList("<p></p><!--comment-->textnode");
-            var sut = CreateHtmlDiffEngine(
+            var sut = CreateHtmlDiffer(
                 nodeMatcher: OneToOneNodeListMatcher,
                 nodeFilter: NoneNodeFilter,
                 nodeComparer: DiffResultNodeComparer);
@@ -130,7 +130,7 @@ namespace AngleSharp.Diffing.Core
         public void WhenNodesAreSameNoDiffIsReturned()
         {
             var nodes = ToNodeList("<p></p><!--comment-->textnode");
-            var sut = CreateHtmlDiffEngine(
+            var sut = CreateHtmlDiffer(
                 nodeMatcher: OneToOneNodeListMatcher,
                 nodeFilter: NoneNodeFilter,
                 nodeComparer: SameResultNodeComparer);
@@ -145,7 +145,7 @@ namespace AngleSharp.Diffing.Core
         {
             var nodes = ToNodeList(@"<p id=""foo""></p>");
             var expectedElementSource = (IElement)nodes[0];
-            var sut = CreateHtmlDiffEngine(
+            var sut = CreateHtmlDiffer(
                 nodeMatcher: OneToOneNodeListMatcher,
                 nodeFilter: NoneNodeFilter,
                 nodeComparer: SameResultNodeComparer,
@@ -177,7 +177,7 @@ namespace AngleSharp.Diffing.Core
         public void PartialUnmatchedAttrs(string matchedAttr)
         {
             var nodes = ToNodeList(@"<p id=""foo"" lang=""bar"" custom=""baz""></p>");
-            var sut = CreateHtmlDiffEngine(
+            var sut = CreateHtmlDiffer(
                 nodeMatcher: OneToOneNodeListMatcher,
                 nodeFilter: NoneNodeFilter,
                 nodeComparer: SameResultNodeComparer,
@@ -202,7 +202,7 @@ namespace AngleSharp.Diffing.Core
         {
             var nodes = ToNodeList(@"<p id=""foo"" lang=""bar"" custom=""baz""></p>");
 
-            var sut = CreateHtmlDiffEngine(
+            var sut = CreateHtmlDiffer(
                 nodeMatcher: OneToOneNodeListMatcher,
                 nodeFilter: NoneNodeFilter,
                 nodeComparer: SameResultNodeComparer,
@@ -224,7 +224,7 @@ namespace AngleSharp.Diffing.Core
         {
             var nodes = ToNodeList(@"<p id=""foo""></p>");
 
-            var sut = CreateHtmlDiffEngine(
+            var sut = CreateHtmlDiffer(
                 nodeMatcher: OneToOneNodeListMatcher,
                 nodeFilter: NoneNodeFilter,
                 nodeComparer: SameResultNodeComparer,
@@ -248,7 +248,7 @@ namespace AngleSharp.Diffing.Core
         {
             var nodes = ToNodeList(@"<p id=""foo"" lang=""bar"" custom=""baz""></p>");
 
-            var sut = CreateHtmlDiffEngine(
+            var sut = CreateHtmlDiffer(
                 nodeMatcher: OneToOneNodeListMatcher,
                 nodeFilter: NoneNodeFilter,
                 nodeComparer: SameResultNodeComparer,
@@ -266,7 +266,7 @@ namespace AngleSharp.Diffing.Core
         {
             var nodes = ToNodeList(@"<main><h1><!--foobar--><p>hello world</p></h1></main>");
 
-            var sut = CreateHtmlDiffEngine(
+            var sut = CreateHtmlDiffer(
                 nodeMatcher: OneToOneNodeListMatcher,
                 nodeFilter: NoneNodeFilter,
                 nodeComparer: DiffResultNodeComparer);
@@ -286,7 +286,7 @@ namespace AngleSharp.Diffing.Core
         [InlineData("<h1></h1>", "<h1><p></p></h1>", typeof(UnexpectedNodeDiff))]
         public void OnlyOnePartHasChildNodes(string control, string test, Type expectedDiffType)
         {
-            var sut = CreateHtmlDiffEngine(
+            var sut = CreateHtmlDiffer(
                 nodeMatcher: OneToOneNodeListMatcher,
                 nodeFilter: NoneNodeFilter,
                 nodeComparer: DiffResultNodeComparer);
@@ -303,7 +303,7 @@ namespace AngleSharp.Diffing.Core
         {
             var nodes = ToNodeList(@"<p id=""foo""></p>");
 
-            var sut = CreateHtmlDiffEngine(
+            var sut = CreateHtmlDiffer(
                 nodeMatcher: OneToOneNodeListMatcher,
                 nodeFilter: NoneNodeFilter,
                 nodeComparer: DiffResultNodeComparer,
@@ -324,7 +324,7 @@ namespace AngleSharp.Diffing.Core
         [Fact(DisplayName = "When comparer returns Skip from an element comparison, none of the attributes or child nodes are compared")]
         public void Test1()
         {
-            var sut = CreateHtmlDiffEngine(
+            var sut = CreateHtmlDiffer(
                 nodeMatcher: OneToOneNodeListMatcher,
                 nodeFilter: NoneNodeFilter,
                 nodeComparer: c => c.Control.Node.NodeName == "P" ? CompareResult.Skip : throw new Exception("NODE COMPARER SHOULD NOT BE CALLED ON CHILD NODES"),
@@ -340,7 +340,7 @@ namespace AngleSharp.Diffing.Core
         [Fact(DisplayName = "When comparer returns Skip from an attribute comparison, no diffs are returned")]
         public void Test2()
         {
-            var sut = CreateHtmlDiffEngine(
+            var sut = CreateHtmlDiffer(
                 nodeMatcher: OneToOneNodeListMatcher,
                 nodeFilter: NoneNodeFilter,
                 nodeComparer: SameResultNodeComparer,

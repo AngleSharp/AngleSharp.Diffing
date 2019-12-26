@@ -2,16 +2,32 @@ using System;
 using System.Collections.Generic;
 using AngleSharp.Diffing.Core;
 using AngleSharp.Dom;
+using AngleSharp.Html.Parser;
 
 namespace AngleSharp.Diffing
 {
     public class HtmlDiffer
     {
+        private readonly IBrowsingContext _context;
+        private readonly IHtmlParser _htmlParser;
+        private readonly IDocument _document;
         private readonly IDiffingStrategy _diffingStrategy;
 
         public HtmlDiffer(IDiffingStrategy diffingStrategy)
         {
             _diffingStrategy = diffingStrategy ?? throw new ArgumentNullException(nameof(diffingStrategy));
+            var config = Configuration.Default.WithCss();
+            _context = BrowsingContext.New(config);
+            _htmlParser = _context.GetService<IHtmlParser>();
+            _document = _context.OpenNewAsync().Result;
+        }
+
+        public IEnumerable<IDiff> Compare(string controlMarkup, string testMarkup)
+        {
+            if (controlMarkup is null) throw new ArgumentNullException(nameof(controlMarkup));
+            if (testMarkup is null) throw new ArgumentNullException(nameof(testMarkup));
+
+            return Compare(Parse(controlMarkup), Parse(testMarkup));
         }
 
         public IEnumerable<IDiff> Compare(INode controlNode, IEnumerable<INode> testNodes)
@@ -47,6 +63,11 @@ namespace AngleSharp.Diffing
             var testSources = testNodes.ToSourceCollection(ComparisonSourceType.Test);
 
             return new HtmlDifferenceEngine(_diffingStrategy, controlSources, testSources).Compare();
+        }
+
+        protected INodeList Parse(string html)
+        {
+            return _htmlParser.ParseFragment(html, _document.Body);
         }
     }
 }

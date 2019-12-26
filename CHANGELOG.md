@@ -1,3 +1,9 @@
+# 0.13.1
+
+Released on Thursday, December 26, 2019.
+
+Small point release with an additional method added to the `HtmlDiffer` class.
+
 # 0.13.0
 
 Released on Wednesday, December 25, 2019.

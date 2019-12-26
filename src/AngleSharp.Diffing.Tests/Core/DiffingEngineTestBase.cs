@@ -9,7 +9,7 @@ namespace AngleSharp.Diffing.Core
         {
         }
 
-        protected static HtmlDiffer CreateHtmlDiffEngine(
+        protected static HtmlDiffer CreateHtmlDiffer(
                 Func<IDiffContext, SourceCollection, SourceCollection, IEnumerable<Comparison>>? nodeMatcher = null,
                 Func<IDiffContext, SourceMap, SourceMap, IEnumerable<AttributeComparison>>? attrMatcher = null,
                 Func<ComparisonSource, FilterDecision>? nodeFilter = null,
