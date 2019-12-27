@@ -119,27 +119,6 @@ Task("Create-Package")
 
         DotNetCorePack($"./src/{solutionName}/", settings);
     });
-//    .IsDependentOn("Copy-Files")
-//    .Does(() =>
-//    {
-//        var nugetExe = GetFiles("./tools/**/nuget.exe").FirstOrDefault()
-//            ?? (isRunningOnAppVeyor ? GetFiles("C:\\Tools\\NuGet3\\nuget.exe").FirstOrDefault() : null)
-//            ?? throw new InvalidOperationException("Could not find nuget.exe.");
-//
-//        var nuspec = nugetRoot + File($"{projectName}.nuspec");
-//
-//        NuGetPack(nuspec, new NuGetPackSettings
-//        {
-//            Version = version,
-//            OutputDirectory = nugetRoot,
-//            Symbols = true,
-//
-//            Properties = new Dictionary<String, String>
-//            {
-//                { "Configuration", configuration },
-//            },
-//        });
-//    });
 
 Task("Publish-Package")
     .IsDependentOn("Create-Package")
@@ -159,6 +138,7 @@ Task("Publish-Package")
             {
                 Source = "https://nuget.org/api/v2/package",
                 ApiKey = apiKey,
+				SkipDuplicate = true
             });
         }
     });
