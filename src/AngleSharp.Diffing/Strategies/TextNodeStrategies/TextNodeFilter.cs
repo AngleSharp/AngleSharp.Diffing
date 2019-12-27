@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using AngleSharp.Dom;
 using AngleSharp.Diffing.Core;
 using AngleSharp.Diffing.Extensions;
@@ -8,6 +8,8 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
     public class TextNodeFilter
     {
         private const string PRE_ELEMENTNAME = "PRE";
+        private const string SCRIPT_ELEMENTNAME = "SCRIPT";
+        private const string STYLE_ELEMENTNAME = "STYLE";
         private const string WHITESPACE_ATTR_NAME = "diff:whitespace";
 
         public WhitespaceOption Whitespace { get; }
@@ -35,7 +37,9 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
         {
             var parent = textNode.ParentElement;
 
-            if (parent.NodeName.Equals(PRE_ELEMENTNAME, StringComparison.Ordinal))
+            if (parent.NodeName.Equals(PRE_ELEMENTNAME, StringComparison.Ordinal) ||
+                parent.NodeName.Equals(SCRIPT_ELEMENTNAME, StringComparison.Ordinal) ||
+                parent.NodeName.Equals(STYLE_ELEMENTNAME, StringComparison.Ordinal))
             {
                 return parent.TryGetAttrValue(WHITESPACE_ATTR_NAME, out WhitespaceOption option)
                     ? option
