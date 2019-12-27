@@ -1,3 +1,4 @@
+using AngleSharp.Diffing.Strategies;
 using AngleSharp.Diffing.Strategies.TextNodeStrategies;
 
 namespace AngleSharp.Diffing
@@ -9,8 +10,8 @@ namespace AngleSharp.Diffing
         /// </summary>
         public static IDiffingStrategyCollection AddTextComparer(this IDiffingStrategyCollection builder, WhitespaceOption whitespaceOption, bool ignoreCase)
         {
-            builder.AddFilter(new TextNodeFilter(whitespaceOption).Filter, isSpecializedFilter: true);
-            builder.AddComparer(new TextNodeComparer(whitespaceOption, ignoreCase).Compare, isSpecializedComparer: true);
+            builder.AddFilter(new TextNodeFilter(whitespaceOption).Filter, StrategyType.Specialized);
+            builder.AddComparer(new TextNodeComparer(whitespaceOption, ignoreCase).Compare, StrategyType.Specialized);
             return builder;
         }
 
@@ -19,7 +20,7 @@ namespace AngleSharp.Diffing
         /// </summary>
         public static IDiffingStrategyCollection AddStyleSheetComparer(this IDiffingStrategyCollection builder)
         {
-            builder.AddComparer(StyleSheetTextNodeComparer.Compare, isSpecializedComparer: true);
+            builder.AddComparer(StyleSheetTextNodeComparer.Compare, StrategyType.Specialized);
             return builder;
         }
     }

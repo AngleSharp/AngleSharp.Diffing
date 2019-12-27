@@ -1,7 +1,5 @@
 using System.Collections.Generic;
-using AngleSharp;
 using AngleSharp.Dom;
-using AngleSharp.Html.Parser;
 using AngleSharp.Diffing.Core;
 using Xunit;
 

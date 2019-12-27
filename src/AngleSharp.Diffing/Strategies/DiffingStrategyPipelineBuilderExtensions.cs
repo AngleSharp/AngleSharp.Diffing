@@ -1,3 +1,4 @@
+using AngleSharp.Diffing.Strategies;
 using AngleSharp.Diffing.Strategies.AttributeStrategies;
 using AngleSharp.Diffing.Strategies.TextNodeStrategies;
 

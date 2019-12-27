@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using AngleSharp.Diffing.Core;
-using AngleSharp.Diffing.Strategies;
 using Shouldly;
 using Xunit;
 

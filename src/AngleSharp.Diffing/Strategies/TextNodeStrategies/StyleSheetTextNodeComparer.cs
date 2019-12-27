@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using AngleSharp;
 using AngleSharp.Dom;
 using AngleSharp.Diffing.Core;
 

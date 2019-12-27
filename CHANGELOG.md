@@ -1,3 +1,10 @@
+# 0.13.2
+
+Released on Thursday, December 27, 2019.
+
+- More code documentation added. 
+- Refactored IDiffingStrategyCollection's methods to take a `StrategyType strategyType = StrategyType.Specialized` as input instead of `bool isSpecialized* = true` argument. 
+
 # 0.13.1
 
 Released on Thursday, December 26, 2019.

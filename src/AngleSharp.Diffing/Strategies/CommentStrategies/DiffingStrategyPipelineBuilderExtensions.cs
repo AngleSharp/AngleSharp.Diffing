@@ -1,3 +1,4 @@
+using AngleSharp.Diffing.Strategies;
 using AngleSharp.Diffing.Strategies.CommentStrategies;
 
 namespace AngleSharp.Diffing
@@ -9,7 +10,7 @@ namespace AngleSharp.Diffing
         /// </summary>
         public static IDiffingStrategyCollection IgnoreComments(this IDiffingStrategyCollection builder)
         {
-            builder.AddFilter(IgnoreCommentsFilter.Filter, true);
+            builder.AddFilter(IgnoreCommentsFilter.Filter, StrategyType.Specialized);
             return builder;
         }
 
@@ -18,7 +19,7 @@ namespace AngleSharp.Diffing
         /// </summary>
         public static IDiffingStrategyCollection AddCommentComparer(this IDiffingStrategyCollection builder)
         {
-            builder.AddComparer(CommentComparer.Compare, isSpecializedComparer: false);
+            builder.AddComparer(CommentComparer.Compare, StrategyType.Generalized);
             return builder;
         }
     }

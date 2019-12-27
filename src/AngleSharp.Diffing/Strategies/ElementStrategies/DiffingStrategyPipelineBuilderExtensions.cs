@@ -1,3 +1,4 @@
+using AngleSharp.Diffing.Strategies;
 using AngleSharp.Diffing.Strategies.ElementStrategies;
 
 namespace AngleSharp.Diffing
@@ -9,7 +10,7 @@ namespace AngleSharp.Diffing
         /// </summary>
         public static IDiffingStrategyCollection AddElementComparer(this IDiffingStrategyCollection builder)
         {
-            builder.AddComparer(ElementComparer.Compare, isSpecializedComparer: false);
+            builder.AddComparer(ElementComparer.Compare, StrategyType.Generalized);
             return builder;
         }
 
@@ -18,7 +19,7 @@ namespace AngleSharp.Diffing
         /// </summary>
         public static IDiffingStrategyCollection AddCssSelectorMatcher(this IDiffingStrategyCollection builder)
         {
-            builder.AddMatcher(CssSelectorElementMatcher.Match, isSpecializedMatcher: true);
+            builder.AddMatcher(CssSelectorElementMatcher.Match, StrategyType.Specialized);
             return builder;
         }
 
@@ -29,7 +30,7 @@ namespace AngleSharp.Diffing
         /// <returns></returns>
         public static IDiffingStrategyCollection AddIgnoreElementSupport(this IDiffingStrategyCollection builder)
         {
-            builder.AddComparer(IgnoreElementComparer.Compare, isSpecializedComparer: true);
+            builder.AddComparer(IgnoreElementComparer.Compare, StrategyType.Specialized);
             return builder;
         }
     }

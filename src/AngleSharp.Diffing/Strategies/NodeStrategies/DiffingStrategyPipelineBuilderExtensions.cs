@@ -1,5 +1,4 @@
-using AngleSharp.Diffing.Strategies.CommentStrategies;
-using AngleSharp.Diffing.Strategies.ElementStrategies;
+using AngleSharp.Diffing.Strategies;
 using AngleSharp.Diffing.Strategies.NodeStrategies;
 
 namespace AngleSharp.Diffing
@@ -11,7 +10,7 @@ namespace AngleSharp.Diffing
         /// </summary>
         public static IDiffingStrategyCollection AddOneToOneNodeMatcher(this IDiffingStrategyCollection builder)
         {
-            builder.AddMatcher(OneToOneNodeMatcher.Match, isSpecializedMatcher: false);
+            builder.AddMatcher(OneToOneNodeMatcher.Match, StrategyType.Generalized);
             return builder;
         }
 
@@ -20,7 +19,7 @@ namespace AngleSharp.Diffing
         /// </summary>
         public static IDiffingStrategyCollection AddSearchingNodeMatcher(this IDiffingStrategyCollection builder)
         {
-            builder.AddMatcher(ForwardSearchingNodeMatcher.Match, isSpecializedMatcher: false);
+            builder.AddMatcher(ForwardSearchingNodeMatcher.Match, StrategyType.Generalized);
             return builder;
         }
     }
