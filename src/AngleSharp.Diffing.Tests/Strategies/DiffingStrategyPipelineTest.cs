@@ -1,8 +1,10 @@
 using System;
 using System.Linq;
+
 using AngleSharp.Diffing.Core;
-using AngleSharp.Dom;
+
 using Shouldly;
+
 using Xunit;
 
 namespace AngleSharp.Diffing.Strategies
@@ -37,10 +39,10 @@ namespace AngleSharp.Diffing.Strategies
         {
             var sut = new DiffingStrategyPipeline();
 
-            sut.AddFilter((in ComparisonSource s, FilterDecision currentDecision) => NegateDecision(expected), isSpecializedFilter: true);
-            sut.AddFilter((in ComparisonSource s, FilterDecision currentDecision) => expected, isSpecializedFilter: true);
-            sut.AddFilter((in AttributeComparisonSource s, FilterDecision currentDecision) => NegateDecision(expected), isSpecializedFilter: true);
-            sut.AddFilter((in AttributeComparisonSource s, FilterDecision currentDecision) => expected, isSpecializedFilter: true);
+            sut.AddFilter((in ComparisonSource s, FilterDecision currentDecision) => NegateDecision(expected), StrategyType.Specialized);
+            sut.AddFilter((in ComparisonSource s, FilterDecision currentDecision) => expected, StrategyType.Specialized);
+            sut.AddFilter((in AttributeComparisonSource s, FilterDecision currentDecision) => NegateDecision(expected), StrategyType.Specialized);
+            sut.AddFilter((in AttributeComparisonSource s, FilterDecision currentDecision) => expected, StrategyType.Specialized);
 
             sut.Filter(new ComparisonSource()).ShouldBe(expected);
             sut.Filter(new AttributeComparisonSource()).ShouldBe(expected);
@@ -53,10 +55,10 @@ namespace AngleSharp.Diffing.Strategies
         {
             var sut = new DiffingStrategyPipeline();
 
-            sut.AddFilter((in ComparisonSource s, FilterDecision currentDecision) => expected, isSpecializedFilter: false);
-            sut.AddFilter((in ComparisonSource s, FilterDecision currentDecision) => NegateDecision(expected), isSpecializedFilter: false);
-            sut.AddFilter((in AttributeComparisonSource s, FilterDecision currentDecision) => expected, isSpecializedFilter: false);
-            sut.AddFilter((in AttributeComparisonSource s, FilterDecision currentDecision) => NegateDecision(expected), isSpecializedFilter: false);
+            sut.AddFilter((in ComparisonSource s, FilterDecision currentDecision) => expected, StrategyType.Generalized);
+            sut.AddFilter((in ComparisonSource s, FilterDecision currentDecision) => NegateDecision(expected), StrategyType.Generalized);
+            sut.AddFilter((in AttributeComparisonSource s, FilterDecision currentDecision) => expected, StrategyType.Generalized);
+            sut.AddFilter((in AttributeComparisonSource s, FilterDecision currentDecision) => NegateDecision(expected), StrategyType.Generalized);
 
             sut.Filter(new ComparisonSource()).ShouldBe(expected);
             sut.Filter(new AttributeComparisonSource()).ShouldBe(expected);
@@ -69,10 +71,10 @@ namespace AngleSharp.Diffing.Strategies
         {
             var sut = new DiffingStrategyPipeline();
 
-            sut.AddFilter((in ComparisonSource s, FilterDecision currentDecision) => expected, isSpecializedFilter: true);
-            sut.AddFilter((in ComparisonSource s, FilterDecision currentDecision) => NegateDecision(expected), isSpecializedFilter: false);
-            sut.AddFilter((in AttributeComparisonSource s, FilterDecision currentDecision) => expected, isSpecializedFilter: true);
-            sut.AddFilter((in AttributeComparisonSource s, FilterDecision currentDecision) => NegateDecision(expected), isSpecializedFilter: false);
+            sut.AddFilter((in ComparisonSource s, FilterDecision currentDecision) => expected, StrategyType.Specialized);
+            sut.AddFilter((in ComparisonSource s, FilterDecision currentDecision) => NegateDecision(expected), StrategyType.Generalized);
+            sut.AddFilter((in AttributeComparisonSource s, FilterDecision currentDecision) => expected, StrategyType.Specialized);
+            sut.AddFilter((in AttributeComparisonSource s, FilterDecision currentDecision) => NegateDecision(expected), StrategyType.Generalized);
 
             sut.Filter(new ComparisonSource()).ShouldBe(expected);
             sut.Filter(new AttributeComparisonSource()).ShouldBe(expected);
@@ -96,8 +98,8 @@ namespace AngleSharp.Diffing.Strategies
         {
             var sourceColllection = ToSourceCollection("<p></p><span></span>", ComparisonSourceType.Control);
             var sut = new DiffingStrategyPipeline();
-            sut.AddMatcher((ctx, s, t) => new[] { new Comparison(s[0], t[0]) }, isSpecializedMatcher: true);
-            sut.AddMatcher((ctx, s, t) => new[] { new Comparison(s[1], t[1]) }, isSpecializedMatcher: true);
+            sut.AddMatcher((ctx, s, t) => new[] { new Comparison(s[0], t[0]) }, StrategyType.Specialized);
+            sut.AddMatcher((ctx, s, t) => new[] { new Comparison(s[1], t[1]) }, StrategyType.Specialized);
 
             var result = sut.Match(DummyContext, sourceColllection, sourceColllection).ToList();
 
@@ -110,8 +112,8 @@ namespace AngleSharp.Diffing.Strategies
         {
             var sourceMap = ToSourceMap(@"<p foo=""bar"" baz=""bum""></p>");
             var sut = new DiffingStrategyPipeline();
-            sut.AddMatcher((ctx, s, t) => new[] { new AttributeComparison(s["foo"], t["foo"]) }, isSpecializedMatcher: true);
-            sut.AddMatcher((ctx, s, t) => new[] { new AttributeComparison(s["baz"], t["baz"]) }, isSpecializedMatcher: true);
+            sut.AddMatcher((ctx, s, t) => new[] { new AttributeComparison(s["foo"], t["foo"]) }, StrategyType.Specialized);
+            sut.AddMatcher((ctx, s, t) => new[] { new AttributeComparison(s["baz"], t["baz"]) }, StrategyType.Specialized);
 
             var result = sut.Match(DummyContext, sourceMap, sourceMap).ToList();
 
@@ -124,8 +126,8 @@ namespace AngleSharp.Diffing.Strategies
         {
             var sourceColllection = ToSourceCollection("<p></p><span></span>", ComparisonSourceType.Control);
             var sut = new DiffingStrategyPipeline();
-            sut.AddMatcher((ctx, s, t) => new[] { new Comparison(s[0], t[0]) }, isSpecializedMatcher: false);
-            sut.AddMatcher((ctx, s, t) => new[] { new Comparison(s[1], t[1]) }, isSpecializedMatcher: false);
+            sut.AddMatcher((ctx, s, t) => new[] { new Comparison(s[0], t[0]) }, StrategyType.Generalized);
+            sut.AddMatcher((ctx, s, t) => new[] { new Comparison(s[1], t[1]) }, StrategyType.Generalized);
 
             var result = sut.Match(DummyContext, sourceColllection, sourceColllection).ToList();
 
@@ -138,8 +140,8 @@ namespace AngleSharp.Diffing.Strategies
         {
             var sourceMap = ToSourceMap(@"<p foo=""bar"" baz=""bum""></p>");
             var sut = new DiffingStrategyPipeline();
-            sut.AddMatcher((ctx, s, t) => new[] { new AttributeComparison(s["foo"], t["foo"]) }, isSpecializedMatcher: false);
-            sut.AddMatcher((ctx, s, t) => new[] { new AttributeComparison(s["baz"], t["baz"]) }, isSpecializedMatcher: false);
+            sut.AddMatcher((ctx, s, t) => new[] { new AttributeComparison(s["foo"], t["foo"]) }, StrategyType.Generalized);
+            sut.AddMatcher((ctx, s, t) => new[] { new AttributeComparison(s["baz"], t["baz"]) }, StrategyType.Generalized);
 
             var result = sut.Match(DummyContext, sourceMap, sourceMap).ToList();
 
@@ -152,8 +154,8 @@ namespace AngleSharp.Diffing.Strategies
         {
             var sourceColllection = ToSourceCollection("<p></p><span></span>", ComparisonSourceType.Control);
             var sut = new DiffingStrategyPipeline();
-            sut.AddMatcher((ctx, s, t) => new[] { new Comparison(s[0], t[0]) }, isSpecializedMatcher: false);
-            sut.AddMatcher((ctx, s, t) => new[] { new Comparison(s[1], t[1]) }, isSpecializedMatcher: true);
+            sut.AddMatcher((ctx, s, t) => new[] { new Comparison(s[0], t[0]) }, StrategyType.Generalized);
+            sut.AddMatcher((ctx, s, t) => new[] { new Comparison(s[1], t[1]) }, StrategyType.Specialized);
 
             var result = sut.Match(DummyContext, sourceColllection, sourceColllection).ToList();
 
@@ -166,8 +168,8 @@ namespace AngleSharp.Diffing.Strategies
         {
             var sourceMap = ToSourceMap(@"<p foo=""bar"" baz=""bum""></p>");
             var sut = new DiffingStrategyPipeline();
-            sut.AddMatcher((ctx, s, t) => new[] { new AttributeComparison(s["foo"], t["foo"]) }, isSpecializedMatcher: false);
-            sut.AddMatcher((ctx, s, t) => new[] { new AttributeComparison(s["baz"], t["baz"]) }, isSpecializedMatcher: true);
+            sut.AddMatcher((ctx, s, t) => new[] { new AttributeComparison(s["foo"], t["foo"]) }, StrategyType.Generalized);
+            sut.AddMatcher((ctx, s, t) => new[] { new AttributeComparison(s["baz"], t["baz"]) }, StrategyType.Specialized);
 
             var result = sut.Match(DummyContext, sourceMap, sourceMap).ToList();
 
@@ -192,10 +194,10 @@ namespace AngleSharp.Diffing.Strategies
         {
             var sut = new DiffingStrategyPipeline();
 
-            sut.AddComparer((in Comparison c, CompareResult current) => first, isSpecializedComparer: true);
-            sut.AddComparer((in Comparison c, CompareResult current) => final, isSpecializedComparer: true);
-            sut.AddComparer((in AttributeComparison c, CompareResult current) => first, isSpecializedComparer: true);
-            sut.AddComparer((in AttributeComparison c, CompareResult current) => final, isSpecializedComparer: true);
+            sut.AddComparer((in Comparison c, CompareResult current) => first, StrategyType.Specialized);
+            sut.AddComparer((in Comparison c, CompareResult current) => final, StrategyType.Specialized);
+            sut.AddComparer((in AttributeComparison c, CompareResult current) => first, StrategyType.Specialized);
+            sut.AddComparer((in AttributeComparison c, CompareResult current) => final, StrategyType.Specialized);
 
             sut.Compare(new Comparison()).ShouldBe(final);
             sut.Compare(new AttributeComparison()).ShouldBe(final);
@@ -208,10 +210,10 @@ namespace AngleSharp.Diffing.Strategies
         {
             var sut = new DiffingStrategyPipeline();
 
-            sut.AddComparer((in Comparison c, CompareResult current) => final, isSpecializedComparer: false);
-            sut.AddComparer((in Comparison c, CompareResult current) => first, isSpecializedComparer: false);
-            sut.AddComparer((in AttributeComparison c, CompareResult current) => final, isSpecializedComparer: false);
-            sut.AddComparer((in AttributeComparison c, CompareResult current) => first, isSpecializedComparer: false);
+            sut.AddComparer((in Comparison c, CompareResult current) => final, StrategyType.Generalized);
+            sut.AddComparer((in Comparison c, CompareResult current) => first, StrategyType.Generalized);
+            sut.AddComparer((in AttributeComparison c, CompareResult current) => final, StrategyType.Generalized);
+            sut.AddComparer((in AttributeComparison c, CompareResult current) => first, StrategyType.Generalized);
 
             sut.Compare(new Comparison()).ShouldBe(final);
             sut.Compare(new AttributeComparison()).ShouldBe(final);
@@ -224,10 +226,10 @@ namespace AngleSharp.Diffing.Strategies
         {
             var sut = new DiffingStrategyPipeline();
 
-            sut.AddComparer((in Comparison c, CompareResult current) => first, isSpecializedComparer: false);
-            sut.AddComparer((in Comparison c, CompareResult current) => final, isSpecializedComparer: true);
-            sut.AddComparer((in AttributeComparison c, CompareResult current) => first, isSpecializedComparer: false);
-            sut.AddComparer((in AttributeComparison c, CompareResult current) => final, isSpecializedComparer: true);
+            sut.AddComparer((in Comparison c, CompareResult current) => first, StrategyType.Generalized);
+            sut.AddComparer((in Comparison c, CompareResult current) => final, StrategyType.Specialized);
+            sut.AddComparer((in AttributeComparison c, CompareResult current) => first, StrategyType.Generalized);
+            sut.AddComparer((in AttributeComparison c, CompareResult current) => final, StrategyType.Specialized);
 
             sut.Compare(new Comparison()).ShouldBe(final);
             sut.Compare(new AttributeComparison()).ShouldBe(final);
@@ -239,7 +241,7 @@ namespace AngleSharp.Diffing.Strategies
             var controlSources = ToSourceCollection("<p></p>", ComparisonSourceType.Control);
             var testSources = ToSourceCollection("<p></p>", ComparisonSourceType.Test);
             var sut = new DiffingStrategyPipeline();
-            sut.AddMatcher((ctx, s, t) => new[] { new Comparison(s[0], t[0]) }, isSpecializedMatcher: true);
+            sut.AddMatcher((ctx, s, t) => new[] { new Comparison(s[0], t[0]) }, StrategyType.Specialized);
 
             var result = sut.Match(DummyContext, controlSources, testSources).ToList();
 
@@ -253,7 +255,7 @@ namespace AngleSharp.Diffing.Strategies
             var controlSources = ToSourceMap(@"<p foo=""bar""></p>", ComparisonSourceType.Control);
             var testSources = ToSourceMap(@"<p foo=""bar""></p>", ComparisonSourceType.Test);
             var sut = new DiffingStrategyPipeline();
-            sut.AddMatcher((ctx, s, t) => new[] { new AttributeComparison(s["foo"], t["foo"]) }, isSpecializedMatcher: true);
+            sut.AddMatcher((ctx, s, t) => new[] { new AttributeComparison(s["foo"], t["foo"]) }, StrategyType.Specialized);
 
             var result = sut.Match(DummyContext, controlSources, testSources).ToList();
 
@@ -272,11 +274,11 @@ namespace AngleSharp.Diffing.Strategies
         public void Test202()
         {
             var sutWithAttrMatcher = new DiffingStrategyPipeline();
-            sutWithAttrMatcher.AddMatcher((ctx, s, t) => Array.Empty<AttributeComparison>(), false);
+            sutWithAttrMatcher.AddMatcher((ctx, s, t) => Array.Empty<AttributeComparison>(), StrategyType.Generalized);
             sutWithAttrMatcher.HasMatchers.ShouldBeFalse();
 
             var sutWithNodeMatcher = new DiffingStrategyPipeline();
-            sutWithNodeMatcher.AddMatcher((ctx, s, t) => Array.Empty<Comparison>(), false);
+            sutWithNodeMatcher.AddMatcher((ctx, s, t) => Array.Empty<Comparison>(), StrategyType.Generalized);
             sutWithNodeMatcher.HasMatchers.ShouldBeFalse();
         }
 
@@ -284,8 +286,8 @@ namespace AngleSharp.Diffing.Strategies
         public void Test203()
         {
             var sut = new DiffingStrategyPipeline();
-            sut.AddMatcher((ctx, s, t) => Array.Empty<AttributeComparison>(), false);
-            sut.AddMatcher((ctx, s, t) => Array.Empty<Comparison>(), false);
+            sut.AddMatcher((ctx, s, t) => Array.Empty<AttributeComparison>(), StrategyType.Generalized);
+            sut.AddMatcher((ctx, s, t) => Array.Empty<Comparison>(), StrategyType.Generalized);
             sut.HasMatchers.ShouldBeTrue();
         }
 
@@ -300,11 +302,11 @@ namespace AngleSharp.Diffing.Strategies
         public void Test302()
         {
             var sutWithAttrComparer = new DiffingStrategyPipeline();
-            sutWithAttrComparer.AddComparer((in AttributeComparison c, CompareResult current) => current, isSpecializedComparer: false);
+            sutWithAttrComparer.AddComparer((in AttributeComparison c, CompareResult current) => current, StrategyType.Generalized);
             sutWithAttrComparer.HasComparers.ShouldBeFalse();
 
             var sutWithNodeComparer = new DiffingStrategyPipeline();
-            sutWithNodeComparer.AddComparer((in Comparison c, CompareResult current) => current, isSpecializedComparer: false);
+            sutWithNodeComparer.AddComparer((in Comparison c, CompareResult current) => current, StrategyType.Generalized);
             sutWithNodeComparer.HasComparers.ShouldBeFalse();
         }
 
@@ -312,8 +314,8 @@ namespace AngleSharp.Diffing.Strategies
         public void Test303()
         {
             var sut = new DiffingStrategyPipeline();
-            sut.AddComparer((in AttributeComparison c, CompareResult current) => current, isSpecializedComparer: false);
-            sut.AddComparer((in Comparison c, CompareResult current) => current, isSpecializedComparer: false);
+            sut.AddComparer((in AttributeComparison c, CompareResult current) => current, StrategyType.Generalized);
+            sut.AddComparer((in Comparison c, CompareResult current) => current, StrategyType.Generalized);
             sut.HasComparers.ShouldBeTrue();
         }
     }

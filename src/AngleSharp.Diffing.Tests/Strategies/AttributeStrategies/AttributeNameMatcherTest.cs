@@ -1,12 +1,10 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using AngleSharp.Diffing;
 using AngleSharp.Diffing.Core;
-using AngleSharp.Dom;
+
 using Shouldly;
+
 using Xunit;
 
 namespace AngleSharp.Diffing.Strategies.AttributeStrategies

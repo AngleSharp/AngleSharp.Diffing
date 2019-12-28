@@ -5,8 +5,9 @@ using System.Linq;
 
 namespace AngleSharp.Diffing.Core
 {
-    public delegate FilterDecision SourceCollectionRemovePredicate(in ComparisonSource source);
-
+    /// <summary>
+    /// Represents a collection of <see cref="ComparisonSource"/> sources in a comparison.
+    /// </summary>
     public class SourceCollection : IEnumerable<ComparisonSource>
     {
         private const int SOURCE_REMOVED = -1;
@@ -16,10 +17,19 @@ namespace AngleSharp.Diffing.Core
         private readonly int[] _status;
         private IReadOnlyList<ComparisonSource> _sources;
 
+        /// <summary>
+        /// Gets the type of the sources in the collection.
+        /// </summary>
         public ComparisonSourceType SourceType { get; }
 
+        /// <summary>
+        /// Gets the number of items in the collection.
+        /// </summary>
         public int Count { get; private set; }
 
+        /// <summary>
+        /// Gets the source at the specified index.
+        /// </summary>
         public ComparisonSource this[int index]
         {
             get
@@ -30,17 +40,25 @@ namespace AngleSharp.Diffing.Core
             }
         }
 
+        /// <summary>
+        /// Creates a new <see cref="SourceCollection"/>.
+        /// </summary>
         public SourceCollection(ComparisonSourceType sourceType, IEnumerable<ComparisonSource> sources) : this(sourceType, sources.ToArray()) { }
-        
+
+        /// <summary>
+        /// Creates a new <see cref="SourceCollection"/>.
+        /// </summary>
         public SourceCollection(ComparisonSourceType sourceType, IReadOnlyList<ComparisonSource> sources)
         {
             SourceType = sourceType;
             _sources = sources;
             _status = new int[_sources.Count];
             Count = _sources.Count;
-            //EnsureSourcesAreInCorrectOrder();
         }
 
+        /// <summary>
+        /// Gets all the unmatched sources in the collection, starting from the specified index (default: 0).
+        /// </summary>
         public IEnumerable<ComparisonSource> GetUnmatched(int startIndex = 0)
         {
             for (int i = startIndex; i < _sources.Count; i++)
@@ -53,6 +71,7 @@ namespace AngleSharp.Diffing.Core
             yield break;
         }
 
+        /// <inheritdoc/>
         public IEnumerator<ComparisonSource> GetEnumerator()
         {
             for (int i = 0; i < _sources.Count; i++)
@@ -68,6 +87,7 @@ namespace AngleSharp.Diffing.Core
             yield break;
         }
 
+        /// <inheritdoc/>
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         /// <summary>

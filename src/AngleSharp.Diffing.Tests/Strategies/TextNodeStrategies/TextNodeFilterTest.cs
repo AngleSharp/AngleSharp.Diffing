@@ -1,5 +1,7 @@
-﻿using AngleSharp.Diffing.Core;
+using AngleSharp.Diffing.Core;
+
 using Shouldly;
+
 using Xunit;
 
 namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
@@ -53,21 +55,27 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
             sut.Filter(source, FilterDecision.Exclude).ShouldBe(FilterDecision.Exclude);
         }
 
-        [Fact(DisplayName = "If parent node is <pre> element, the implicit option is Preserved")]
-        public void Test5()
+        [Theory(DisplayName = "If parent node is <pre>, <script>, or <style> element, the implicit option is Preserved")]
+        [InlineData("pre")]
+        [InlineData("style")]
+        [InlineData("script")]
+        public void Test5(string tag)
         {
             var sut = new TextNodeFilter(WhitespaceOption.Normalize);
-            var pre = ToComparisonSource("<pre> \n\t </pre>");
+            var pre = ToComparisonSource($"<{tag}> \n\t </{tag}>");
             var source = new ComparisonSource(pre.Node.FirstChild, 0, pre.Path, ComparisonSourceType.Control);
 
             sut.Filter(source, FilterDecision.Keep).ShouldBe(FilterDecision.Keep);
         }
 
-        [Fact(DisplayName = "If parent node is <pre> element with a diff:whitespace, the option is take from the attribute")]
-        public void Test51()
+        [Theory(DisplayName = "If parent node is <pre>, <script>, or <style> element with a diff:whitespace, the option is take from the attribute")]
+        [InlineData("pre")]
+        [InlineData("style")]
+        [InlineData("script")]
+        public void Test51(string tag)
         {
             var sut = new TextNodeFilter(WhitespaceOption.Normalize);
-            var pre = ToComparisonSource("<pre diff:whitespace=\"RemoveWhitespaceNodes\"> \n\t </pre>");
+            var pre = ToComparisonSource($"<{tag} diff:whitespace=\"RemoveWhitespaceNodes\"> \n\t </{tag}>");
             var source = new ComparisonSource(pre.Node.FirstChild, 0, pre.Path, ComparisonSourceType.Control);
 
             sut.Filter(source, FilterDecision.Keep).ShouldBe(FilterDecision.Exclude);

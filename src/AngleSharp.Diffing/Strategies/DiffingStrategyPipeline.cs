@@ -1,13 +1,13 @@
 using System.Collections.Generic;
+
 using AngleSharp.Diffing.Core;
 
 namespace AngleSharp.Diffing.Strategies
 {
-
-    public delegate FilterDecision FilterStrategy<TSource>(in TSource source, FilterDecision currentDecision);
-    public delegate IEnumerable<TComparison> MatchStrategy<in TSources, out TComparison>(IDiffContext context, TSources controlSources, TSources testSources);
-    public delegate CompareResult CompareStrategy<TComparison>(in TComparison comparison, CompareResult currentDecision);
-
+    /// <summary>
+    /// Represents a <see cref="IDiffingStrategy"/> and a <see cref="IDiffingStrategyCollection"/>.
+    /// Use the pipeline to invoke the strategies registered within it as a pipeline, one at the time.
+    /// </summary>
     public class DiffingStrategyPipeline : IDiffingStrategy, IDiffingStrategyCollection
     {
         private readonly List<FilterStrategy<ComparisonSource>> _nodeFilters = new List<FilterStrategy<ComparisonSource>>();
@@ -17,12 +17,23 @@ namespace AngleSharp.Diffing.Strategies
         private readonly List<CompareStrategy<Comparison>> _nodeComparers = new List<CompareStrategy<Comparison>>();
         private readonly List<CompareStrategy<AttributeComparison>> _attrComparers = new List<CompareStrategy<AttributeComparison>>();
 
+        /// <summary>
+        /// Gets whether the pipeline have any matchers registered.
+        /// </summary>
         public bool HasMatchers => _nodeMatchers.Count > 0 && _attrsMatchers.Count > 0;
+
+        /// <summary>
+        /// Gets whether the pipeline has any comparers registered.
+        /// </summary>
         public bool HasComparers => _nodeComparers.Count > 0 && _attrComparers.Count > 0;
 
+        /// <inheritdoc/>
         public FilterDecision Filter(in ComparisonSource comparisonSource) => Filter(comparisonSource, _nodeFilters);
+
+        /// <inheritdoc/>
         public FilterDecision Filter(in AttributeComparisonSource attributeComparisonSource) => Filter(attributeComparisonSource, _attrsFilters);
 
+        /// <inheritdoc/>
         public IEnumerable<Comparison> Match(IDiffContext context, SourceCollection controlSources, SourceCollection testSources)
         {
             foreach (var matcher in _nodeMatchers)
@@ -35,6 +46,8 @@ namespace AngleSharp.Diffing.Strategies
                 }
             }
         }
+
+        /// <inheritdoc/>
         public IEnumerable<AttributeComparison> Match(IDiffContext context, SourceMap controlAttrSources, SourceMap testAttrSources)
         {
             foreach (var matcher in _attrsMatchers)
@@ -48,99 +61,66 @@ namespace AngleSharp.Diffing.Strategies
             }
         }
 
+        /// <inheritdoc/>
         public CompareResult Compare(in Comparison comparison) => Compare(comparison, _nodeComparers, CompareResult.Different);
+
+        /// <inheritdoc/>
         public CompareResult Compare(in AttributeComparison comparison) => Compare(comparison, _attrComparers, CompareResult.Different);
 
-        /// <summary>
-        /// Adds a node filter to the pipeline.
-        /// Specialized filters always execute after any generalized filters in the pipeline.
-        /// That enables them to correct for the generic filters decision.
-        /// </summary>
-        /// <param name="filterStrategy"></param>
-        /// <param name="isSpecializedFilter">true if <paramref name="filterStrategy"/> is a specialized filter, false if it is a generalized filter</param>
-        public IDiffingStrategyCollection AddFilter(FilterStrategy<ComparisonSource> filterStrategy, bool isSpecializedFilter)
+        /// <inheritdoc/>
+        public IDiffingStrategyCollection AddFilter(FilterStrategy<ComparisonSource> filterStrategy, StrategyType strategyType)
         {
-            if (isSpecializedFilter)
+            if (strategyType == StrategyType.Specialized)
                 _nodeFilters.Add(filterStrategy);
             else
                 _nodeFilters.Insert(0, filterStrategy);
             return this;
         }
 
-        /// <summary>
-        /// Adds an attribute filter to the pipeline.
-        /// Specialized filters always execute after any generalized filters in the pipeline.
-        /// That enables them to correct for the generic filters decision.
-        /// </summary>
-        /// <param name="filterStrategy"></param>
-        /// <param name="isSpecializedFilter">true if <paramref name="filterStrategy"/> is a specialized filter, false if it is a generalized filter</param>
-        public IDiffingStrategyCollection AddFilter(FilterStrategy<AttributeComparisonSource> filterStrategy, bool isSpecializedFilter)
+        /// <inheritdoc/>
+        public IDiffingStrategyCollection AddFilter(FilterStrategy<AttributeComparisonSource> filterStrategy, StrategyType strategyType)
         {
-            if (isSpecializedFilter)
+            if (strategyType == StrategyType.Specialized)
                 _attrsFilters.Add(filterStrategy);
             else
                 _attrsFilters.Insert(0, filterStrategy);
             return this;
         }
 
-        /// <summary>
-        /// Adds a node matcher to the pipeline.
-        /// Specialized matchers always execute before any generalized matchers in the pipeline.
-        /// This enables the special matchers to handle special matching cases before the more simple generalized matchers process the rest.
-        /// </summary>
-        /// <param name="matchStrategy"></param>
-        /// <param name="isSpecializedMatcher">true if <paramref name="matchStrategy"/> is a specialized matcher, false if it is a generalized matcher</param>
-        public IDiffingStrategyCollection AddMatcher(MatchStrategy<SourceCollection, Comparison> matchStrategy, bool isSpecializedMatcher)
+        /// <inheritdoc/>
+        public IDiffingStrategyCollection AddMatcher(MatchStrategy<SourceCollection, Comparison> matchStrategy, StrategyType strategyType)
         {
-            if (isSpecializedMatcher)
+            if (strategyType == StrategyType.Specialized)
                 _nodeMatchers.Insert(0, matchStrategy);
             else
                 _nodeMatchers.Add(matchStrategy);
             return this;
         }
 
-        /// <summary>
-        /// Adds an attribute matcher to the pipeline.
-        /// Specialized matchers always execute before any generalized matchers in the pipeline.
-        /// This enables the special matchers to handle special matching cases before the more simple generalized matchers process the rest.
-        /// </summary>
-        /// <param name="matchStrategy"></param>
-        /// <param name="isSpecializedMatcher">true if <paramref name="matchStrategy"/> is a specialized matcher, false if it is a generalized matcher</param>
-        public IDiffingStrategyCollection AddMatcher(MatchStrategy<SourceMap, AttributeComparison> matchStrategy, bool isSpecializedMatcher)
+        /// <inheritdoc/>
+        public IDiffingStrategyCollection AddMatcher(MatchStrategy<SourceMap, AttributeComparison> matchStrategy, StrategyType strategyType)
         {
-            if (isSpecializedMatcher)
+            if (strategyType == StrategyType.Specialized)
                 _attrsMatchers.Insert(0, matchStrategy);
             else
                 _attrsMatchers.Add(matchStrategy);
             return this;
         }
 
-        /// <summary>
-        /// Adds a node comparer to the pipeline.
-        /// Specialized comparers always execute after any generalized comparers in the pipeline.
-        /// That enables them to correct for the generic comparers decision.
-        /// </summary>
-        /// <param name="compareStrategy"></param>
-        /// <param name="isSpecializedComparer">true if <paramref name="compareStrategy"/> is a specialized comparer, false if it is a generalized comparer</param>
-        public IDiffingStrategyCollection AddComparer(CompareStrategy<Comparison> compareStrategy, bool isSpecializedComparer)
+        /// <inheritdoc/>
+        public IDiffingStrategyCollection AddComparer(CompareStrategy<Comparison> compareStrategy, StrategyType strategyType)
         {
-            if (isSpecializedComparer)
+            if (strategyType == StrategyType.Specialized)
                 _nodeComparers.Add(compareStrategy);
             else
                 _nodeComparers.Insert(0, compareStrategy);
             return this;
         }
 
-        /// <summary>
-        /// Adds a attribute comparer to the pipeline.
-        /// Specialized comparers always execute after any generalized comparers in the pipeline.
-        /// That enables them to correct for the generic comparers decision.
-        /// </summary>
-        /// <param name="compareStrategy"></param>
-        /// <param name="isSpecializedComparer">true if <paramref name="compareStrategy"/> is a specialized comparer, false if it is a generalized comparer</param>
-        public IDiffingStrategyCollection AddComparer(CompareStrategy<AttributeComparison> compareStrategy, bool isSpecializedComparer)
+        /// <inheritdoc/>
+        public IDiffingStrategyCollection AddComparer(CompareStrategy<AttributeComparison> compareStrategy, StrategyType strategyType)
         {
-            if (isSpecializedComparer)
+            if (strategyType == StrategyType.Specialized)
                 _attrComparers.Add(compareStrategy);
             else
                 _attrComparers.Insert(0, compareStrategy);

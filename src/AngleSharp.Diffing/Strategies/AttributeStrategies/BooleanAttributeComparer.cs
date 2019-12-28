@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using AngleSharp.Dom;
+
 using AngleSharp.Diffing.Core;
+using AngleSharp.Dom;
 
 namespace AngleSharp.Diffing.Strategies.AttributeStrategies
 {
+    /// <summary>
+    /// Boolean attribute comparer strategy.
+    /// </summary>
     public class BooleanAttributeComparer
     {
         private static readonly HashSet<string> BooleanAttributesSet = new HashSet<string>()
@@ -36,20 +40,33 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
             "typemustmatch"
         };
 
+        /// <summary>
+        /// Gets a collection of names of all attributes the strategy considers as boolean attributes.
+        /// </summary>        
         public static IReadOnlyCollection<string> BooleanAttributes => BooleanAttributesSet;
 
         private readonly BooleanAttributeComparision _mode;
 
+        /// <summary>
+        /// Creates a instance of the <see cref="BooleanAttributeComparer"/>.
+        /// </summary>
+        /// <param name="mode"></param>
         public BooleanAttributeComparer(BooleanAttributeComparision mode)
         {
             _mode = mode;
         }
 
+        /// <summary>
+        /// The boolean attribute comparer strategy.
+        /// </summary>
         public CompareResult Compare(in AttributeComparison comparison, CompareResult currentDecision)
         {
-            if (currentDecision.IsSameOrSkip()) return currentDecision;
-            if (!IsAttributeNamesEqual(comparison)) return CompareResult.Different;
-            if (!BooleanAttributesSet.Contains(comparison.Control.Attribute.Name)) return currentDecision;
+            if (currentDecision.IsSameOrSkip())
+                return currentDecision;
+            if (!IsAttributeNamesEqual(comparison))
+                return CompareResult.Different;
+            if (!BooleanAttributesSet.Contains(comparison.Control.Attribute.Name))
+                return currentDecision;
 
             var hasSameValue = _mode == BooleanAttributeComparision.Strict
                 ? CompareStrict(comparison)

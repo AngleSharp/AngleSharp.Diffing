@@ -1,3 +1,4 @@
+using AngleSharp.Diffing.Strategies;
 using AngleSharp.Diffing.Strategies.AttributeStrategies;
 using AngleSharp.Diffing.Strategies.TextNodeStrategies;
 
@@ -16,7 +17,7 @@ namespace AngleSharp.Diffing
                 .AddSearchingNodeMatcher()
                 .AddCssSelectorMatcher()
                 .AddAttributeNameMatcher()
-                .AddElementComparer()                
+                .AddElementComparer()
                 .AddIgnoreElementSupport()
                 .AddStyleSheetComparer()
                 .AddTextComparer(WhitespaceOption.Normalize, ignoreCase: false)

@@ -1,6 +1,8 @@
 ﻿using AngleSharp.Diffing.Core;
 using AngleSharp.Diffing.Strategies.AttributeStrategies;
+
 using Shouldly;
+
 using Xunit;
 
 namespace AngleSharp.Diffing.Strategies.IgnoreStrategies

@@ -1,7 +1,11 @@
+using AngleSharp.Diffing.Strategies;
 using AngleSharp.Diffing.Strategies.AttributeStrategies;
 
 namespace AngleSharp.Diffing
 {
+    /// <summary>
+    /// Helper methods for registering strategies.
+    /// </summary>
     public static partial class DiffingStrategyPipelineBuilderExtensions
     {
         /// <summary>
@@ -9,7 +13,7 @@ namespace AngleSharp.Diffing
         /// </summary>
         public static IDiffingStrategyCollection IgnoreDiffAttributes(this IDiffingStrategyCollection builder)
         {
-            builder.AddFilter(IgnoreDiffAttributesFilter.Filter, true);
+            builder.AddFilter(IgnoreDiffAttributesFilter.Filter, StrategyType.Specialized);
             return builder;
         }
 
@@ -18,7 +22,7 @@ namespace AngleSharp.Diffing
         /// </summary>
         public static IDiffingStrategyCollection AddAttributeNameMatcher(this IDiffingStrategyCollection builder)
         {
-            builder.AddMatcher(AttributeNameMatcher.Match, isSpecializedMatcher: false);
+            builder.AddMatcher(AttributeNameMatcher.Match, StrategyType.Generalized);
             return builder;
         }
 
@@ -27,9 +31,9 @@ namespace AngleSharp.Diffing
         /// </summary>
         public static IDiffingStrategyCollection AddAttributeComparer(this IDiffingStrategyCollection builder)
         {
-            builder.AddMatcher(PostfixedAttributeMatcher.Match, isSpecializedMatcher: true);
-            builder.AddComparer(AttributeComparer.Compare, isSpecializedComparer: false);
-            builder.AddComparer(IgnoreAttributeComparer.Compare, isSpecializedComparer: true);
+            builder.AddMatcher(PostfixedAttributeMatcher.Match, StrategyType.Specialized);
+            builder.AddComparer(AttributeComparer.Compare, StrategyType.Generalized);
+            builder.AddComparer(IgnoreAttributeComparer.Compare, StrategyType.Specialized);
             return builder;
         }
 
@@ -38,7 +42,7 @@ namespace AngleSharp.Diffing
         /// </summary>
         public static IDiffingStrategyCollection AddClassAttributeComparer(this IDiffingStrategyCollection builder)
         {
-            builder.AddComparer(ClassAttributeComparer.Compare, isSpecializedComparer: true);
+            builder.AddComparer(ClassAttributeComparer.Compare, StrategyType.Specialized);
             return builder;
         }
 
@@ -47,7 +51,7 @@ namespace AngleSharp.Diffing
         /// </summary>
         public static IDiffingStrategyCollection AddBooleanAttributeComparer(this IDiffingStrategyCollection builder, BooleanAttributeComparision booleanAttributeComparision)
         {
-            builder.AddComparer(new BooleanAttributeComparer(booleanAttributeComparision).Compare, isSpecializedComparer: true);
+            builder.AddComparer(new BooleanAttributeComparer(booleanAttributeComparision).Compare, StrategyType.Specialized);
             return builder;
         }
 
@@ -56,7 +60,7 @@ namespace AngleSharp.Diffing
         /// </summary>
         public static IDiffingStrategyCollection AddStyleAttributeComparer(this IDiffingStrategyCollection builder)
         {
-            builder.AddComparer(StyleAttributeComparer.Compare, isSpecializedComparer: true);
+            builder.AddComparer(StyleAttributeComparer.Compare, StrategyType.Specialized);
             return builder;
         }
     }

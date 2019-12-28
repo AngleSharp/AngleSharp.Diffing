@@ -1,5 +1,7 @@
-﻿using Shouldly;
-using System;
+﻿using System;
+
+using Shouldly;
+
 using Xunit;
 
 namespace AngleSharp.Diffing.Core

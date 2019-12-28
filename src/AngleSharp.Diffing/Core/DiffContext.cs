@@ -1,6 +1,7 @@
 using System.Collections.Generic;
-using AngleSharp.Dom;
+
 using AngleSharp.Diffing.Extensions;
+using AngleSharp.Dom;
 
 namespace AngleSharp.Diffing.Core
 {
@@ -19,8 +20,10 @@ namespace AngleSharp.Diffing.Core
 
         public DiffContext(SourceCollection controlSources, SourceCollection testSources)
         {
-            if (controlSources.Count > 0 && controlSources[0].Node.GetRoot() is IElement r1) { _controlRoot = r1; }
-            if (testSources.Count > 0 && testSources[0].Node.GetRoot() is IElement r2) { _testRoot = r2; }
+            if (controlSources.Count > 0 && controlSources[0].Node.GetRoot() is IElement r1)
+            { _controlRoot = r1; }
+            if (testSources.Count > 0 && testSources[0].Node.GetRoot() is IElement r2)
+            { _testRoot = r2; }
         }
 
         public DiffContext(IElement? controlRoot, IElement? testRoot)
@@ -29,24 +32,30 @@ namespace AngleSharp.Diffing.Core
             _testRoot = testRoot;
         }
 
-        public IHtmlCollection<IElement> QueryControlRoot(string selector)
+        public IHtmlCollection<IElement> QueryControlNodes(string selector)
         {
-            if (_controlRoot is null) return EmptyHtmlCollection<IElement>.Empty;
+            if (_controlRoot is null)
+                return EmptyHtmlCollection<IElement>.Empty;
             return _controlRoot.QuerySelectorAll(selector);
         }
 
-        public IHtmlCollection<IElement> QueryTestRoot(string selector)
+        public IHtmlCollection<IElement> QueryTestNodes(string selector)
         {
-            if (_testRoot is null) return EmptyHtmlCollection<IElement>.Empty;
+            if (_testRoot is null)
+                return EmptyHtmlCollection<IElement>.Empty;
             return _testRoot.QuerySelectorAll(selector);
         }
 
         internal IEnumerable<IDiff> GetDiffsFromUnmatched()
         {
-            foreach (var source in MissingSources) yield return new MissingNodeDiff(source);
-            foreach (var source in UnexpectedSources) yield return new UnexpectedNodeDiff(source);
-            foreach (var source in MissingAttributeSources) yield return new MissingAttrDiff(source);
-            foreach (var source in UnexpectedAttributeSources) yield return new UnexpectedAttrDiff(source);
+            foreach (var source in MissingSources)
+                yield return new MissingNodeDiff(source);
+            foreach (var source in UnexpectedSources)
+                yield return new UnexpectedNodeDiff(source);
+            foreach (var source in MissingAttributeSources)
+                yield return new MissingAttrDiff(source);
+            foreach (var source in UnexpectedAttributeSources)
+                yield return new UnexpectedAttrDiff(source);
         }
     }
 }

@@ -1,11 +1,15 @@
 using System;
 using System.Text.RegularExpressions;
-using AngleSharp.Dom;
+
 using AngleSharp.Diffing.Core;
 using AngleSharp.Diffing.Extensions;
+using AngleSharp.Dom;
 
 namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
 {
+    /// <summary>
+    /// Represents the text node comparer strategy.
+    /// </summary>
     public class TextNodeComparer
     {
         private static readonly string[] DefaultPreserveElement = new string[] { "PRE", "SCRIPT", "STYLE" };
@@ -14,19 +18,32 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
         private const string REGEX_ATTR_NAME = "diff:regex";
         private static readonly Regex WhitespaceReplace = new Regex(@"\s+", RegexOptions.Compiled | RegexOptions.CultureInvariant, TimeSpan.FromSeconds(5));
 
+        /// <summary>
+        /// Gets the whitespace option of the comparer instance.
+        /// </summary>
         public WhitespaceOption Whitespace { get; }
 
+        /// <summary>
+        /// Gets whether the comparer has been configured to ignore case.
+        /// </summary>
         public bool IgnoreCase { get; }
 
+        /// <summary>
+        /// Instantiates a <see cref="TextNodeComparer"/> with the provided configuration.
+        /// </summary>
         public TextNodeComparer(WhitespaceOption option = WhitespaceOption.Preserve, bool ignoreCase = false)
         {
             Whitespace = option;
             IgnoreCase = ignoreCase;
         }
 
+        /// <summary>
+        /// The text node comparer strategy.
+        /// </summary>
         public CompareResult Compare(in Comparison comparison, CompareResult currentDecision)
         {
-            if (currentDecision.IsSameOrSkip()) return currentDecision;
+            if (currentDecision.IsSameOrSkip())
+                return currentDecision;
 
             if (comparison.TryGetNodesAsType<IText>(out var controlTextNode, out var testTextNode))
                 return Compare(controlTextNode, testTextNode);
@@ -81,7 +98,7 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
         private WhitespaceOption GetWhitespaceOption(IText textNode)
         {
             var parent = textNode.ParentElement;
-            foreach(var tagName in DefaultPreserveElement)
+            foreach (var tagName in DefaultPreserveElement)
             {
                 if (parent.NodeName.Equals(tagName, StringComparison.Ordinal))
                 {

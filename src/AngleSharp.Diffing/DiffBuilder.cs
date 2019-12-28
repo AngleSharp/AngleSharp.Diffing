@@ -1,12 +1,16 @@
 using System;
 using System.Collections.Generic;
-using AngleSharp.Dom;
-using AngleSharp.Html.Parser;
+
 using AngleSharp.Diffing.Core;
 using AngleSharp.Diffing.Strategies;
+using AngleSharp.Dom;
+using AngleSharp.Html.Parser;
 
 namespace AngleSharp.Diffing
 {
+    /// <summary>
+    /// Use the <see cref="DiffBuilder"/> to easily set up a comparison of a control and test DOM tree.
+    /// </summary>
     public class DiffBuilder
     {
         private readonly IBrowsingContext _context;
@@ -16,8 +20,14 @@ namespace AngleSharp.Diffing
         private string _control = string.Empty;
         private string _test = string.Empty;
 
+        /// <summary>
+        /// Gets or sets the control markup string.
+        /// </summary>
         public string Control { get => _control; set => _control = value ?? throw new ArgumentNullException(nameof(Control)); }
 
+        /// <summary>
+        /// Gets or sets the test markup string.
+        /// </summary>
         public string Test { get => _test; set => _test = value ?? throw new ArgumentNullException(nameof(Test)); }
 
         private DiffBuilder(string control)
@@ -29,17 +39,26 @@ namespace AngleSharp.Diffing
             _document = _context.OpenNewAsync().Result;
         }
 
+        /// <summary>
+        /// Creates a <see cref="DiffBuilder"/> with the provided control markup.
+        /// </summary>
         public static DiffBuilder Compare(string control)
         {
             return new DiffBuilder(control);
         }
 
+        /// <summary>
+        /// Sets the <see cref="Test"/> markup used during comparison.
+        /// </summary>
         public DiffBuilder WithTest(string test)
         {
             Test = test;
             return this;
         }
 
+        /// <summary>
+        /// Add any options/strategies that should be used during comparison.
+        /// </summary>
         public DiffBuilder WithOptions(Action<IDiffingStrategyCollection> registerOptions)
         {
             _diffStrategy = new DiffingStrategyPipeline();
@@ -47,6 +66,9 @@ namespace AngleSharp.Diffing
             return this;
         }
 
+        /// <summary>
+        /// Execute the comparison operation and returns any differences found.
+        /// </summary>
         public IEnumerable<IDiff> Build()
         {
             if (_diffStrategy is null)
@@ -61,6 +83,9 @@ namespace AngleSharp.Diffing
             return new HtmlDifferenceEngine(_diffStrategy, controls, tests).Compare();
         }
 
+        /// <summary>
+        /// Parse the provided markup into a AngleSharp DOM tree.
+        /// </summary>
         protected INodeList Parse(string html)
         {
             return _htmlParser.ParseFragment(html, _document.Body);

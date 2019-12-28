@@ -1,23 +1,33 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using AngleSharp.Dom;
+
 using AngleSharp.Diffing.Core;
 using AngleSharp.Diffing.Extensions;
+using AngleSharp.Dom;
 
 namespace AngleSharp.Diffing.Strategies.ElementStrategies
 {
+    /// <summary>
+    /// Represents the CSS selector element matcher.
+    /// </summary>
     public static class CssSelectorElementMatcher
     {
         private const string DIFF_MATCH_ATTR_NAME = "diff:match";
 
+        /// <summary>
+        /// The CSS selector element matcher.
+        /// </summary>
         public static IEnumerable<Comparison> Match(IDiffContext context,
                                                     SourceCollection controlSources,
                                                     SourceCollection testSources)
         {
-            if (context is null) throw new ArgumentNullException(nameof(context));
-            if (controlSources is null) throw new ArgumentNullException(nameof(controlSources));
-            if (testSources is null) throw new ArgumentNullException(nameof(testSources));
+            if (context is null)
+                throw new ArgumentNullException(nameof(context));
+            if (controlSources is null)
+                throw new ArgumentNullException(nameof(controlSources));
+            if (testSources is null)
+                throw new ArgumentNullException(nameof(testSources));
 
             foreach (var control in controlSources.GetUnmatched())
             {
@@ -36,7 +46,7 @@ namespace AngleSharp.Diffing.Strategies.ElementStrategies
 
         private static bool TryGetTestNode(IDiffContext context, string cssSelector, [NotNullWhen(true)]out INode? testNode)
         {
-            var searchResult = context.QueryTestRoot(cssSelector);
+            var searchResult = context.QueryTestNodes(cssSelector);
 
             testNode = searchResult.Length switch
             {

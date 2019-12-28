@@ -1,3 +1,12 @@
+# 0.13.2
+
+Released on Thursday, December 27, 2019.
+
+- Added code documentation to all public methods.
+- Refactored IDiffingStrategyCollection's methods to take a `StrategyType strategyType = StrategyType.Specialized` as input instead of `bool isSpecialized* = true` argument.
+- Fixed bug where `TextNodeFilter` would not give `<style>` and `<script>` the `WhitespaceOption.Preserve` by default.
+- Fixed bug where `IgnoreElementComparer` would not change a current decision to SKip if it was Same.
+
 # 0.13.1
 
 Released on Thursday, December 26, 2019.
