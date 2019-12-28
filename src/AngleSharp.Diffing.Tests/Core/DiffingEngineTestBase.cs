@@ -27,7 +27,7 @@ namespace AngleSharp.Diffing.Core
             );
         }
 
-        class MockDiffingStrategy : IDiffingStrategy
+        private class MockDiffingStrategy : IDiffingStrategy
         {
             private readonly Func<ComparisonSource, FilterDecision>? _nodeFilter;
             private readonly Func<AttributeComparisonSource, FilterDecision>? _attrFilter;

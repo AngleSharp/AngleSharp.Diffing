@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
-using AngleSharp.Dom;
-using AngleSharp.Html.Parser;
+
 using AngleSharp.Diffing.Core;
 using AngleSharp.Diffing.Strategies;
+using AngleSharp.Dom;
+using AngleSharp.Html.Parser;
 
 namespace AngleSharp.Diffing
 {

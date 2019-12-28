@@ -1,5 +1,7 @@
 ﻿using AngleSharp.Diffing.Core;
+
 using Shouldly;
+
 using Xunit;
 
 namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
@@ -51,8 +53,8 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
             var sut = new TextNodeComparer(WhitespaceOption.Normalize);
             var normalText = "text";
             var whitespaceText = $"{whitespace}text{whitespace}";
-            var c1 = ToComparison(normalText    , normalText);
-            var c2 = ToComparison(normalText    , whitespaceText);
+            var c1 = ToComparison(normalText, normalText);
+            var c2 = ToComparison(normalText, whitespaceText);
             var c3 = ToComparison(whitespaceText, normalText);
             var c4 = ToComparison(whitespaceText, whitespaceText);
 

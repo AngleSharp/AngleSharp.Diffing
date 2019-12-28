@@ -17,7 +17,7 @@ namespace AngleSharp.Diffing
                 .AddSearchingNodeMatcher()
                 .AddCssSelectorMatcher()
                 .AddAttributeNameMatcher()
-                .AddElementComparer()                
+                .AddElementComparer()
                 .AddIgnoreElementSupport()
                 .AddStyleSheetComparer()
                 .AddTextComparer(WhitespaceOption.Normalize, ignoreCase: false)

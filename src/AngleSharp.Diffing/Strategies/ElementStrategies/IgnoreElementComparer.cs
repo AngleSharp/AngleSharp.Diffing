@@ -1,6 +1,6 @@
-﻿using AngleSharp.Dom;
 using AngleSharp.Diffing.Core;
 using AngleSharp.Diffing.Extensions;
+using AngleSharp.Dom;
 
 namespace AngleSharp.Diffing.Strategies.ElementStrategies
 {
@@ -10,7 +10,7 @@ namespace AngleSharp.Diffing.Strategies.ElementStrategies
 
         public static CompareResult Compare(in Comparison comparison, CompareResult currentDecision)
         {
-            if (currentDecision.IsSameOrSkip()) return currentDecision;
+            if (currentDecision == CompareResult.Skip) return currentDecision;
 
             return ControlHasTruthyIgnoreAttribute(comparison)
                 ? CompareResult.Skip
@@ -20,8 +20,8 @@ namespace AngleSharp.Diffing.Strategies.ElementStrategies
         private static bool ControlHasTruthyIgnoreAttribute(in Comparison comparison)
         {
             return comparison.Control.Node is IElement element &&
-                   element.TryGetAttrValue(DIFF_IGNORE_ATTRIBUTE, out bool shouldIgnore) &&
-                   shouldIgnore;
+                    element.TryGetAttrValue(DIFF_IGNORE_ATTRIBUTE, out bool shouldIgnore) &&
+                    shouldIgnore;
         }
     }
 }

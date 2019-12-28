@@ -1,6 +1,8 @@
 using System.Collections.Generic;
-using AngleSharp.Dom;
+
 using AngleSharp.Diffing.Core;
+using AngleSharp.Dom;
+
 using Xunit;
 
 namespace AngleSharp.Diffing

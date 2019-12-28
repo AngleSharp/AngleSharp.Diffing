@@ -1,8 +1,9 @@
 using System;
 using System.Text.RegularExpressions;
-using AngleSharp.Dom;
+
 using AngleSharp.Diffing.Core;
 using AngleSharp.Diffing.Extensions;
+using AngleSharp.Dom;
 
 namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
 {
@@ -81,7 +82,7 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
         private WhitespaceOption GetWhitespaceOption(IText textNode)
         {
             var parent = textNode.ParentElement;
-            foreach(var tagName in DefaultPreserveElement)
+            foreach (var tagName in DefaultPreserveElement)
             {
                 if (parent.NodeName.Equals(tagName, StringComparison.Ordinal))
                 {

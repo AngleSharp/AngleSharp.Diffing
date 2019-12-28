@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+
 using AngleSharp.Diffing.Core;
 
 namespace AngleSharp.Diffing.Strategies

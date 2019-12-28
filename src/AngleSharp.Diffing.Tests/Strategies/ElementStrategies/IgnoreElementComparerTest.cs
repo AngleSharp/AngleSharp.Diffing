@@ -1,5 +1,7 @@
-﻿using AngleSharp.Diffing.Core;
+using AngleSharp.Diffing.Core;
+
 using Shouldly;
+
 using Xunit;
 
 namespace AngleSharp.Diffing.Strategies.ElementStrategies
@@ -33,6 +35,7 @@ namespace AngleSharp.Diffing.Strategies.ElementStrategies
         {
             var comparison = ToComparison(controlHtml, "<p></p>");
 
+            IgnoreElementComparer.Compare(comparison, CompareResult.Same).ShouldBe(CompareResult.Skip);
             IgnoreElementComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Skip);
         }
     }

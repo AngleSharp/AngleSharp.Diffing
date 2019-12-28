@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
-using AngleSharp.Dom;
-using AngleSharp.Diffing.Strategies.NodeStrategies;
-using Shouldly;
-using Xunit;
 using System.Linq;
+
+using AngleSharp.Diffing.Strategies.NodeStrategies;
+using AngleSharp.Dom;
+
+using Shouldly;
+
+using Xunit;
 
 namespace AngleSharp.Diffing.Core
 {
@@ -296,7 +299,7 @@ namespace AngleSharp.Diffing.Core
             results.Count.ShouldBe(2);
             results[0].ShouldBeOfType<NodeDiff>();
             results[1].ShouldBeOfType(expectedDiffType);
-        }      
+        }
 
         [Fact(DisplayName = "Comparison sources have their type set correctly")]
         public void ComparisonSourcesHaveCorrectType()
@@ -400,7 +403,9 @@ namespace AngleSharp.Diffing.Core
             foreach (var ctrlAttrSrc in controlAttrs)
             {
                 if (testAttrs.Contains(ctrlAttrSrc.Attribute.Name))
+                {
                     yield return new AttributeComparison(ctrlAttrSrc, testAttrs[ctrlAttrSrc.Attribute.Name]);
+                }
             }
         }
 

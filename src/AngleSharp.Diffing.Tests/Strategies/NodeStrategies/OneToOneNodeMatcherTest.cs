@@ -1,7 +1,10 @@
 using System.Linq;
+
 using AngleSharp.Diffing.Core;
-using Xunit;
+
 using Shouldly;
+
+using Xunit;
 
 namespace AngleSharp.Diffing.Strategies.NodeStrategies
 {
