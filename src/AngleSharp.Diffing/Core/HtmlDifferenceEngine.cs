@@ -1,11 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using AngleSharp.Dom;
+
 using AngleSharp.Diffing.Extensions;
+using AngleSharp.Dom;
 
 namespace AngleSharp.Diffing.Core
 {
+    /// <summary>
+    /// Represents the engine that drives the diffing/comparison of two DOM trees.
+    /// </summary>
     public class HtmlDifferenceEngine
     {
         private readonly IDiffingStrategy _diffingStrategy;
@@ -14,6 +18,9 @@ namespace AngleSharp.Diffing.Core
 
         private DiffContext Context { get; }
 
+        /// <summary>
+        /// Creates a diffing engine which will perform a comparison of the control and test sources, using the provided strategies.
+        /// </summary>
         public HtmlDifferenceEngine(IDiffingStrategy diffingStrategy, SourceCollection controlSources, SourceCollection testSources)
         {
             _diffingStrategy = diffingStrategy ?? throw new ArgumentNullException(nameof(diffingStrategy));
@@ -22,6 +29,9 @@ namespace AngleSharp.Diffing.Core
             Context = new DiffContext(controlSources, testSources);
         }
 
+        /// <summary>
+        /// Executes the comparison and returns any differences found.
+        /// </summary>
         public IEnumerable<IDiff> Compare()
         {
             var diffs = Compare(_controlSources, _testSources);
@@ -112,7 +122,8 @@ namespace AngleSharp.Diffing.Core
 
         private IEnumerable<IDiff> CompareElementAttributes(in Comparison comparison)
         {
-            if (!comparison.Control.Node.HasAttributes() && !comparison.Test.Node.HasAttributes()) return Array.Empty<IDiff>();
+            if (!comparison.Control.Node.HasAttributes() && !comparison.Test.Node.HasAttributes())
+                return Array.Empty<IDiff>();
 
             var controlAttrs = new SourceMap(comparison.Control);
             var testAttrs = new SourceMap(comparison.Test);

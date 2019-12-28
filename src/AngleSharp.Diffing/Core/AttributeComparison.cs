@@ -1,5 +1,6 @@
-using AngleSharp.Dom;
 using System;
+
+using AngleSharp.Dom;
 
 namespace AngleSharp.Diffing.Core
 {
@@ -36,13 +37,16 @@ namespace AngleSharp.Diffing.Core
             => ((IElement)Control.ElementSource.Node, (IElement)Test.ElementSource.Node);
 
         #region Equals and HashCode
-        #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+        /// <inheritdoc/>
         public bool Equals(AttributeComparison other) => Control.Equals(other.Control) && Test.Equals(other.Test);
+        /// <inheritdoc/>
         public override bool Equals(object? obj) => obj is AttributeComparison other && Equals(other);
+        /// <inheritdoc/>
         public override int GetHashCode() => (Control, Test).GetHashCode();
+        /// <inheritdoc/>
         public static bool operator ==(AttributeComparison left, AttributeComparison right) => left.Equals(right);
+        /// <inheritdoc/>
         public static bool operator !=(AttributeComparison left, AttributeComparison right) => !left.Equals(right);
-        #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
         #endregion
     }
 }

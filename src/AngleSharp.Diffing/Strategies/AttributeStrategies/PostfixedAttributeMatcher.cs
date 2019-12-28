@@ -1,10 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using AngleSharp.Diffing.Core;
 
 namespace AngleSharp.Diffing.Strategies.AttributeStrategies
 {
+    /// <summary>
+    /// Represents the post fixed attribute matcher.
+    /// </summary>
     public static class PostfixedAttributeMatcher
     {
         private readonly static string[] POSTFIXES = new string[] {
@@ -13,15 +17,21 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
             ":regex"
         };
 
+        /// <summary>
+        /// The post fixed attribute matcher.
+        /// </summary>
         public static IEnumerable<AttributeComparison> Match(IDiffContext context, SourceMap controlSources, SourceMap testSources)
         {
-            if (controlSources is null) throw new ArgumentNullException(nameof(controlSources));
-            if (testSources is null) throw new ArgumentNullException(nameof(testSources));
+            if (controlSources is null)
+                throw new ArgumentNullException(nameof(controlSources));
+            if (testSources is null)
+                throw new ArgumentNullException(nameof(testSources));
 
             foreach (var control in controlSources.GetUnmatched())
             {
                 var ctrlName = control.Attribute.Name;
-                if (!NameHasPostfixSeparator(ctrlName)) continue;
+                if (!NameHasPostfixSeparator(ctrlName))
+                    continue;
 
                 ctrlName = RemovePostfixFromName(ctrlName);
 

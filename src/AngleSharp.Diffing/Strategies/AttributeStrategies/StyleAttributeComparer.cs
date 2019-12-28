@@ -1,15 +1,23 @@
 ﻿using System;
-using AngleSharp.Diffing.Core;
+
 using AngleSharp.Css.Dom;
+using AngleSharp.Diffing.Core;
 using AngleSharp.Dom;
 
 namespace AngleSharp.Diffing.Strategies.AttributeStrategies
 {
+    /// <summary>
+    /// Represents the style attribute comparer strategy.
+    /// </summary>
     public static class StyleAttributeComparer
     {
+        /// <summary>
+        /// The style attribute comparer strategy.
+        /// </summary>
         public static CompareResult Compare(in AttributeComparison comparison, CompareResult currentDecision)
         {
-            if (currentDecision.IsSameOrSkip()) return currentDecision;
+            if (currentDecision.IsSameOrSkip())
+                return currentDecision;
 
             return IsStyleAttributeComparison(comparison)
                 ? CompareElementStyle(comparison)

@@ -1,17 +1,25 @@
-using AngleSharp.Dom;
 using AngleSharp.Diffing.Core;
+using AngleSharp.Dom;
 
 namespace AngleSharp.Diffing.Strategies.CommentStrategies
 {
+    /// <summary>
+    /// Represents the ignore comment filter strategy.
+    /// </summary>
     public static class IgnoreCommentsFilter
     {
-public static FilterDecision Filter(in ComparisonSource source, FilterDecision currentDecision)
-{
-    if (currentDecision.IsExclude()) return currentDecision;
+        /// <summary>
+        /// The ignore comment filter strategy.
+        /// </summary>
+        public static FilterDecision Filter(in ComparisonSource source, FilterDecision currentDecision)
+        {
+            if (currentDecision.IsExclude())
+                return currentDecision;
 
-    if (source.Node.NodeType == NodeType.Comment) return FilterDecision.Exclude;
+            if (source.Node.NodeType == NodeType.Comment)
+                return FilterDecision.Exclude;
 
-    return currentDecision;
-}
+            return currentDecision;
+        }
     }
 }

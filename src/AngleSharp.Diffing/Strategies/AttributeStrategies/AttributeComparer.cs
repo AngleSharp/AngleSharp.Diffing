@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+
 using AngleSharp.Diffing.Core;
 
 namespace AngleSharp.Diffing.Strategies.AttributeStrategies
 {
+    /// <summary>
+    /// The logic for comparing attributes.
+    /// </summary>
     public static class AttributeComparer
     {
         private const string IGNORE_CASE_POSTFIX = ":ignorecase";
@@ -11,15 +15,20 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
         private const string IGNORE_CASE_REGEX_POSTFIX = IGNORE_CASE_POSTFIX + REGEX_POSTFIX;
         private const string REGEX_IGNORE_CASE_POSTFIX = REGEX_POSTFIX + IGNORE_CASE_POSTFIX;
 
+        /// <summary>
+        /// Attribute compare strategy.
+        /// </summary>
         public static CompareResult Compare(in AttributeComparison comparison, CompareResult currentDecision)
         {
-            if (currentDecision.IsSameOrSkip()) return currentDecision;
+            if (currentDecision.IsSameOrSkip())
+                return currentDecision;
 
             var (ignoreCase, isRegexValueCompare) = GetComparisonModifiers(comparison);
 
             var hasSameName = CompareAttributeNames(comparison, ignoreCase, isRegexValueCompare);
 
-            if(!hasSameName) return CompareResult.Different;
+            if (!hasSameName)
+                return CompareResult.Different;
 
             var hasSameValue = isRegexValueCompare
                 ? CompareAttributeValuesByRegex(comparison, ignoreCase)

@@ -1,15 +1,23 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using AngleSharp.Dom;
+
 using AngleSharp.Diffing.Core;
+using AngleSharp.Dom;
 
 namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
 {
+    /// <summary>
+    /// Represents the stylesheet text node comparer.
+    /// </summary>
     public static class StyleSheetTextNodeComparer
     {
+        /// <summary>
+        /// The stylesheet text node comparer.
+        /// </summary>
         public static CompareResult Compare(in Comparison comparison, CompareResult currentDecision)
         {
-            if (currentDecision.IsSameOrSkip()) return currentDecision;
+            if (currentDecision.IsSameOrSkip())
+                return currentDecision;
             if (TryGetStyleDeclaretions(comparison, out var controlStyles, out var testStyles))
                 return Compare(controlStyles, testStyles);
             else

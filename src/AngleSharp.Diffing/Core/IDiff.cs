@@ -1,5 +1,8 @@
 ﻿namespace AngleSharp.Diffing.Core
 {
+    /// <summary>
+    /// Represents a difference in a comparison.
+    /// </summary>
     public interface IDiff
     {
         /// <summary>

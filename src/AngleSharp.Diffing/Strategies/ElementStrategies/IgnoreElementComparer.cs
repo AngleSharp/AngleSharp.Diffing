@@ -4,13 +4,20 @@ using AngleSharp.Dom;
 
 namespace AngleSharp.Diffing.Strategies.ElementStrategies
 {
+    /// <summary>
+    /// Represents the ignore element comparer.
+    /// </summary>
     public static class IgnoreElementComparer
     {
         private const string DIFF_IGNORE_ATTRIBUTE = "diff:ignore";
 
+        /// <summary>
+        /// The ignore element comparer.
+        /// </summary>
         public static CompareResult Compare(in Comparison comparison, CompareResult currentDecision)
         {
-            if (currentDecision == CompareResult.Skip) return currentDecision;
+            if (currentDecision == CompareResult.Skip)
+                return currentDecision;
 
             return ControlHasTruthyIgnoreAttribute(comparison)
                 ? CompareResult.Skip

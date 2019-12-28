@@ -2,6 +2,9 @@ using AngleSharp.Diffing.Core;
 
 namespace AngleSharp.Diffing.Strategies
 {
+    /// <summary>
+    /// Represents a collection of diffing strategies.
+    /// </summary>
     public interface IDiffingStrategyCollection
     {
         /// <summary>

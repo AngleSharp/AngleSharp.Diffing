@@ -3,6 +3,9 @@ using AngleSharp.Diffing.Strategies.AttributeStrategies;
 
 namespace AngleSharp.Diffing
 {
+    /// <summary>
+    /// Helper methods for registering strategies.
+    /// </summary>
     public static partial class DiffingStrategyPipelineBuilderExtensions
     {
         /// <summary>

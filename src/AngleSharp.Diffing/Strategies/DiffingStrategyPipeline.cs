@@ -1,8 +1,13 @@
 using System.Collections.Generic;
+
 using AngleSharp.Diffing.Core;
 
 namespace AngleSharp.Diffing.Strategies
 {
+    /// <summary>
+    /// Represents a <see cref="IDiffingStrategy"/> and a <see cref="IDiffingStrategyCollection"/>.
+    /// Use the pipeline to invoke the strategies registered within it as a pipeline, one at the time.
+    /// </summary>
     public class DiffingStrategyPipeline : IDiffingStrategy, IDiffingStrategyCollection
     {
         private readonly List<FilterStrategy<ComparisonSource>> _nodeFilters = new List<FilterStrategy<ComparisonSource>>();
@@ -12,7 +17,14 @@ namespace AngleSharp.Diffing.Strategies
         private readonly List<CompareStrategy<Comparison>> _nodeComparers = new List<CompareStrategy<Comparison>>();
         private readonly List<CompareStrategy<AttributeComparison>> _attrComparers = new List<CompareStrategy<AttributeComparison>>();
 
+        /// <summary>
+        /// Gets whether the pipeline have any matchers registered.
+        /// </summary>
         public bool HasMatchers => _nodeMatchers.Count > 0 && _attrsMatchers.Count > 0;
+
+        /// <summary>
+        /// Gets whether the pipeline has any comparers registered.
+        /// </summary>
         public bool HasComparers => _nodeComparers.Count > 0 && _attrComparers.Count > 0;
 
         /// <inheritdoc/>
