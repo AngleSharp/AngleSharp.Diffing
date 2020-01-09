@@ -62,21 +62,24 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
         public void Test5(string tag)
         {
             var sut = new TextNodeFilter(WhitespaceOption.Normalize);
-            var pre = ToComparisonSource($"<{tag}> \n\t </{tag}>");
-            var source = new ComparisonSource(pre.Node.FirstChild, 0, pre.Path, ComparisonSourceType.Control);
+            var pre = ToNode($"<{tag}> \n\t </{tag}>");
+            var source = pre.FirstChild.ToComparisonSource(0, ComparisonSourceType.Control);
 
             sut.Filter(source, FilterDecision.Keep).ShouldBe(FilterDecision.Keep);
         }
 
         [Theory(DisplayName = "If parent node is <pre>, <script>, or <style> element with a diff:whitespace, the option is take from the attribute")]
-        [InlineData("pre")]
-        [InlineData("style")]
-        [InlineData("script")]
-        public void Test51(string tag)
+        [InlineData("pre", WhitespaceOption.RemoveWhitespaceNodes)]
+        [InlineData("style", WhitespaceOption.RemoveWhitespaceNodes)]
+        [InlineData("script", WhitespaceOption.RemoveWhitespaceNodes)]
+        [InlineData("pre", WhitespaceOption.Normalize)]
+        [InlineData("style", WhitespaceOption.Normalize)]
+        [InlineData("script", WhitespaceOption.Normalize)]
+        public void Test51(string tag, WhitespaceOption whitespaceOption)
         {
             var sut = new TextNodeFilter(WhitespaceOption.Normalize);
-            var pre = ToComparisonSource($"<{tag} diff:whitespace=\"RemoveWhitespaceNodes\"> \n\t </{tag}>");
-            var source = new ComparisonSource(pre.Node.FirstChild, 0, pre.Path, ComparisonSourceType.Control);
+            var pre = ToNode($"<{tag} diff:whitespace=\"{whitespaceOption.ToString()}\">\n\t</{tag}>");
+            var source = pre.FirstChild.ToComparisonSource(0, ComparisonSourceType.Control);
 
             sut.Filter(source, FilterDecision.Keep).ShouldBe(FilterDecision.Exclude);
         }

@@ -28,7 +28,7 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
         [InlineData(WhitespaceOption.RemoveWhitespaceNodes)]
         public void Test5(WhitespaceOption whitespaceOption)
         {
-            var comparison = ToComparison("hello world", "  hello   world  ");
+            var comparison = ToComparison("hello world", "   hello   world  ");
             var sut = new TextNodeComparer(whitespaceOption);
 
             sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
@@ -52,7 +52,7 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
         {
             var sut = new TextNodeComparer(WhitespaceOption.Normalize);
             var normalText = "text";
-            var whitespaceText = $"{whitespace}text{whitespace}";
+            var whitespaceText = $"{whitespace}  text  {whitespace}";
             var c1 = ToComparison(normalText, normalText);
             var c2 = ToComparison(normalText, whitespaceText);
             var c3 = ToComparison(whitespaceText, normalText);
@@ -70,7 +70,7 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
         {
             var sut = new TextNodeComparer(WhitespaceOption.Normalize);
             var normalText = "hello world";
-            var whitespaceText = $"{whitespace}hello{whitespace}{whitespace}world{whitespace}";
+            var whitespaceText = $"  {whitespace}  hello  {whitespace} {whitespace} world  {whitespace}   ";
             var c1 = ToComparison(normalText, normalText);
             var c2 = ToComparison(normalText, whitespaceText);
             var c3 = ToComparison(whitespaceText, normalText);
@@ -131,22 +131,42 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
             sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
         }
 
-        [Theory(DisplayName = "When the parent element is <pre/script/style> and the whitespace option is set inline, the inline option is used instead of Preserve")]
+        [Theory(DisplayName = "When the parent element is <pre/script/style> and the whitespace option is set " +
+                              "inline to Normalize, the inline option is used instead of Preserve")]
         [InlineData("pre")]
         [InlineData("script")]
         [InlineData("style")]
         public void Test006(string tag)
         {
             var sut = new TextNodeComparer(WhitespaceOption.Normalize);
-            var elm = ToComparisonSource($"<{tag} diff:whitespace=\"normalize\">foo   bar</{tag}>");
-            var controlSource = new ComparisonSource(elm.Node.FirstChild, 0, elm.Path, ComparisonSourceType.Control);
-            var testSource = ToComparisonSource("foo bar", ComparisonSourceType.Test);
+            var controlNode = ToNode($@"<{tag} diff:whitespace=""{nameof(WhitespaceOption.Normalize)}"">foo bar</{tag}>");
+            var testNode = ToNode($@"<{tag}>  foo    bar   </{tag}>");
+            var controlSource = controlNode.FirstChild.ToComparisonSource(0, ComparisonSourceType.Control);
+            var testSource = testNode.FirstChild.ToComparisonSource(0, ComparisonSourceType.Test);
             var comparison = new Comparison(controlSource, testSource);
 
             sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Same);
         }
 
-        [Theory(DisplayName = "When IgnoreCase='true' inline attribute is present in a parent element, a string ordinal ignore case comparison is performed")]
+        [Theory(DisplayName = "When the parent element is <pre/script/style> and the whitespace option is set " +
+                      "inline to RemoveWhitespaceNodes, the inline option is used instead of Preserve")]
+        [InlineData("pre")]
+        [InlineData("script")]
+        [InlineData("style")]
+        public void Test007(string tag)
+        {
+            var sut = new TextNodeComparer(WhitespaceOption.Normalize);
+            var controlNode = ToNode($@"<{tag} diff:whitespace=""{nameof(WhitespaceOption.RemoveWhitespaceNodes)}"">foo bar</{tag}>");
+            var testNode = ToNode($@"<{tag}>  foo bar   </{tag}>");
+            var controlSource = controlNode.FirstChild.ToComparisonSource(0, ComparisonSourceType.Control);
+            var testSource = testNode.FirstChild.ToComparisonSource(0, ComparisonSourceType.Test);
+            var comparison = new Comparison(controlSource, testSource);
+
+            sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Same);
+        }
+
+        [Theory(DisplayName = "When IgnoreCase='true' inline attribute is present in a parent element, a string " +
+                              "ordinal ignore case comparison is performed")]
         [InlineData(@"<header><h1><em diff:ignoreCase=""true"">HELLO WoRlD</em></h1></header>")]
         [InlineData(@"<header><h1  diff:ignoreCase=""True""><em>HELLO WoRlD</em></h1></header>")]
         [InlineData(@"<header diff:ignoreCase=""TRUE""><h1><em>HELLO WoRlD</em></h1></header>")]
