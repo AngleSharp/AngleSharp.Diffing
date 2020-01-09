@@ -58,10 +58,16 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
             var controlText = controlTextNode.Data;
             var testText = testTextNode.Data;
 
+            if(option == WhitespaceOption.Normalize || option == WhitespaceOption.RemoveWhitespaceNodes)
+            {
+                controlText = controlText.Trim();
+                testText = testText.Trim();
+            }
+
             if (option == WhitespaceOption.Normalize)
             {
-                controlText = WhitespaceReplace.Replace(controlText.Trim(), " ");
-                testText = WhitespaceReplace.Replace(testText.Trim(), " ");
+                controlText = WhitespaceReplace.Replace(controlText, " ");
+                testText = WhitespaceReplace.Replace(testText, " ");
             }
 
             var isRegexCompare = GetIsRegexComparison(controlTextNode);

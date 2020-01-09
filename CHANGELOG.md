@@ -1,3 +1,7 @@
+# 0.13.3
+
+- Bug: custom whitespace options on `<pre>`/`<style>`/`<script>` not being applied during comparison.
+
 # 0.13.2
 
 Released on Thursday, December 27, 2019.
