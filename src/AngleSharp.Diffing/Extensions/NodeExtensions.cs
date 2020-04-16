@@ -22,7 +22,7 @@ namespace AngleSharp.Diffing.Extensions
         /// Try to get an attribute with the <paramref name="attributeName"/> from the <paramref name="node"/>.
         /// Returns true if the attribute exists, false otherwise.
         /// </summary>
-        public static bool TryGetAttr(this INode node, string attributeName, [NotNullWhen(true)]out IAttr? attribute)
+        public static bool TryGetAttr(this INode node, string attributeName, [NotNullWhen(true)] out IAttr? attribute)
         {
             if (node is IElement element && element.HasAttribute(attributeName))
             {
@@ -52,7 +52,7 @@ namespace AngleSharp.Diffing.Extensions
         /// Try to get an attribute value off of an element.
         /// Returns true when the attribute was found, false otherwise.
         /// </summary>
-        public static bool TryGetAttrValue(this INode node, string attributeName, [NotNullWhen(true)]out string result)
+        public static bool TryGetAttrValue(this INode node, string attributeName, [NotNullWhen(true)] out string result)
         {
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             result = default;
@@ -66,9 +66,9 @@ namespace AngleSharp.Diffing.Extensions
         /// </summary>
         public static bool TryGetAttrValue<T>(this INode node, string attributeName, out T result) where T : System.Enum
         {
-#pragma warning disable CS8653 // A default expression introduces a null value for a type parameter.
+#pragma warning disable CS8601 // Possible null reference assignment.
             result = default;
-#pragma warning restore CS8653 // A default expression introduces a null value for a type parameter.
+#pragma warning restore CS8601 // Possible null reference assignment.
             return node is IElement element && element.TryGetAttrValue(attributeName, out result);
         }
 
@@ -76,11 +76,11 @@ namespace AngleSharp.Diffing.Extensions
         /// Try to get an attribute value off of an element.
         /// Returns true when the attribute was found, false otherwise.
         /// </summary>
-        public static bool TryGetAttrValue<T>(this INode node, string attributeName, Func<string, T> resultFunc, [NotNullWhen(true)] out T result)
+        public static bool TryGetAttrValue<T>(this INode node, string attributeName, Func<string, T> resultFunc, [NotNullWhen(true)] out T result) where T : notnull
         {
-#pragma warning disable CS8653 // A default expression introduces a null value for a type parameter.
+#pragma warning disable CS8601 // Possible null reference assignment.
             result = default;
-#pragma warning restore CS8653 // A default expression introduces a null value for a type parameter.
+#pragma warning restore CS8601 // Possible null reference assignment.
             return node is IElement element && element.TryGetAttrValue(attributeName, resultFunc, out result);
         }
 
