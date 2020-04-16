@@ -26,7 +26,7 @@ namespace AngleSharp.Diffing.Extensions
         /// Try to get an attribute value off of an element.
         /// Returns true when the attribute was found, false otherwise.
         /// </summary>
-        public static bool TryGetAttrValue(this IElement element, string attributeName, [NotNullWhen(true)]out string result)
+        public static bool TryGetAttrValue(this IElement element, string attributeName, [NotNullWhen(true)] out string result)
         {
             return TryGetAttrValue(element, attributeName, GetStringAttrValue, out result);
 
@@ -48,7 +48,7 @@ namespace AngleSharp.Diffing.Extensions
         /// Try to get an attribute value off of an element.
         /// Returns true when the attribute was found, false otherwise.
         /// </summary>
-        public static bool TryGetAttrValue<T>(this IElement element, string attributeName, Func<string, T> resultFunc, [NotNullWhen(true)] out T result)
+        public static bool TryGetAttrValue<T>(this IElement element, string attributeName, Func<string, T> resultFunc, [NotNullWhen(true)] out T result) where T : notnull
         {
             if (element is null)
                 throw new ArgumentNullException(nameof(element));
@@ -62,9 +62,9 @@ namespace AngleSharp.Diffing.Extensions
             }
             else
             {
-#pragma warning disable CS8653 // A default expression introduces a null value for a type parameter.
-                result = default;
-#pragma warning restore CS8653 // A default expression introduces a null value for a type parameter.
+#pragma warning disable CS8601 // Possible null reference assignment.
+                result = default(T);
+#pragma warning restore CS8601 // Possible null reference assignment.
                 return false;
             }
         }
@@ -112,7 +112,7 @@ namespace AngleSharp.Diffing.Extensions
         /// Try to get the index of the node in its parent's ChildNodes list.
         /// Returns true if index was found. False otherwise.
         /// </summary>
-        public static bool TryGetNodeIndex(this INode node, [NotNullWhen(true)]out int index)
+        public static bool TryGetNodeIndex(this INode node, [NotNullWhen(true)] out int index)
         {
             index = -1;
 

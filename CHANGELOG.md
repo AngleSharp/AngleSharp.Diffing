@@ -1,6 +1,6 @@
 # 0.14.0
 
-Released on Wednesday, April 1, 2020.
+Released on Wednesday, April 16, 2020.
 
 - Bug: custom whitespace options on `<pre>`/`<style>`/`<script>` not being applied during comparison.
 - Upgraded to version 0.14.0 of AngleSharp.
