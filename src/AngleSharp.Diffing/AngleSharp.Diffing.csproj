@@ -2,10 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>Key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -13,12 +12,12 @@
     <Product>AngleSharp.Diffing</Product>
     <Authors>AngleSharp</Authors>
     <PackageId>AngleSharp.Diffing</PackageId>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://anglesharp.github.io</PackageProjectUrl>
     <PackageIcon>logo.png</PackageIcon>
     <PackageIconUrl>https://raw.github.com/AngleSharp/AngleSharp.Diffing/master/logo.png</PackageIconUrl>
     <PackageTags>html html5 css css3 dom library diffing anglesharp diff difference compare comparison testing</PackageTags>
-    <Copyright>Copyright 2019, Egil Hansen</Copyright>
+    <Copyright>Copyright 2019-2021, Egil Hansen</Copyright>
     <RepositoryUrl>https://github.com/AngleSharp/AngleSharp.Diffing</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
