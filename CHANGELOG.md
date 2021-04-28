@@ -1,3 +1,10 @@
+# 0.15.0
+
+Released on Wednesday, April 28, 2021.
+
+- Upgraded to version 0.15.0 of AngleSharp.
+- Added strong name signing of assembly.
+
 # 0.14.0
 
 Released on Wednesday, April 16, 2020.
