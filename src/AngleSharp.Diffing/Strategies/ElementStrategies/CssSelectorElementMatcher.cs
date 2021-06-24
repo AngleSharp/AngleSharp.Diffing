@@ -55,7 +55,7 @@ namespace AngleSharp.Diffing.Strategies.ElementStrategies
                 _ => throw new DiffMatchSelectorReturnedTooManyResultsException($@"The CSS selector ""{cssSelector}"" returned {searchResult.Length} matches from the test node tree. No more than one is allowed.")
             };
 
-            return testNode is { };
+            return testNode is not null;
         }
     }
 }

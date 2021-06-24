@@ -36,7 +36,7 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
                 controlStyles = controlParentStyle?.Sheet;
                 testStyles = testParentStyle?.Sheet;
 
-                return controlStyles is { } && testStyles is { };
+                return controlStyles is not null && testStyles is not null;
             }
             else
                 return false;

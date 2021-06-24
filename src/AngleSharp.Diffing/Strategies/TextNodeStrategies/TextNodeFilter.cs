@@ -53,7 +53,7 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
 
         private WhitespaceOption GetWhitespaceOption(IText textNode)
         {
-            var parent = textNode.ParentElement;
+            var parent = textNode.ParentElement ?? throw new UnexpectedDOMTreeStructureException();
 
             if (parent.NodeName.Equals(PRE_ELEMENTNAME, StringComparison.Ordinal) ||
                 parent.NodeName.Equals(SCRIPT_ELEMENTNAME, StringComparison.Ordinal) ||

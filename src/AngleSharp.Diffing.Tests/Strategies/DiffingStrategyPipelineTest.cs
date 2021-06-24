@@ -1,10 +1,7 @@
 using System;
 using System.Linq;
-
 using AngleSharp.Diffing.Core;
-
 using Shouldly;
-
 using Xunit;
 
 namespace AngleSharp.Diffing.Strategies
@@ -22,7 +19,7 @@ namespace AngleSharp.Diffing.Strategies
             _ => throw new InvalidOperationException()
         };
 
-        [Fact(DisplayName = "Wen zero filter strategies have been added, true is returned")]
+        [Fact(DisplayName = "When zero filter strategies have been added, true is returned")]
         public void Test1()
         {
             var sut = new DiffingStrategyPipeline();
