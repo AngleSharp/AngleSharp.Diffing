@@ -96,7 +96,7 @@ namespace AngleSharp.Diffing.Extensions
 
             var element = startElement;
 
-            while (element is { })
+            while (element is not null)
             {
                 if (element.Attributes[optionName] is IAttr attr)
                 {
@@ -139,7 +139,7 @@ namespace AngleSharp.Diffing.Extensions
         public static IEnumerable<INode> GetParents(this INode node)
         {
             var parent = node.Parent;
-            while (parent is { })
+            while (parent is not null)
             {
                 yield return parent;
                 parent = parent.Parent;

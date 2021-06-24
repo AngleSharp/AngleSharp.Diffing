@@ -26,7 +26,9 @@ namespace AngleSharp.Diffing.Extensions
         {
             if (node is IElement element && element.HasAttribute(attributeName))
             {
-                attribute = element.Attributes[attributeName];
+                // BANG: element.HasAttribute is used to ensure that the attributes indexer
+                //       returns a non-null IAttr value.
+                attribute = element.Attributes[attributeName]!;
                 return true;
             }
             else

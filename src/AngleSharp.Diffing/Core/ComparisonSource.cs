@@ -107,10 +107,10 @@ namespace AngleSharp.Diffing.Core
         private static string CalculateParentPath(INode node)
         {
             var result = string.Empty;
-            foreach (var parent in node.GetParents().TakeWhile(x => x.Parent is { }))
+            foreach (var parent in node.GetParents().TakeWhile(x => x.Parent is not null))
             {
                 var pathSegment = GetNodePathSegment(parent);
-                if (pathSegment is { })
+                if (pathSegment is not null)
                     result = CombinePath(pathSegment, result);
             }
             return result;
@@ -120,13 +120,16 @@ namespace AngleSharp.Diffing.Core
         {
             var result = 0;
             var parent = node.Parent;
-            var childNodes = parent.ChildNodes;
-            for (int index = 0; index < childNodes.Length; index++)
+            if (parent is not null)
             {
-                if (ReferenceEquals(childNodes[index], node))
-                    return result;
-                if (childNodes[index] is IParentNode)
-                    result += 1;
+                var childNodes = parent.ChildNodes;
+                for (int index = 0; index < childNodes.Length; index++)
+                {
+                    if (ReferenceEquals(childNodes[index], node))
+                        return result;
+                    if (childNodes[index] is IParentNode)
+                        result += 1;
+                }
             }
             throw new InvalidOperationException("Unexpected node tree state. The node was not found in its parents child nodes collection.");
         }

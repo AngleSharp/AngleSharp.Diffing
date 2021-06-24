@@ -98,12 +98,12 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
         private static bool GetIsRegexComparison(IText controlTextNode)
         {
             var parent = controlTextNode.ParentElement;
-            return parent is { } && parent.TryGetAttrValue(REGEX_ATTR_NAME, out bool isRegex) && isRegex;
+            return parent is not null && parent.TryGetAttrValue(REGEX_ATTR_NAME, out bool isRegex) && isRegex;
         }
 
         private WhitespaceOption GetWhitespaceOption(IText textNode)
         {
-            var parent = textNode.ParentElement;
+            var parent = textNode.ParentElement ?? throw new UnexpectedDOMTreeStructureException();
             foreach (var tagName in DefaultPreserveElement)
             {
                 if (parent.NodeName.Equals(tagName, StringComparison.Ordinal))
@@ -118,7 +118,8 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
 
         private StringComparison GetCompareMethod(IText controlTextNode)
         {
-            return controlTextNode.ParentElement.GetInlineOptionOrDefault(IGNORECASE_ATTR_NAME, IgnoreCase)
+            var parent = controlTextNode.ParentElement ?? throw new UnexpectedDOMTreeStructureException();
+            return parent.GetInlineOptionOrDefault(IGNORECASE_ATTR_NAME, IgnoreCase)
                 ? StringComparison.OrdinalIgnoreCase
                 : StringComparison.Ordinal;
         }

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-
 using AngleSharp.Diffing.Core;
+using AngleSharp.Diffing.Extensions;
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
 
@@ -26,7 +26,7 @@ namespace AngleSharp.Diffing
             _diffingStrategy = diffingStrategy ?? throw new ArgumentNullException(nameof(diffingStrategy));
             var config = Configuration.Default.WithCss();
             _context = BrowsingContext.New(config);
-            _htmlParser = _context.GetService<IHtmlParser>();
+            _htmlParser = _context.GetService<IHtmlParser>() ?? throw new InvalidOperationException("No IHtmlParser registered in the default AngleSharp browsing context.");
             _document = _context.OpenNewAsync().Result;
         }
 
@@ -103,7 +103,7 @@ namespace AngleSharp.Diffing
         /// </summary>
         protected INodeList Parse(string html)
         {
-            return _htmlParser.ParseFragment(html, _document.Body);
+            return _htmlParser.ParseFragment(html, _document.Body ?? throw new UnexpectedDOMTreeStructureException());
         }
     }
 }
