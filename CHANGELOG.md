@@ -1,3 +1,9 @@
+# 0.16.0
+
+Released on Wednesday, June 24, 2021.
+
+- Upgraded to version 0.16.0 of AngleSharp.
+
 # 0.15.0
 
 Released on Wednesday, April 28, 2021.
