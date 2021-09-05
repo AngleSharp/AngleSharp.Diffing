@@ -33,5 +33,16 @@ namespace AngleSharp.Diffing
             builder.AddComparer(IgnoreElementComparer.Compare, StrategyType.Specialized);
             return builder;
         }
+
+        /// <summary>
+        /// Enables the ignore children element `diff:ignorechildren` attribute during diffing.
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <returns></returns>
+        public static IDiffingStrategyCollection AddIgnoreChildrenElementSupport(this IDiffingStrategyCollection builder)
+        {
+            builder.AddComparer(IgnoreChildrenElementComparer.Compare, StrategyType.Specialized);
+            return builder;
+        }
     }
 }

@@ -1,22 +1,29 @@
-﻿namespace AngleSharp.Diffing.Core
+﻿using System;
+
+namespace AngleSharp.Diffing.Core
 {
     /// <summary>
     /// Represents a result of a comparison.
     /// </summary>
+    [Flags]
     public enum CompareResult
     {
         /// <summary>
         /// Use when the two compared nodes or attributes are the same.
         /// </summary>
-        Same,
+        Same = 1,
         /// <summary>
         /// Use when the two compared nodes or attributes are the different.
         /// </summary>
-        Different,
+        Different = 2,
         /// <summary>
         /// Use when the comparison should be skipped and any child-nodes or attributes skipped as well.
         /// </summary>
-        Skip
+        Skip = 4,
+        /// <summary>
+        /// Use when the comparison should skip any child-nodes.
+        /// </summary>
+        SkipChildren = 8,
     }
 
     /// <summary>
