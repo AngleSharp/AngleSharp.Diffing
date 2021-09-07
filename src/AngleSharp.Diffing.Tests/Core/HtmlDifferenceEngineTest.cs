@@ -357,7 +357,7 @@ namespace AngleSharp.Diffing.Core
             results.ShouldBeEmpty();
         }
 
-        [Fact(DisplayName = "When comparer returns SkipChildren from an element comparison, the attributes are compared but child nodes not compared")]
+        [Fact(DisplayName = "When comparer returns SkipChildren from an element comparison, child nodes are not compared")]
         public void Test3()
         {
             var sut = CreateHtmlDiffer(
@@ -369,7 +369,7 @@ namespace AngleSharp.Diffing.Core
                 attrComparer: SameResultAttrComparer
                 );
 
-            var results = sut.Compare(ToNodeList(@"<p id=""bar""><em>foo</em></p>"), ToNodeList(@"<p id=""bar""><span>baz</span></p>"));
+            var results = sut.Compare(ToNodeList(@"<p><em>foo</em></p>"), ToNodeList(@"<p><span>baz</span></p>"));
 
             results.ShouldBeEmpty();
         }
