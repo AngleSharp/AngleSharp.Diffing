@@ -24,6 +24,10 @@ namespace AngleSharp.Diffing.Core
         /// Use when the comparison should skip any child-nodes.
         /// </summary>
         SkipChildren = 8,
+        /// <summary>
+        /// Use when the comparison should skip any attributes.
+        /// </summary>
+        SkipAttributes = 16,
     }
 
     /// <summary>

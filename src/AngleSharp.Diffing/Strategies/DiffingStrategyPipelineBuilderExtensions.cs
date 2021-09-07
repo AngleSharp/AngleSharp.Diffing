@@ -19,13 +19,15 @@ namespace AngleSharp.Diffing
                 .AddAttributeNameMatcher()
                 .AddElementComparer()
                 .AddIgnoreElementSupport()
-                .AddIgnoreChildrenElementSupport()
                 .AddStyleSheetComparer()
                 .AddTextComparer(WhitespaceOption.Normalize, ignoreCase: false)
                 .AddAttributeComparer()
                 .AddClassAttributeComparer()
                 .AddBooleanAttributeComparer(BooleanAttributeComparision.Strict)
-                .AddStyleAttributeComparer();
+                .AddStyleAttributeComparer()
+                .AddIgnoreChildrenElementSupport()
+                .AddIgnoreAttributesElementSupport()
+                ;
         }
     }
 }

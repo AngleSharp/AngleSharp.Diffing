@@ -374,6 +374,23 @@ namespace AngleSharp.Diffing.Core
             results.ShouldBeEmpty();
         }
 
+        [Fact(DisplayName = "When comparer returns SkipAttributes from an element comparison, attributes are not compared")]
+        public void Test4()
+        {
+            var sut = CreateHtmlDiffer(
+                nodeMatcher: OneToOneNodeListMatcher,
+                nodeFilter: NoneNodeFilter,
+                nodeComparer: c => CompareResult.Same | CompareResult.SkipAttributes,
+                attrMatcher: AttributeNameMatcher,
+                attrFilter: NoneAttrFilter,
+                attrComparer: SameResultAttrComparer
+                );
+
+            var results = sut.Compare(ToNodeList(@"<p id=""foo""></p>"), ToNodeList(@"<p id=""bar"" unexpected></p>"));
+
+            results.ShouldBeEmpty();
+        }
+
         #region NodeFilters
         private static FilterDecision NoneNodeFilter(ComparisonSource source) => FilterDecision.Keep;
         private static FilterDecision RemoveCommentNodeFilter(ComparisonSource source) => source.Node.NodeType == NodeType.Comment ? FilterDecision.Exclude : FilterDecision.Keep;

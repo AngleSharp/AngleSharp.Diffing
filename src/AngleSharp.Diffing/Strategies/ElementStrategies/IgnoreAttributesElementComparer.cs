@@ -5,29 +5,29 @@ using AngleSharp.Dom;
 namespace AngleSharp.Diffing.Strategies.ElementStrategies
 {
     /// <summary>
-    /// Represents the ignore children element comparer.
+    /// Represents the ignore attributes element comparer.
     /// </summary>
-    public static class IgnoreChildrenElementComparer
+    public static class IgnoreAttributesElementComparer
     {
-        private const string DIFF_IGNORE_CHILDREN_ATTRIBUTE = "diff:ignorechildren";
+        private const string DIFF_IGNORE_ATTRIBUTES_ATTRIBUTE = "diff:ignoreattributes";
 
         /// <summary>
-        /// The ignore children element comparer.
+        /// The ignore attributes element comparer.
         /// </summary>
         public static CompareResult Compare(in Comparison comparison, CompareResult currentDecision)
         {
             if (currentDecision == CompareResult.Skip)
                 return currentDecision;
 
-            return ControlHasTruthyIgnoreChildrenAttribute(comparison)
-                ? currentDecision | CompareResult.SkipChildren
+            return ControlHasTruthyIgnoreAttributesAttribute(comparison)
+                ? currentDecision | CompareResult.SkipAttributes
                 : currentDecision;
         }
 
-        private static bool ControlHasTruthyIgnoreChildrenAttribute(in Comparison comparison)
+        private static bool ControlHasTruthyIgnoreAttributesAttribute(in Comparison comparison)
         {
             return comparison.Control.Node is IElement element &&
-                    element.TryGetAttrValue(DIFF_IGNORE_CHILDREN_ATTRIBUTE, out bool shouldIgnore) &&
+                    element.TryGetAttrValue(DIFF_IGNORE_ATTRIBUTES_ATTRIBUTE, out bool shouldIgnore) &&
                     shouldIgnore;
         }
     }

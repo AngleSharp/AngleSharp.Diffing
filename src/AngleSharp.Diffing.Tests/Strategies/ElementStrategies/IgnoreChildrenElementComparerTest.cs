@@ -21,7 +21,7 @@ namespace AngleSharp.Diffing.Strategies.ElementStrategies
         [InlineData(@"<p diff:ignoreChildren=""faLsE""></p>")]
         public void Test001(string controlHtml)
         {
-            var comparison = ToComparison(controlHtml, "<p><em></em></p>");
+            var comparison = ToComparison(controlHtml, "<p></p>");
 
             IgnoreChildrenElementComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
             IgnoreChildrenElementComparer.Compare(comparison, CompareResult.Same).ShouldBe(CompareResult.Same);
@@ -35,28 +35,10 @@ namespace AngleSharp.Diffing.Strategies.ElementStrategies
         [InlineData(@"<p diff:ignoreChildren=""TrUe""></p>")]
         public void Test002(string controlHtml)
         {
-            var comparison = ToComparison(controlHtml, "<p><em></em></p>");
+            var comparison = ToComparison(controlHtml, "<p></p>");
 
             IgnoreChildrenElementComparer.Compare(comparison, CompareResult.Same).ShouldBe(CompareResult.Same | CompareResult.SkipChildren);
             IgnoreChildrenElementComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different | CompareResult.SkipChildren);
-        }
-
-        [Theory(DisplayName = "When a control element has 'diff:ignoreChildren', calling Build() with DefaultOptions() returns empty diffs")]
-        [InlineData(@"<p diff:ignoreChildren>hello <em>world</em></p>",
-                         @"<p>world says <strong>hello</strong></p>")]
-        [InlineData(@"<p diff:ignoreChildren>hello</p>",
-                         @"<p>world says <strong>hello</strong></p>")]
-        [InlineData(@"<p diff:ignoreChildren>hello <em>world</em></p>",
-                         @"<p>world says</p>")]
-        public void Test004(string control, string test)
-        {
-            var diffs = DiffBuilder
-                .Compare(control)
-                .WithTest(test)
-                .Build()
-                .ToList();
-
-            diffs.ShouldBeEmpty();
         }
     }
 }
