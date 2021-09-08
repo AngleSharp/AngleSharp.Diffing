@@ -111,7 +111,7 @@ namespace AngleSharp.Diffing.Core
                 result.Add(new NodeDiff(comparison));
             }
 
-            if (compareRes != CompareResult.Skip)
+            if (!compareRes.HasFlag(CompareResult.Skip))
             {
                 if (!compareRes.HasFlag(CompareResult.SkipAttributes))
                     result.AddRange(CompareElementAttributes(comparison));

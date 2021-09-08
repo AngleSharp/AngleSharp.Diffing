@@ -357,13 +357,15 @@ namespace AngleSharp.Diffing.Core
             results.ShouldBeEmpty();
         }
 
-        [Fact(DisplayName = "When comparer returns SkipChildren from an element comparison, child nodes are not compared")]
-        public void Test3()
+        [Theory(DisplayName = "When comparer returns SkipChildren flag from an element comparison, child nodes are not compared")]
+        [InlineData(CompareResult.Same | CompareResult.SkipChildren)]
+        [InlineData(CompareResult.Skip | CompareResult.SkipChildren)]
+        public void Test3(CompareResult compareResult)
         {
             var sut = CreateHtmlDiffer(
                 nodeMatcher: OneToOneNodeListMatcher,
                 nodeFilter: NoneNodeFilter,
-                nodeComparer: c => c.Control.Node.NodeName == "P" ? CompareResult.Same | CompareResult.SkipChildren : throw new Exception("NODE COMPARER SHOULD NOT BE CALLED ON CHILD NODES"),
+                nodeComparer: c => c.Control.Node.NodeName == "P" ? compareResult : throw new Exception("NODE COMPARER SHOULD NOT BE CALLED ON CHILD NODES"),
                 attrMatcher: AttributeNameMatcher,
                 attrFilter: NoneAttrFilter,
                 attrComparer: SameResultAttrComparer
@@ -374,13 +376,15 @@ namespace AngleSharp.Diffing.Core
             results.ShouldBeEmpty();
         }
 
-        [Fact(DisplayName = "When comparer returns SkipAttributes from an element comparison, attributes are not compared")]
-        public void Test4()
+        [Theory(DisplayName = "When comparer returns SkipAttributes flag from an element comparison, attributes are not compared")]
+        [InlineData(CompareResult.Same | CompareResult.SkipAttributes)]
+        [InlineData(CompareResult.Skip | CompareResult.SkipAttributes)]
+        public void Test4(CompareResult compareResult)
         {
             var sut = CreateHtmlDiffer(
                 nodeMatcher: OneToOneNodeListMatcher,
                 nodeFilter: NoneNodeFilter,
-                nodeComparer: c => CompareResult.Same | CompareResult.SkipAttributes,
+                nodeComparer: c => compareResult,
                 attrMatcher: AttributeNameMatcher,
                 attrFilter: NoneAttrFilter,
                 attrComparer: SameResultAttrComparer
