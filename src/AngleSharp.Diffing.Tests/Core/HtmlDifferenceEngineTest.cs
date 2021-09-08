@@ -357,6 +357,44 @@ namespace AngleSharp.Diffing.Core
             results.ShouldBeEmpty();
         }
 
+        [Theory(DisplayName = "When comparer returns SkipChildren flag from an element comparison, child nodes are not compared")]
+        [InlineData(CompareResult.Same | CompareResult.SkipChildren)]
+        [InlineData(CompareResult.Skip | CompareResult.SkipChildren)]
+        public void Test3(CompareResult compareResult)
+        {
+            var sut = CreateHtmlDiffer(
+                nodeMatcher: OneToOneNodeListMatcher,
+                nodeFilter: NoneNodeFilter,
+                nodeComparer: c => c.Control.Node.NodeName == "P" ? compareResult : throw new Exception("NODE COMPARER SHOULD NOT BE CALLED ON CHILD NODES"),
+                attrMatcher: AttributeNameMatcher,
+                attrFilter: NoneAttrFilter,
+                attrComparer: SameResultAttrComparer
+                );
+
+            var results = sut.Compare(ToNodeList(@"<p><em>foo</em></p>"), ToNodeList(@"<p><span>baz</span></p>"));
+
+            results.ShouldBeEmpty();
+        }
+
+        [Theory(DisplayName = "When comparer returns SkipAttributes flag from an element comparison, attributes are not compared")]
+        [InlineData(CompareResult.Same | CompareResult.SkipAttributes)]
+        [InlineData(CompareResult.Skip | CompareResult.SkipAttributes)]
+        public void Test4(CompareResult compareResult)
+        {
+            var sut = CreateHtmlDiffer(
+                nodeMatcher: OneToOneNodeListMatcher,
+                nodeFilter: NoneNodeFilter,
+                nodeComparer: c => compareResult,
+                attrMatcher: AttributeNameMatcher,
+                attrFilter: NoneAttrFilter,
+                attrComparer: SameResultAttrComparer
+                );
+
+            var results = sut.Compare(ToNodeList(@"<p id=""foo""></p>"), ToNodeList(@"<p id=""bar"" unexpected></p>"));
+
+            results.ShouldBeEmpty();
+        }
+
         #region NodeFilters
         private static FilterDecision NoneNodeFilter(ComparisonSource source) => FilterDecision.Keep;
         private static FilterDecision RemoveCommentNodeFilter(ComparisonSource source) => source.Node.NodeType == NodeType.Comment ? FilterDecision.Exclude : FilterDecision.Keep;

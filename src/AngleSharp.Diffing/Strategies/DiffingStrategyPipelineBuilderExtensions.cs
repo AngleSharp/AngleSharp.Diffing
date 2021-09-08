@@ -24,8 +24,10 @@ namespace AngleSharp.Diffing
                 .AddAttributeComparer()
                 .AddClassAttributeComparer()
                 .AddBooleanAttributeComparer(BooleanAttributeComparision.Strict)
-                .AddStyleAttributeComparer();
-            ;
+                .AddStyleAttributeComparer()
+                .AddIgnoreChildrenElementSupport()
+                .AddIgnoreAttributesElementSupport()
+                ;
         }
     }
 }
