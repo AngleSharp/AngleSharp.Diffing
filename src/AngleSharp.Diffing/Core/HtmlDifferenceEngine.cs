@@ -92,7 +92,7 @@ namespace AngleSharp.Diffing.Core
             }
 
             var compareRes = _diffingStrategy.Compare(comparison);
-            if (compareRes == CompareResult.Different)
+            if (compareRes.HasFlag(CompareResult.Different))
             {
                 IDiff diff = new NodeDiff(comparison);
                 return new[] { diff };
@@ -106,15 +106,17 @@ namespace AngleSharp.Diffing.Core
             var result = new List<IDiff>();
 
             var compareRes = _diffingStrategy.Compare(comparison);
-            if (compareRes == CompareResult.Different)
+            if (compareRes.HasFlag(CompareResult.Different))
             {
                 result.Add(new NodeDiff(comparison));
             }
 
-            if (compareRes != CompareResult.Skip)
+            if (!compareRes.HasFlag(CompareResult.Skip))
             {
-                result.AddRange(CompareElementAttributes(comparison));
-                result.AddRange(CompareChildNodes(comparison));
+                if (!compareRes.HasFlag(CompareResult.SkipAttributes))
+                    result.AddRange(CompareElementAttributes(comparison));
+                if (!compareRes.HasFlag(CompareResult.SkipChildren))
+                    result.AddRange(CompareChildNodes(comparison));
             }
 
             return result;

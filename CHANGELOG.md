@@ -1,3 +1,9 @@
+# 0.17.0
+
+Released on Wednesday, September 8, 2021.
+
+- Added the ability to ignore an elements children or its attributes. By [@grishat](https://github.com/grishat).
+
 # 0.16.0
 
 Released on Wednesday, June 24, 2021.

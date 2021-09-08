@@ -89,5 +89,41 @@ namespace AngleSharp.Diffing
             nodeComparerCalled.ShouldBeTrue();
             attrComparerCalled.ShouldBeTrue();
         }
+
+        [Theory(DisplayName = "When a control element has 'diff:ignoreChildren', calling Build() with DefaultOptions() returns empty diffs")]
+        [InlineData(@"<p diff:ignoreChildren>hello <em>world</em></p>",
+                         @"<p>world says <strong>hello</strong></p>")]
+        [InlineData(@"<p diff:ignoreChildren>hello</p>",
+                         @"<p>world says <strong>hello</strong></p>")]
+        [InlineData(@"<p diff:ignoreChildren>hello <em>world</em></p>",
+                         @"<p>world says</p>")]
+        public void Test005(string control, string test)
+        {
+            var diffs = DiffBuilder
+                .Compare(control)
+                .WithTest(test)
+                .Build()
+                .ToList();
+
+            diffs.ShouldBeEmpty();
+        }
+
+        [Theory(DisplayName = "When a control element has 'diff:ignoreAttributes', calling Build() with DefaultOptions() returns empty diffs")]
+        [InlineData(@"<p id=""foo"" diff:ignoreAttributes></p>",
+                         @"<p id=""bar""></p>")]
+        [InlineData(@"<p diff:ignoreAttributes></p>",
+                         @"<p unexpected></p>")]
+        [InlineData(@"<p id=""foo"" diff:ignoreAttributes></p>",
+                         @"<p></p>")]
+        public void Test006(string control, string test)
+        {
+            var diffs = DiffBuilder
+                .Compare(control)
+                .WithTest(test)
+                .Build()
+                .ToList();
+
+            diffs.ShouldBeEmpty();
+        }
     }
 }
