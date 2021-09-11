@@ -17,7 +17,7 @@ namespace AngleSharp.Diffing.Strategies.NodeStrategies
         public void Test001()
         {
             var comparison = ToComparison("<p>", "<p>");
-            ElementComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Same);
+            ElementComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Same);
         }
 
         [Theory(DisplayName = "When control and test nodes have the a different type and name, the result is Different")]
@@ -28,7 +28,7 @@ namespace AngleSharp.Diffing.Strategies.NodeStrategies
         public void Test002(string controlHtml, string testHtml)
         {
             var comparison = ToComparison(controlHtml, testHtml);
-            ElementComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
+            ElementComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Different);
         }
     }
 }

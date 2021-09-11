@@ -35,8 +35,8 @@ namespace AngleSharp.Diffing.Strategies.ElementStrategies
         {
             var comparison = ToComparison(controlHtml, "<p></p>");
 
-            IgnoreElementComparer.Compare(comparison, CompareResult.Same).ShouldBe(CompareResult.Skip);
-            IgnoreElementComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Skip);
+            IgnoreElementComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Skip);
+            IgnoreElementComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Skip);
         }
     }
 }

@@ -24,7 +24,7 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
             var comparison = ToAttributeComparison($@"<p class=""{controlClasses}"">", "class",
                                                    $@"<p class=""{testClasses}"">", "class");
 
-            ClassAttributeComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Same);
+            ClassAttributeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Same);
         }
 
         [Fact(DisplayName = "When a class attribute is matched up with another attribute, the result is different")]
@@ -33,7 +33,7 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
             var comparison = ToAttributeComparison(@"<p class=""foo"">", "class",
                                                    @"<p bar=""bar"">", "bar");
 
-            ClassAttributeComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
+            ClassAttributeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Different);
         }
 
         [Theory(DisplayName = "When there are different number of classes in the class attributes the result is different")]
@@ -44,7 +44,7 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
             var comparison = ToAttributeComparison($@"<p class=""{controlClasses}"">", "class",
                                                    $@"<p class=""{testClasses}"">", "class");
 
-            ClassAttributeComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
+            ClassAttributeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Different);
         }
 
         [Theory(DisplayName = "When the classes in the class attributes are different the result is different")]
@@ -57,7 +57,7 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
             var comparison = ToAttributeComparison($@"<p class=""{controlClasses}"">", "class",
                                                    $@"<p class=""{testClasses}"">", "class");
 
-            ClassAttributeComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
+            ClassAttributeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Different);
         }
     }
 }
