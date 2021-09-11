@@ -29,7 +29,7 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
             var (ctrlElm, testElm) = comparison.GetAttributeElements();
             var ctrlStyle = ctrlElm.GetStyle();
             var testStyle = testElm.GetStyle();
-            return ctrlStyle.CssText.Equals(testStyle.CssText, StringComparison.Ordinal)
+            return CompareCssStyleDeclarations(ctrlStyle, testStyle)
                 ? CompareResult.Same
                 : CompareResult.Different;
         }
@@ -38,6 +38,14 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
         {
             return comparison.Control.Attribute.Name.Equals(AttributeNames.Style, StringComparison.Ordinal) &&
                 comparison.Test.Attribute.Name.Equals(AttributeNames.Style, StringComparison.Ordinal);
+        }
+
+        private static bool CompareCssStyleDeclarations(ICssStyleDeclaration control, ICssStyleDeclaration test)
+        {
+            if(control.Length != test.Length)
+                return false;
+
+            return control.CssText.Equals(test.CssText, StringComparison.Ordinal);
         }
     }
 }
