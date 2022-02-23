@@ -118,7 +118,6 @@ namespace AngleSharp.Diffing.Core
 
         private static int GetPathIndex(INode node)
         {
-            var result = 0;
             var parent = node.Parent;
             if (parent is not null)
             {
@@ -126,9 +125,7 @@ namespace AngleSharp.Diffing.Core
                 for (int index = 0; index < childNodes.Length; index++)
                 {
                     if (ReferenceEquals(childNodes[index], node))
-                        return result;
-                    if (childNodes[index] is IParentNode)
-                        result += 1;
+                        return index;
                 }
             }
             throw new InvalidOperationException("Unexpected node tree state. The node was not found in its parents child nodes collection.");
