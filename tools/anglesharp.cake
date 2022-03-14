@@ -1,4 +1,4 @@
-#addin nuget:?package=Cake.FileHelpers&version=3.2.0
+#addin nuget:?package=Cake.FileHelpers&version=4.0.1
 #addin nuget:?package=Octokit&version=0.32.0
 using Octokit;
 
