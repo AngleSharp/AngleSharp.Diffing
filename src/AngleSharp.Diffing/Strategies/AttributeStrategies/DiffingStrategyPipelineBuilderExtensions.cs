@@ -63,5 +63,14 @@ namespace AngleSharp.Diffing
             builder.AddComparer(StyleAttributeComparer.Compare, StrategyType.Specialized);
             return builder;
         }
+
+        /// <summary>
+        /// Enables the special style attributes comparer during diffing and orderers the styles alphabetically before comparing them.
+        /// </summary>
+        public static IDiffingStrategyCollection AddOrderedStyleAttributeComparer(this IDiffingStrategyCollection builder)
+        {
+            builder.AddComparer(OrderedStyleAttributeComparer.Compare, StrategyType.Specialized);
+            return builder;
+        }
     }
 }
