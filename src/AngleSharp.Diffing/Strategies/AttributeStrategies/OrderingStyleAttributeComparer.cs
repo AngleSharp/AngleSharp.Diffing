@@ -10,7 +10,7 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
     /// <summary>
     /// Represents the style attribute comparer strategy.
     /// </summary>
-    public static class OrderedStyleAttributeComparer
+    public static class OrderingStyleAttributeComparer
     {
         /// <summary>
         /// The style attribute comparer strategy.
@@ -43,7 +43,7 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
 
         private static bool CompareCssStyleDeclarations(ICssStyleDeclaration control, ICssStyleDeclaration test)
         {
-            if(control.Length != test.Length)
+            if (control.Length != test.Length)
                 return false;
 
             var orderedControl = control.CssText.Split(';').Select(x => x.Trim()).OrderBy(x => x);
