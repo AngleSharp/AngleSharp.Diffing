@@ -45,5 +45,13 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
             var comparison = ToAttributeComparison(control, "style", test, "style");
             StyleAttributeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Same);
         }
+
+        [Theory(DisplayName = "Comparer should ignore different order inside style")]
+        [InlineData(@"<p style=""border:1px solid black"">", @"<p style=""border:solid 1px black"">")]
+        public void Test005(string control, string test)
+        {
+            var comparison = ToAttributeComparison(control, "style", test, "style");
+            StyleAttributeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Same);
+        }
     }
 }
