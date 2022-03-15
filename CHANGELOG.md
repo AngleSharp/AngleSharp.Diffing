@@ -1,3 +1,9 @@
+# 0.18.0
+
+Released on Tuesday, February 15, 2022.
+
+- Added a new style comparer which orders the styles before comparing them. By [@grishat](https://github.com/SebastianStehle).
+
 # 0.17.0
 
 Released on Wednesday, September 8, 2021.
