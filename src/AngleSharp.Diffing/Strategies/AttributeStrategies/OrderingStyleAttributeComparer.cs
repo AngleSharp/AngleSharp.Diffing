@@ -8,7 +8,7 @@ using AngleSharp.Dom;
 namespace AngleSharp.Diffing.Strategies.AttributeStrategies
 {
     /// <summary>
-    /// Represents the style attribute comparer strategy.
+    /// Represents the style attribute comparer strategy which orders the styles before comparing them.
     /// </summary>
     public static class OrderingStyleAttributeComparer
     {
