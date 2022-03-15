@@ -65,11 +65,11 @@ namespace AngleSharp.Diffing
         {
             if (ignoreOrder)
             {
-                builder.AddComparer(StyleAttributeComparer.Compare, StrategyType.Specialized);
+                builder.AddComparer(OrderingStyleAttributeComparer.Compare, StrategyType.Specialized);
             }
             else
             {
-                builder.AddComparer(OrderingStyleAttributeComparer.Compare, StrategyType.Specialized);
+                builder.AddComparer(StyleAttributeComparer.Compare, StrategyType.Specialized);
             }
             return builder;
         }
