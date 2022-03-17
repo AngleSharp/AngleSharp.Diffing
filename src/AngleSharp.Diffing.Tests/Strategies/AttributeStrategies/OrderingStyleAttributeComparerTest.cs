@@ -4,9 +4,9 @@ using Xunit;
 
 namespace AngleSharp.Diffing.Strategies.AttributeStrategies
 {
-    public class StyleAttributeComparerTest : DiffingTestBase
+    public class OrderingStyleAttributeComparerTest : DiffingTestBase
     {
-        public StyleAttributeComparerTest(DiffingTestFixture fixture) : base(fixture)
+        public OrderingStyleAttributeComparerTest(DiffingTestFixture fixture) : base(fixture)
         {
         }
 
@@ -27,14 +27,14 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
         public void Test002(string control, string test)
         {
             var comparison = ToAttributeComparison(control, "style", test, "style");
-            StyleAttributeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Different);
+            OrderingStyleAttributeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Different);
         }
 
         [Fact(DisplayName = "Comparer should correctly ignore insignificant whitespace")]
         public void Test003()
         {
             var comparison = ToAttributeComparison(@"<p style=""color: red"">", "style", @"<p style=""color:red"">", "style");
-            StyleAttributeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Same);
+            OrderingStyleAttributeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Same);
         }
 
         [Theory(DisplayName = "Comparer should ignore trailing semi colons")]
@@ -43,15 +43,24 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
         public void Test004(string control, string test)
         {
             var comparison = ToAttributeComparison(control, "style", test, "style");
-            StyleAttributeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Same);
+            OrderingStyleAttributeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Same);
+        }
+
+        [Theory(DisplayName = "Comparer should ignore different order")]
+        [InlineData(@"<p style=""alpha:0;border:0;color:red;"">", @"<p style=""color:red;border:0;alpha:0"">")]
+        [InlineData(@"<p style=""alpha:0;border:0;color:red;"">", @"<p style=""border:0;color:red;alpha:0"">")]
+        public void Test005(string control, string test)
+        {
+            var comparison = ToAttributeComparison(control, "style", test, "style");
+            OrderingStyleAttributeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Same);
         }
 
         [Theory(DisplayName = "Comparer should ignore different order inside style")]
         [InlineData(@"<p style=""border:1px solid black"">", @"<p style=""border:solid 1px black"">")]
-        public void Test005(string control, string test)
+        public void Test006(string control, string test)
         {
             var comparison = ToAttributeComparison(control, "style", test, "style");
-            StyleAttributeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Same);
+            OrderingStyleAttributeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Same);
         }
     }
 }
