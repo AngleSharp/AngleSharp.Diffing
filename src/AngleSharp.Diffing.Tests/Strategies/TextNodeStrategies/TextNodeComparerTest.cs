@@ -58,10 +58,10 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
             var c3 = ToComparison(whitespaceText, normalText);
             var c4 = ToComparison(whitespaceText, whitespaceText);
 
-            sut.Compare(c1, CompareResult.Different).ShouldBe(CompareResult.Same);
-            sut.Compare(c2, CompareResult.Different).ShouldBe(CompareResult.Same);
-            sut.Compare(c3, CompareResult.Different).ShouldBe(CompareResult.Same);
-            sut.Compare(c4, CompareResult.Different).ShouldBe(CompareResult.Same);
+            sut.Compare(c1, CompareResult.Unknown).ShouldBe(CompareResult.Same);
+            sut.Compare(c2, CompareResult.Unknown).ShouldBe(CompareResult.Same);
+            sut.Compare(c3, CompareResult.Unknown).ShouldBe(CompareResult.Same);
+            sut.Compare(c4, CompareResult.Unknown).ShouldBe(CompareResult.Same);
         }
 
         [Theory(DisplayName = "When option is Normalize, any consecutive whitespace characters are collapsed into one before comparison")]
@@ -76,10 +76,10 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
             var c3 = ToComparison(whitespaceText, normalText);
             var c4 = ToComparison(whitespaceText, whitespaceText);
 
-            sut.Compare(c1, CompareResult.Different).ShouldBe(CompareResult.Same);
-            sut.Compare(c2, CompareResult.Different).ShouldBe(CompareResult.Same);
-            sut.Compare(c3, CompareResult.Different).ShouldBe(CompareResult.Same);
-            sut.Compare(c4, CompareResult.Different).ShouldBe(CompareResult.Same);
+            sut.Compare(c1, CompareResult.Unknown).ShouldBe(CompareResult.Same);
+            sut.Compare(c2, CompareResult.Unknown).ShouldBe(CompareResult.Same);
+            sut.Compare(c3, CompareResult.Unknown).ShouldBe(CompareResult.Same);
+            sut.Compare(c4, CompareResult.Unknown).ShouldBe(CompareResult.Same);
         }
 
         [Theory(DisplayName = "When a parent node has a inline whitespace option, that overrides the global whitespace option")]
@@ -93,7 +93,7 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
             var testSource = new ComparisonSource(ToNode(testHtml).FirstChild.FirstChild.FirstChild, 0, "dummypath", ComparisonSourceType.Test);
             var comparison = new Comparison(controlSource, testSource);
 
-            sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Same);
+            sut.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Same);
         }
 
         [Theory(DisplayName = "When whitespace option is Preserve or RemoveWhitespaceNodes, a string ordinal comparison is performed")]
@@ -104,7 +104,7 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
             var sut = new TextNodeComparer(whitespaceOption);
             var comparison = ToComparison("  hello\n\nworld ", "  hello\n\nworld ");
 
-            sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Same);
+            sut.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Same);
         }
 
         [Fact(DisplayName = "When IgnoreCase is true, a string ordinal ignore case comparison is performed")]
@@ -113,7 +113,7 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
             var sut = new TextNodeComparer(ignoreCase: true);
             var comparison = ToComparison("HELLO WoRlD", "hello world");
 
-            sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Same);
+            sut.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Same);
         }
 
         [Theory(DisplayName = "When the parent element is <pre/script/style>, the is implicitly set to Preserve")]
@@ -128,7 +128,7 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
             var testSource = ToComparisonSource("foo bar", ComparisonSourceType.Test);
             var comparison = new Comparison(controlSource, testSource);
 
-            sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
+            sut.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Different);
         }
 
         [Theory(DisplayName = "When the parent element is <pre/script/style> and the whitespace option is set " +
@@ -145,7 +145,7 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
             var testSource = testNode.FirstChild.ToComparisonSource(0, ComparisonSourceType.Test);
             var comparison = new Comparison(controlSource, testSource);
 
-            sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Same);
+            sut.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Same);
         }
 
         [Theory(DisplayName = "When the parent element is <pre/script/style> and the whitespace option is set " +
@@ -162,7 +162,7 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
             var testSource = testNode.FirstChild.ToComparisonSource(0, ComparisonSourceType.Test);
             var comparison = new Comparison(controlSource, testSource);
 
-            sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Same);
+            sut.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Same);
         }
 
         [Theory(DisplayName = "When IgnoreCase='true' inline attribute is present in a parent element, a string " +
@@ -178,7 +178,7 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
             var testSource = ToComparisonSource("hello world", ComparisonSourceType.Test);
             var comparison = new Comparison(controlSource, testSource);
 
-            sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Same);
+            sut.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Same);
         }
 
         [Theory(DisplayName = "When IgnoreCase='false' inline attribute is present in a parent element, a string ordinal case comparison is performed")]
@@ -193,7 +193,7 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
             var testSource = ToComparisonSource("hello world", ComparisonSourceType.Test);
             var comparison = new Comparison(controlSource, testSource);
 
-            sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
+            sut.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Different);
         }
 
         [Theory(DisplayName = "When diff:regex attribute is found on the immediate parent element, the control text is expected to a regex and that used when comparing to the test text node.")]
@@ -207,7 +207,7 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
             var testSource = ToComparisonSource("1234", ComparisonSourceType.Test);
             var comparison = new Comparison(controlSource, testSource);
 
-            sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Same);
+            sut.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Same);
         }
 
         [Fact(DisplayName = "When diff:regex attribute is found on the immediate parent element and ignoreCase is true, the regex compare is done as case insensitive.")]
@@ -219,7 +219,7 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
             var testSource = ToComparisonSource("foo1234", ComparisonSourceType.Test);
             var comparison = new Comparison(controlSource, testSource);
 
-            sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Same);
+            sut.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Same);
         }
 
         [Theory(DisplayName = "When diff:regex='false' attribute is found on the immediate parent element, a string ordinal case comparison is performed.")]
@@ -232,7 +232,7 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
             var testSource = ToComparisonSource("1234", ComparisonSourceType.Test);
             var comparison = new Comparison(controlSource, testSource);
 
-            sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Same);
+            sut.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Same);
         }
     }
 }

@@ -20,7 +20,7 @@ namespace AngleSharp.Diffing.Strategies.ElementStrategies
                 return currentDecision;
 
             return ControlHasTruthyIgnoreChildrenAttribute(comparison)
-                ? currentDecision | CompareResult.SkipChildren
+                ? CompareResult.SkipChildren
                 : currentDecision;
         }
 

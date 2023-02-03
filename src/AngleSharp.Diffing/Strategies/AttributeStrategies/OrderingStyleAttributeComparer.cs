@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 using AngleSharp.Css.Dom;
 using AngleSharp.Diffing.Core;
@@ -7,9 +8,9 @@ using AngleSharp.Dom;
 namespace AngleSharp.Diffing.Strategies.AttributeStrategies
 {
     /// <summary>
-    /// Represents the style attribute comparer strategy.
+    /// Represents the style attribute comparer strategy which orders the styles before comparing them.
     /// </summary>
-    public static class StyleAttributeComparer
+    public static class OrderingStyleAttributeComparer
     {
         /// <summary>
         /// The style attribute comparer strategy.
@@ -42,10 +43,13 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
 
         private static bool CompareCssStyleDeclarations(ICssStyleDeclaration control, ICssStyleDeclaration test)
         {
-            if(control.Length != test.Length)
+            if (control.Length != test.Length)
                 return false;
 
-            return control.CssText.Equals(test.CssText, StringComparison.Ordinal);
+            var orderedControl = control.CssText.Split(';').Select(x => x.Trim()).OrderBy(x => x);
+            var orderedTest = test.CssText.Split(';').Select(x => x.Trim()).OrderBy(x => x);
+
+            return orderedControl.SequenceEqual(orderedTest, StringComparer.Ordinal);
         }
     }
 }

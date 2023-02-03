@@ -1,3 +1,11 @@
+# 0.17.1
+
+Released on Friday, February 3, 2023.
+
+- Added a new style comparer which orders the styles before comparing them. By [@grishat](https://github.com/SebastianStehle).
+- Change Core.ComparisonSource.GetPathIndex() to return the index inside ChildNodes instead of Children. By [@edxlhornung](https://github.com/edxlhornung).
+- Fixed element comparison such that it uses case insensitive comparison of the name of the node. By [@egil](https://github.com/egil).
+
 # 0.17.0
 
 Released on Wednesday, September 8, 2021.

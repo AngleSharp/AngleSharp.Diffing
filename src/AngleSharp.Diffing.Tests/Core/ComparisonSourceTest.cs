@@ -68,12 +68,13 @@ namespace AngleSharp.Diffing.Core
         }
 
         [Theory(DisplayName = "The index in the source's path is based on its position in it's parents" +
-            "child node list, i.e. excluding other node types that does not contain children")]
+            "child node list")]
         [InlineData("<p>", 0, "p(0)")]
-        [InlineData("text<p>", 1, "p(0)")]
-        [InlineData("<!--x--><p>", 1, "p(0)")]
-        [InlineData("<i></i>text<p>", 2, "p(1)")]
-        [InlineData("<i></i><!--x--><p>", 2, "p(1)")]
+        [InlineData("text<p>", 1, "p(1)")]
+        [InlineData("<!--x--><p>", 1, "p(1)")]
+        [InlineData("<i></i>text<p>", 2, "p(2)")]
+        [InlineData("<i></i><!--x--><p>", 2, "p(2)")]
+        [InlineData("<i></i>text<!--x--><p>text", 2, "#comment(2)")]
         public void Test005(string sourceMarkup, int nodeIndex, string expectedPath)
         {
             var node = ToNodeList(sourceMarkup)[nodeIndex];
@@ -91,7 +92,7 @@ namespace AngleSharp.Diffing.Core
 
             var sut = new ComparisonSource(textNode, ComparisonSourceType.Control);
 
-            sut.Path.ShouldBe("p(0) > i(1) > #text(0)");
+            sut.Path.ShouldBe("p(0) > i(2) > #text(0)");
         }
 
         [Fact(DisplayName = "Source uses parent path if provided to construct own path")]

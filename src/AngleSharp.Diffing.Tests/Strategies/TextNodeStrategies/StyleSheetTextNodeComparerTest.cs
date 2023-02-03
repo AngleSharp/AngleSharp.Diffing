@@ -33,12 +33,12 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
         }
 
 
-        [Fact(DisplayName = "The comparer responses with Different when style information is different")]
+        [Fact(DisplayName = "The comparer responds with Different when style information is different")]
         public void Test001()
         {
             var comparison = ToStyleComparison(@"h1{background:#000;}", @"h1{color:#000;}");
 
-            StyleSheetTextNodeComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
+            StyleSheetTextNodeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Different);
         }
 
         [Theory(DisplayName = "The comparer ignores insignificant whitespace")]
@@ -51,7 +51,7 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
         {
             var comparison = ToStyleComparison($@"h1{whitespace}{{{whitespace}color:{whitespace}#000;{whitespace}}}", @"h1{color:#000;}");
 
-            StyleSheetTextNodeComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Same);
+            StyleSheetTextNodeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Same);
         }
 
         private Comparison ToStyleComparison(string controlStyleText, string testStyleText)

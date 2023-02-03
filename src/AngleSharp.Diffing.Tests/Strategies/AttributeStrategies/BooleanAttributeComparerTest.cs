@@ -23,7 +23,7 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
             var sut = new BooleanAttributeComparer(BooleanAttributeComparision.Strict);
             var comparison = ToAttributeComparison("<b foo>", "foo", "<b bar>", "bar");
 
-            sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
+            sut.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Different);
         }
 
         [Fact(DisplayName = "When attribute name is not an boolean attribute, its current result is returned")]
@@ -49,12 +49,12 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
             var c5 = ToAttributeComparison($@"<b {attrName}="""">", attrName, $@"<b {attrName}>", attrName);
             var c6 = ToAttributeComparison($@"<b {attrName}=""{attrName}"">", attrName, $@"<b {attrName}>", attrName);
 
-            sut.Compare(c1, CompareResult.Different).ShouldBe(CompareResult.Same);
-            sut.Compare(c2, CompareResult.Different).ShouldBe(CompareResult.Same);
-            sut.Compare(c3, CompareResult.Different).ShouldBe(CompareResult.Same);
-            sut.Compare(c4, CompareResult.Different).ShouldBe(CompareResult.Same);
-            sut.Compare(c5, CompareResult.Different).ShouldBe(CompareResult.Same);
-            sut.Compare(c6, CompareResult.Different).ShouldBe(CompareResult.Same);
+            sut.Compare(c1, CompareResult.Unknown).ShouldBe(CompareResult.Same);
+            sut.Compare(c2, CompareResult.Unknown).ShouldBe(CompareResult.Same);
+            sut.Compare(c3, CompareResult.Unknown).ShouldBe(CompareResult.Same);
+            sut.Compare(c4, CompareResult.Unknown).ShouldBe(CompareResult.Same);
+            sut.Compare(c5, CompareResult.Unknown).ShouldBe(CompareResult.Same);
+            sut.Compare(c6, CompareResult.Unknown).ShouldBe(CompareResult.Same);
         }
 
         [Theory(DisplayName = "When attributes is boolean and mode is loose, the presence of " +
@@ -68,9 +68,9 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
             var c3 = ToAttributeComparison($@"<b {attrName}=""true"">", attrName, $@"<b {attrName}=""false"">", attrName);
 
 
-            sut.Compare(c1, CompareResult.Different).ShouldBe(CompareResult.Same);
-            sut.Compare(c2, CompareResult.Different).ShouldBe(CompareResult.Same);
-            sut.Compare(c3, CompareResult.Different).ShouldBe(CompareResult.Same);
+            sut.Compare(c1, CompareResult.Unknown).ShouldBe(CompareResult.Same);
+            sut.Compare(c2, CompareResult.Unknown).ShouldBe(CompareResult.Same);
+            sut.Compare(c3, CompareResult.Unknown).ShouldBe(CompareResult.Same);
         }
     }
 }

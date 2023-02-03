@@ -19,8 +19,9 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
         {
             if (currentDecision.IsSameOrSkip())
                 return currentDecision;
-            if (!IsClassAttributes(comparison))
-                return currentDecision;
+
+            if (!IsBothClassAttributes(comparison))
+                return CompareResult.Different;
 
             var (ctrlElm, testElm) = comparison.GetAttributeElements();
             if (ctrlElm.ClassList.Length != testElm.ClassList.Length)
@@ -31,7 +32,7 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
                 : CompareResult.Different;
         }
 
-        private static bool IsClassAttributes(in AttributeComparison comparison)
+        private static bool IsBothClassAttributes(in AttributeComparison comparison)
         {
             return comparison.Control.Attribute.Name.Equals(CLASS_ATTRIBUTE_NAME, StringComparison.OrdinalIgnoreCase) &&
                 comparison.Test.Attribute.Name.Equals(CLASS_ATTRIBUTE_NAME, StringComparison.OrdinalIgnoreCase);

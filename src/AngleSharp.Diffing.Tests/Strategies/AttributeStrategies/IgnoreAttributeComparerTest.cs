@@ -33,7 +33,7 @@ namespace AngleSharp.Diffing.Strategies.IgnoreStrategies
                 @"<p foo=""baz""></p>", "foo"
             );
 
-            IgnoreAttributeComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Same);
+            IgnoreAttributeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Same);
         }
     }
 }

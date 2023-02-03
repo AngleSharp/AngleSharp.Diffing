@@ -1,4 +1,6 @@
-﻿using AngleSharp.Diffing.Core;
+﻿using System;
+
+using AngleSharp.Diffing.Core;
 using AngleSharp.Diffing.Strategies.ElementStrategies;
 
 using Shouldly;
@@ -17,7 +19,7 @@ namespace AngleSharp.Diffing.Strategies.NodeStrategies
         public void Test001()
         {
             var comparison = ToComparison("<p>", "<p>");
-            ElementComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Same);
+            ElementComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Same);
         }
 
         [Theory(DisplayName = "When control and test nodes have the a different type and name, the result is Different")]
@@ -28,7 +30,18 @@ namespace AngleSharp.Diffing.Strategies.NodeStrategies
         public void Test002(string controlHtml, string testHtml)
         {
             var comparison = ToComparison(controlHtml, testHtml);
-            ElementComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
+            ElementComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Different);
+        }
+
+        [Theory(DisplayName = "When unknown node is used in comparison, but node name is equal, the result is Same")]
+        [InlineData("<svg><path></path></svg>", "<path/>")]
+        public void HandleUnknownNodeDuringComparison(string controlHtml, string testHtml)
+        {
+            var knownNode = ToNode(controlHtml).FirstChild.ToComparisonSource(0, ComparisonSourceType.Control);
+            var unknownNode = ToNode(testHtml).ToComparisonSource(0, ComparisonSourceType.Test);
+            var comparison = new Comparison(knownNode, unknownNode);
+            
+            ElementComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Same);
         }
     }
 }
