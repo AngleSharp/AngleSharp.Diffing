@@ -58,6 +58,7 @@ namespace AngleSharp.Diffing
         /// <summary>
         /// Enables the special style attributes comparer during diffing.
         /// </summary>
+        /// <param name="builder"></param>
         /// <param name="ignoreOrder">Then the flag is true, the comparer orders the styles in ascending order before comparing them.
         /// Therefore two styles are identical if they have the same properties and values but in different order.
         /// </param>
