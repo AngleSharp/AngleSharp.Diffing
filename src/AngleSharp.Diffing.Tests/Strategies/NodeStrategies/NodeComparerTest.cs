@@ -1,4 +1,6 @@
-﻿using AngleSharp.Diffing.Core;
+﻿using System;
+
+using AngleSharp.Diffing.Core;
 using AngleSharp.Diffing.Strategies.ElementStrategies;
 
 using Shouldly;
@@ -29,6 +31,17 @@ namespace AngleSharp.Diffing.Strategies.NodeStrategies
         {
             var comparison = ToComparison(controlHtml, testHtml);
             ElementComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Different);
+        }
+
+        [Theory(DisplayName = "When unknown node is used in comparison, but node name is equal, the result is Same")]
+        [InlineData("<svg><path></path></svg>", "<path/>")]
+        public void HandleUnknownNodeDuringComparison(string controlHtml, string testHtml)
+        {
+            var knownNode = ToNode(controlHtml).FirstChild.ToComparisonSource(0, ComparisonSourceType.Control);
+            var unknownNode = ToNode(testHtml).ToComparisonSource(0, ComparisonSourceType.Test);
+            var comparison = new Comparison(knownNode, unknownNode);
+            
+            ElementComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Same);
         }
     }
 }

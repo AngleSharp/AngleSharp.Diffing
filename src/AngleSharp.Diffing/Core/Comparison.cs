@@ -25,7 +25,9 @@ namespace AngleSharp.Diffing.Core
         /// <summary>
         /// Gets whether the control and test nodes are of the same type and has the same name.
         /// </summary>
-        public bool AreNodeTypesEqual => Control.Node.NodeType == Test.Node.NodeType && Control.Node.NodeName == Test.Node.NodeName;
+        public bool AreNodeTypesEqual
+            => Control.Node.NodeType == Test.Node.NodeType
+            && Control.Node.NodeName.Equals(Test.Node.NodeName, StringComparison.OrdinalIgnoreCase);
 
         /// <summary>
         /// Creates a new comparison.
