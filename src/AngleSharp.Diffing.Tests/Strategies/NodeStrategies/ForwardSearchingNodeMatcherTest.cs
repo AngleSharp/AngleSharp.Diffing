@@ -17,8 +17,11 @@ namespace AngleSharp.Diffing.Strategies.NodeStrategies
 
         [Theory(DisplayName = "The matcher matches two nodes with the same node name")]
         [InlineData("textnode", "textnode")]
-        [InlineData("<!--comment-->", "<!--comment-->")]
         [InlineData("<p></p>", "<p></p>")]
+        [InlineData("<!--comment-->", "<!--comment-->")]
+        [InlineData("<!-- [endif] -->", "<!-- [endif] -->")]
+        [InlineData("<!-- -->", "<!-- -->")]
+        [InlineData("<!---->", "<!---->")]
         public void Test001(string controlHtml, string testHtml)
         {
             var controls = ToSourceCollection(controlHtml, ComparisonSourceType.Control);
