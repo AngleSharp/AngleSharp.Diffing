@@ -1,4 +1,4 @@
-# 0.17.2
+# 0.18.0
 
 - Added a new comparer, which ensures element tags are closed the same way, e.g. `<br> and <br />` would not be considered equal, but `<br>` and `<br>` would be.
 
