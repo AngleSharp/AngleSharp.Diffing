@@ -15,6 +15,15 @@ namespace AngleSharp.Diffing
         }
 
         /// <summary>
+        /// Enables the basic element comparer, that checks if two elements are closed in the same way.
+        /// </summary>
+        public static IDiffingStrategyCollection AddElementClosingComparer(this IDiffingStrategyCollection builder)
+        {
+            builder.AddComparer(ElementClosingComparer.Compare, StrategyType.Generalized);
+            return builder;
+        }
+
+        /// <summary>
         /// Enables the CSS-selector matcher strategy during diffing.
         /// </summary>
         public static IDiffingStrategyCollection AddCssSelectorMatcher(this IDiffingStrategyCollection builder)
