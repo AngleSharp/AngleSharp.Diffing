@@ -5,12 +5,12 @@ using AngleSharp.Html.Parser.Tokens;
 namespace AngleSharp.Diffing.Strategies.ElementStrategies
 {
     /// <summary>
-    /// Represents the element closing  comparerstrategy.
+    /// Represents the element closing comparer strategy.
     /// </summary>
     public static class ElementClosingComparer
     {
         /// <summary>
-        /// The element comparer closing  strategy.
+        /// The element comparer closing strategy.
         /// </summary>
         public static CompareResult Compare(in Comparison comparison, CompareResult currentDecision)
         {

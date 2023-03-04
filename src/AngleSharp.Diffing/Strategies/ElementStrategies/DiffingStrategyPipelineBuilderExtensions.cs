@@ -15,7 +15,7 @@ namespace AngleSharp.Diffing
         }
 
         /// <summary>
-        /// Enables the basic element comparer, that checks if two elements are closed in the same way.
+        /// Adds an element comparer that ensures element tags are closed the same way, e.g. `&lt;br&gt;` and `&lt;br /&gt;` would not be considered equal, but `&lt;br&gt;` and `&lt;br&gt;` would be.
         /// </summary>
         public static IDiffingStrategyCollection AddElementClosingComparer(this IDiffingStrategyCollection builder)
         {
