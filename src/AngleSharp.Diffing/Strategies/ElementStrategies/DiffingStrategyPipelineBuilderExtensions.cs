@@ -19,7 +19,7 @@ namespace AngleSharp.Diffing
         /// </summary>
         public static IDiffingStrategyCollection AddElementClosingComparer(this IDiffingStrategyCollection builder)
         {
-            builder.AddComparer(ElementClosingComparer.Compare, StrategyType.Generalized);
+            builder.AddComparer(ElementClosingComparer.Compare, StrategyType.Specialized);
             return builder;
         }
 
