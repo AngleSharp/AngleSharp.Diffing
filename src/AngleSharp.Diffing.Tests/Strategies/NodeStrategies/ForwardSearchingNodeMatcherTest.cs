@@ -15,7 +15,7 @@ namespace AngleSharp.Diffing.Strategies.NodeStrategies
         {
         }
 
-        [Theory(DisplayName = "The matcher matches two nodes with the same node name")]
+        [Theory(DisplayName = "The matcher matches two nodes with of the same type")]
         [InlineData("textnode", "textnode")]
         [InlineData("<p></p>", "<p></p>")]
         [InlineData("<!--comment-->", "<!--comment-->")]
@@ -33,7 +33,7 @@ namespace AngleSharp.Diffing.Strategies.NodeStrategies
             actual.ShouldAllBe((c, idx) => c.Control == controls[idx] && c.Test == tests[idx]);
         }
 
-        [Theory(DisplayName = "The matcher matches two nodes with the same node name")]
+        [Theory(DisplayName = "The matcher matches two nodes of the same type skipping excluded")]
         [InlineData("asdf<h1>Hello world</h1>asdf<h1>Hello world</h1>", "asdf<h1>Hello world</h1>asdf<h1>Hello world</h1>")]
         public void Test0011(string controlHtml, string testHtml)
         {

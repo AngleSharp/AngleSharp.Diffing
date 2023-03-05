@@ -1,3 +1,7 @@
+# 0.18.0
+
+- Added a new comparer, which ensures element tags are closed the same way, e.g. `<br> and <br />` would not be considered equal, but `<br>` and `<br>` would be.
+
 # 0.17.1
 
 Released on Friday, February 3, 2023.
