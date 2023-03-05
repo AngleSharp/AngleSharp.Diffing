@@ -1,18 +1,15 @@
-using System.Diagnostics;
+namespace AngleSharp.Diffing.Core;
 
-namespace AngleSharp.Diffing.Core
+/// <summary>
+/// Represents an attribute difference
+/// </summary>
+[DebuggerDisplay("Attribute diff: Control = {Control.Path}, Test = {Test.Path}")]
+public class AttrDiff : DiffBase<AttributeComparisonSource>
 {
     /// <summary>
-    /// Represents an attribute difference
+    /// Creates an <see cref="AttrDiff"/>.
     /// </summary>
-    [DebuggerDisplay("Attribute diff: Control = {Control.Path}, Test = {Test.Path}")]
-    public class AttrDiff : DiffBase<AttributeComparisonSource>
+    public AttrDiff(in AttributeComparison comparison) : base(comparison.Control, comparison.Test, DiffTarget.Attribute)
     {
-        /// <summary>
-        /// Creates an <see cref="AttrDiff"/>.
-        /// </summary>
-        public AttrDiff(in AttributeComparison comparison) : base(comparison.Control, comparison.Test, DiffTarget.Attribute)
-        {
-        }
     }
 }

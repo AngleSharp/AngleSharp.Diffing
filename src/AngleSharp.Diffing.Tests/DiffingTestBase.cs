@@ -1,79 +1,71 @@
-using System.Collections.Generic;
+namespace AngleSharp.Diffing;
 
-using AngleSharp.Diffing.Core;
-using AngleSharp.Dom;
-
-using Xunit;
-
-namespace AngleSharp.Diffing
+public abstract class DiffingTestBase : IClassFixture<DiffingTestFixture>
 {
-    public abstract class DiffingTestBase : IClassFixture<DiffingTestFixture>
+    private readonly DiffingTestFixture _testFixture;
+
+    protected IDiffContext DummyContext { get; } = new DiffContext(default(IElement), default(IElement));
+
+    protected INodeList EmptyNodeList => ToNodeList("");
+
+    public DiffingTestBase(DiffingTestFixture fixture)
     {
-        private readonly DiffingTestFixture _testFixture;
+        _testFixture = fixture;
+    }
 
-        protected IDiffContext DummyContext { get; } = new DiffContext(default(IElement), default(IElement));
+    protected INodeList ToNodeList(string? htmlsnippet)
+    {
+        var fragment = _testFixture.Parse(htmlsnippet);
+        return fragment;
+    }
 
-        protected INodeList EmptyNodeList => ToNodeList("");
+    protected IEnumerable<ComparisonSource> ToComparisonSourceList(string html)
+    {
+        return ToNodeList(html).ToComparisonSourceList(ComparisonSourceType.Control);
+    }
 
-        public DiffingTestBase(DiffingTestFixture fixture)
-        {
-            _testFixture = fixture;
-        }
+    protected INode ToNode(string htmlsnippet)
+    {
+        var fragment = _testFixture.Parse(htmlsnippet);
+        return fragment[0];
+    }
 
-        protected INodeList ToNodeList(string? htmlsnippet)
-        {
-            var fragment = _testFixture.Parse(htmlsnippet);
-            return fragment;
-        }
+    protected ComparisonSource ToComparisonSource(string html, ComparisonSourceType sourceType = ComparisonSourceType.Control)
+    {
+        return ToNode(html).ToComparisonSource(0, sourceType);
+    }
 
-        protected IEnumerable<ComparisonSource> ToComparisonSourceList(string html)
-        {
-            return ToNodeList(html).ToComparisonSourceList(ComparisonSourceType.Control);
-        }
+    protected Comparison ToComparison(string controlHtml, string testHtml)
+    {
+        return new Comparison(
+            ToComparisonSource(controlHtml, ComparisonSourceType.Control),
+            ToComparisonSource(testHtml, ComparisonSourceType.Test)
+            );
+    }
 
-        protected INode ToNode(string htmlsnippet)
-        {
-            var fragment = _testFixture.Parse(htmlsnippet);
-            return fragment[0];
-        }
+    protected AttributeComparisonSource ToAttributeComparisonSource(string html, string attrName, ComparisonSourceType sourceType = ComparisonSourceType.Control)
+    {
+        var elementSource = ToComparisonSource(html, sourceType);
+        return new AttributeComparisonSource(attrName, elementSource);
+    }
 
-        protected ComparisonSource ToComparisonSource(string html, ComparisonSourceType sourceType = ComparisonSourceType.Control)
-        {
-            return ToNode(html).ToComparisonSource(0, sourceType);
-        }
+    protected AttributeComparison ToAttributeComparison(string controlHtml, string controlAttrName, string testHtml, string testAttrName)
+    {
+        return new AttributeComparison(
+            ToAttributeComparisonSource(controlHtml, controlAttrName, ComparisonSourceType.Control),
+            ToAttributeComparisonSource(testHtml, testAttrName, ComparisonSourceType.Test)
+            );
+    }
 
-        protected Comparison ToComparison(string controlHtml, string testHtml)
-        {
-            return new Comparison(
-                ToComparisonSource(controlHtml, ComparisonSourceType.Control),
-                ToComparisonSource(testHtml, ComparisonSourceType.Test)
-                );
-        }
+    protected SourceCollection ToSourceCollection(string html, ComparisonSourceType sourceType = ComparisonSourceType.Control)
+    {
+        var sources = ToComparisonSourceList(html);
+        return new SourceCollection(sourceType, sources);
+    }
 
-        protected AttributeComparisonSource ToAttributeComparisonSource(string html, string attrName, ComparisonSourceType sourceType = ComparisonSourceType.Control)
-        {
-            var elementSource = ToComparisonSource(html, sourceType);
-            return new AttributeComparisonSource(attrName, elementSource);
-        }
-
-        protected AttributeComparison ToAttributeComparison(string controlHtml, string controlAttrName, string testHtml, string testAttrName)
-        {
-            return new AttributeComparison(
-                ToAttributeComparisonSource(controlHtml, controlAttrName, ComparisonSourceType.Control),
-                ToAttributeComparisonSource(testHtml, testAttrName, ComparisonSourceType.Test)
-                );
-        }
-
-        protected SourceCollection ToSourceCollection(string html, ComparisonSourceType sourceType = ComparisonSourceType.Control)
-        {
-            var sources = ToComparisonSourceList(html);
-            return new SourceCollection(sourceType, sources);
-        }
-
-        protected SourceMap ToSourceMap(string html, ComparisonSourceType sourceType = ComparisonSourceType.Control)
-        {
-            var source = ToComparisonSource(html, sourceType);
-            return new SourceMap(source);
-        }
+    protected SourceMap ToSourceMap(string html, ComparisonSourceType sourceType = ComparisonSourceType.Control)
+    {
+        var source = ToComparisonSource(html, sourceType);
+        return new SourceMap(source);
     }
 }
