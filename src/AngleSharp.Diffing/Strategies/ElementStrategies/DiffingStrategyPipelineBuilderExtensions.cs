@@ -15,6 +15,15 @@ namespace AngleSharp.Diffing
         }
 
         /// <summary>
+        /// Adds an element comparer that ensures element tags are closed the same way, e.g. `&lt;br&gt;` and `&lt;br /&gt;` would not be considered equal, but `&lt;br&gt;` and `&lt;br&gt;` would be.
+        /// </summary>
+        public static IDiffingStrategyCollection AddElementClosingComparer(this IDiffingStrategyCollection builder)
+        {
+            builder.AddComparer(ElementClosingComparer.Compare, StrategyType.Generalized);
+            return builder;
+        }
+
+        /// <summary>
         /// Enables the CSS-selector matcher strategy during diffing.
         /// </summary>
         public static IDiffingStrategyCollection AddCssSelectorMatcher(this IDiffingStrategyCollection builder)

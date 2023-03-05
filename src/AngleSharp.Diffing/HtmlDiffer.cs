@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+
 using AngleSharp.Diffing.Core;
 using AngleSharp.Diffing.Extensions;
 using AngleSharp.Dom;
@@ -24,9 +25,19 @@ namespace AngleSharp.Diffing
         public HtmlDiffer(IDiffingStrategy diffingStrategy)
         {
             _diffingStrategy = diffingStrategy ?? throw new ArgumentNullException(nameof(diffingStrategy));
-            var config = Configuration.Default.WithCss();
+
+            // Create a custom config with a parser to allow access to the source reference from the AST.
+            var config = Configuration.Default
+                .WithCss()
+                .With<IHtmlParser>(ctx => new HtmlParser(new HtmlParserOptions
+                {
+                    IsKeepingSourceReferences = true,
+                    IsScripting = ctx?.IsScripting() ?? false
+                }, ctx));
+
             _context = BrowsingContext.New(config);
-            _htmlParser = _context.GetService<IHtmlParser>() ?? throw new InvalidOperationException("No IHtmlParser registered in the default AngleSharp browsing context.");
+            _htmlParser = _context.GetService<IHtmlParser>()
+                ?? throw new InvalidOperationException("No IHtmlParser registered in the default AngleSharp browsing context.");
             _document = _context.OpenNewAsync().Result;
         }
 
