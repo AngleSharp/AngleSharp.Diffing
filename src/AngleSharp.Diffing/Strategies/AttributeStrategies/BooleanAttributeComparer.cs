@@ -64,7 +64,7 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
             if (currentDecision.IsSameOrSkip())
                 return currentDecision;
             if (!IsAttributeNamesEqual(comparison))
-                return CompareResult.Different;
+                return CompareResult.Different(new AttrNameDiff(comparison));
             if (!BooleanAttributesSet.Contains(comparison.Control.Attribute.Name))
                 return currentDecision;
 
@@ -72,7 +72,9 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
                 ? CompareStrict(comparison)
                 : true;
 
-            return hasSameValue ? CompareResult.Same : CompareResult.Different;
+            return hasSameValue ?
+                CompareResult.Same :
+                CompareResult.Different(new AttrValueDiff(comparison, AttributeValueKind.Boolean));
         }
 
         private static bool IsAttributeNamesEqual(in AttributeComparison comparison)

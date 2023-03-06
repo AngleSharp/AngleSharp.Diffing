@@ -18,7 +18,7 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
             var comparison = ToComparison("<p></p>", "<p></p>");
             var sut = new TextNodeComparer();
 
-            sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
+            sut.Compare(comparison, CompareResult.Different()).ShouldBe(CompareResult.Different());
             sut.Compare(comparison, CompareResult.Same).ShouldBe(CompareResult.Same);
             sut.Compare(comparison, CompareResult.Skip).ShouldBe(CompareResult.Skip);
         }
@@ -31,9 +31,13 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
             var comparison = ToComparison("hello world", "   hello   world  ");
             var sut = new TextNodeComparer(whitespaceOption);
 
-            sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
             sut.Compare(comparison, CompareResult.Same).ShouldBe(CompareResult.Same);
             sut.Compare(comparison, CompareResult.Skip).ShouldBe(CompareResult.Skip);
+
+            var difference = sut.Compare(comparison, CompareResult.Different());
+
+            difference.Decision.ShouldBe(CompareResultDecision.Different);
+            difference.Diff.ShouldBeEquivalentTo(new TextDiff(comparison));
         }
 
         [Fact(DisplayName = "When option is Normalize and current decision is Same or Skip, compare uses the current decision")]
@@ -128,7 +132,10 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
             var testSource = ToComparisonSource("foo bar", ComparisonSourceType.Test);
             var comparison = new Comparison(controlSource, testSource);
 
-            sut.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Different);
+            var result = sut.Compare(comparison, CompareResult.Unknown);
+
+            result.Decision.ShouldBe(CompareResultDecision.Different);
+            result.Diff.ShouldBeEquivalentTo(new TextDiff(comparison));
         }
 
         [Theory(DisplayName = "When the parent element is <pre/script/style> and the whitespace option is set " +
@@ -193,7 +200,10 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
             var testSource = ToComparisonSource("hello world", ComparisonSourceType.Test);
             var comparison = new Comparison(controlSource, testSource);
 
-            sut.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Different);
+            var result = sut.Compare(comparison, CompareResult.Unknown);
+
+            result.Decision.ShouldBe(CompareResultDecision.Different);
+            result.Diff.ShouldBeEquivalentTo(new TextDiff(comparison));
         }
 
         [Theory(DisplayName = "When diff:regex attribute is found on the immediate parent element, the control text is expected to a regex and that used when comparing to the test text node.")]

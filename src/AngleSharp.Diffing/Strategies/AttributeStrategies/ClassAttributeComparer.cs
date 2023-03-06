@@ -21,15 +21,15 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
                 return currentDecision;
 
             if (!IsBothClassAttributes(comparison))
-                return CompareResult.Different;
+                return CompareResult.Different(new AttrNameDiff(comparison));
 
             var (ctrlElm, testElm) = comparison.GetAttributeElements();
             if (ctrlElm.ClassList.Length != testElm.ClassList.Length)
-                return CompareResult.Different;
+                return CompareResult.Different(new AttrValueDiff(comparison, AttributeValueKind.Class));
 
             return ctrlElm.ClassList.All(x => testElm.ClassList.Contains(x))
                 ? CompareResult.Same
-                : CompareResult.Different;
+                : CompareResult.Different(new AttrValueDiff(comparison, AttributeValueKind.Class));
         }
 
         private static bool IsBothClassAttributes(in AttributeComparison comparison)

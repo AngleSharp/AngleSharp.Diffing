@@ -14,7 +14,7 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
         public void Test001()
         {
             var comparison = ToAttributeComparison(@"<p foo=""bar"">", "foo", @"<p foo=""zab"">", "foo");
-            StyleAttributeComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
+            StyleAttributeComparer.Compare(comparison, CompareResult.Different()).ShouldBe(CompareResult.Different());
             StyleAttributeComparer.Compare(comparison, CompareResult.Same).ShouldBe(CompareResult.Same);
             StyleAttributeComparer.Compare(comparison, CompareResult.Skip).ShouldBe(CompareResult.Skip);
         }
@@ -27,7 +27,11 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
         public void Test002(string control, string test)
         {
             var comparison = ToAttributeComparison(control, "style", test, "style");
-            StyleAttributeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Different);
+
+            var result = StyleAttributeComparer.Compare(comparison, CompareResult.Unknown);
+
+            result.Decision.ShouldBe(CompareResultDecision.Different);
+            result.Diff.ShouldBeEquivalentTo(new AttrValueDiff(comparison, AttributeValueKind.Style));
         }
 
         [Fact(DisplayName = "Comparer should correctly ignore insignificant whitespace")]

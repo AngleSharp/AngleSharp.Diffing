@@ -28,7 +28,7 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
             var hasSameName = CompareAttributeNames(comparison, ignoreCase, isRegexValueCompare);
 
             if (!hasSameName)
-                return CompareResult.Different;
+                return CompareResult.Different(new AttrNameDiff(comparison));
 
             var hasSameValue = isRegexValueCompare
                 ? CompareAttributeValuesByRegex(comparison, ignoreCase)
@@ -36,7 +36,7 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
 
             return hasSameValue
                 ? CompareResult.Same
-                : CompareResult.Different;
+                : CompareResult.Different(new AttrValueDiff(comparison, AttributeValueKind.Unspecified));
         }
 
         private static (bool ignoreCase, bool isRegexCompare) GetComparisonModifiers(in AttributeComparison comparison)

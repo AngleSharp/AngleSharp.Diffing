@@ -17,7 +17,7 @@ namespace AngleSharp.Diffing.Strategies.CommentStrategies
                 return currentDecision;
             return comparison.Control.Node.NodeType == NodeType.Comment && comparison.AreNodeTypesEqual
                 ? CompareResult.Same
-                : CompareResult.Different;
+                : CompareResult.Different(new CommentDiff(comparison));
         }
     }
 }

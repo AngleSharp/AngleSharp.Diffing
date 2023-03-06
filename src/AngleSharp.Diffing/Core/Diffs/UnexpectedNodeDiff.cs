@@ -1,11 +1,8 @@
-using System.Diagnostics;
-
 namespace AngleSharp.Diffing.Core
 {
     /// <summary>
     /// Represents an unexpected node in the test DOM tree.
     /// </summary>
-    [DebuggerDisplay("Unexpected {Target}: Test = {Test.Path}")]
     public class UnexpectedNodeDiff : UnexpectedDiffBase<ComparisonSource>
     {
         /// <summary>
@@ -13,6 +10,12 @@ namespace AngleSharp.Diffing.Core
         /// </summary>
         public UnexpectedNodeDiff(in ComparisonSource test) : base(test, test.Node.NodeType.ToDiffTarget())
         {
+        }
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            return $"Unexpected {Target}: Test = {Test.Path}";
         }
     }
 }

@@ -21,7 +21,7 @@ namespace AngleSharp.Diffing.Strategies.IgnoreStrategies
                 @"<p foo=""bar""></p>", "foo"
             );
 
-            IgnoreAttributeComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
+            IgnoreAttributeComparer.Compare(comparison, CompareResult.Different()).ShouldBe(CompareResult.Different());
             IgnoreAttributeComparer.Compare(comparison, CompareResult.Same).ShouldBe(CompareResult.Same);
         }
 

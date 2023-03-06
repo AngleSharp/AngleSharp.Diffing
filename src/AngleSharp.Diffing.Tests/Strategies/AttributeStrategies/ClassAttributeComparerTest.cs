@@ -33,7 +33,10 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
             var comparison = ToAttributeComparison(@"<p class=""foo"">", "class",
                                                    @"<p bar=""bar"">", "bar");
 
-            ClassAttributeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Different);
+            var result = ClassAttributeComparer.Compare(comparison, CompareResult.Unknown);
+
+            result.Decision.ShouldBe(CompareResultDecision.Different);
+            result.Diff.ShouldBeEquivalentTo(new AttrNameDiff(comparison));
         }
 
         [Theory(DisplayName = "When there are different number of classes in the class attributes the result is different")]
@@ -44,7 +47,10 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
             var comparison = ToAttributeComparison($@"<p class=""{controlClasses}"">", "class",
                                                    $@"<p class=""{testClasses}"">", "class");
 
-            ClassAttributeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Different);
+            var result = ClassAttributeComparer.Compare(comparison, CompareResult.Unknown);
+
+            result.Decision.ShouldBe(CompareResultDecision.Different);
+            result.Diff.ShouldBeEquivalentTo(new AttrValueDiff(comparison, AttributeValueKind.Class));
         }
 
         [Theory(DisplayName = "When the classes in the class attributes are different the result is different")]
@@ -57,7 +63,10 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
             var comparison = ToAttributeComparison($@"<p class=""{controlClasses}"">", "class",
                                                    $@"<p class=""{testClasses}"">", "class");
 
-            ClassAttributeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Different);
+            var result = ClassAttributeComparer.Compare(comparison, CompareResult.Unknown);
+
+            result.Decision.ShouldBe(CompareResultDecision.Different);
+            result.Diff.ShouldBeEquivalentTo(new AttrValueDiff(comparison, AttributeValueKind.Class));
         }
     }
 }

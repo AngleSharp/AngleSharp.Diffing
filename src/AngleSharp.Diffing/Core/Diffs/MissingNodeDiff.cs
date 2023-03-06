@@ -1,11 +1,8 @@
-using System.Diagnostics;
-
 namespace AngleSharp.Diffing.Core
 {
     /// <summary>
     /// Represents a missing node in the test DOM tree.
     /// </summary>
-    [DebuggerDisplay("Missing {Target}: Control = {Control.Path}")]
     public class MissingNodeDiff : MissingDiffBase<ComparisonSource>
     {
         /// <summary>
@@ -13,6 +10,12 @@ namespace AngleSharp.Diffing.Core
         /// </summary>
         public MissingNodeDiff(in ComparisonSource control) : base(control, control.Node.NodeType.ToDiffTarget())
         {
+        }
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            return $"Missing {Target}: Control = {Control.Path}";
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 
 using AngleSharp.Diffing.Core;
+using AngleSharp.Diffing.Strategies.AttributeStrategies;
 using AngleSharp.Diffing.Strategies.ElementStrategies;
 
 using Shouldly;
@@ -30,7 +31,11 @@ namespace AngleSharp.Diffing.Strategies.NodeStrategies
         public void Test002(string controlHtml, string testHtml)
         {
             var comparison = ToComparison(controlHtml, testHtml);
-            ElementComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Different);
+
+            var result = ElementComparer.Compare(comparison, CompareResult.Unknown);
+
+            result.Decision.ShouldBe(CompareResultDecision.Different);
+            result.Diff.ShouldBeEquivalentTo(new NodeTypeDiff(comparison));
         }
 
         [Theory(DisplayName = "When unknown node is used in comparison, but node name is equal, the result is Same")]

@@ -1,4 +1,5 @@
 ﻿using AngleSharp.Diffing.Core;
+using AngleSharp.Diffing.Strategies.ElementStrategies;
 
 using Shouldly;
 
@@ -17,7 +18,7 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
         {
             var comparison = ToComparison("<p></p>", "<p></p>");
 
-            StyleSheetTextNodeComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
+            StyleSheetTextNodeComparer.Compare(comparison, CompareResult.Different()).ShouldBe(CompareResult.Different());
             StyleSheetTextNodeComparer.Compare(comparison, CompareResult.Same).ShouldBe(CompareResult.Same);
             StyleSheetTextNodeComparer.Compare(comparison, CompareResult.Skip).ShouldBe(CompareResult.Skip);
         }
@@ -27,7 +28,7 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
         {
             var comparison = ToComparison("<p>h1{background:#000;}</p>", "<p>h1{background:#000;}</p>");
 
-            StyleSheetTextNodeComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
+            StyleSheetTextNodeComparer.Compare(comparison, CompareResult.Different()).ShouldBe(CompareResult.Different());
             StyleSheetTextNodeComparer.Compare(comparison, CompareResult.Same).ShouldBe(CompareResult.Same);
             StyleSheetTextNodeComparer.Compare(comparison, CompareResult.Skip).ShouldBe(CompareResult.Skip);
         }
@@ -38,7 +39,10 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
         {
             var comparison = ToStyleComparison(@"h1{background:#000;}", @"h1{color:#000;}");
 
-            StyleSheetTextNodeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Different);
+            var result = StyleSheetTextNodeComparer.Compare(comparison, CompareResult.Unknown);
+
+            result.Decision.ShouldBe(CompareResultDecision.Different);
+            result.Diff.ShouldBeEquivalentTo(new StylesheetDiff(comparison));
         }
 
         [Theory(DisplayName = "The comparer ignores insignificant whitespace")]

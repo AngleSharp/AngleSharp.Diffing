@@ -92,9 +92,9 @@ namespace AngleSharp.Diffing.Core
             }
 
             var compareRes = _diffingStrategy.Compare(comparison);
-            if (compareRes.HasFlag(CompareResult.Different))
+            if (compareRes.Decision.HasFlag(CompareResultDecision.Different))
             {
-                IDiff diff = new NodeDiff(comparison);
+                IDiff diff = compareRes.Diff ?? new NodeDiff(comparison);
                 return new[] { diff };
             }
 
@@ -106,16 +106,16 @@ namespace AngleSharp.Diffing.Core
             var result = new List<IDiff>();
 
             var compareRes = _diffingStrategy.Compare(comparison);
-            if (compareRes.HasFlag(CompareResult.Different))
+            if (compareRes.Decision.HasFlag(CompareResultDecision.Different))
             {
-                result.Add(new NodeDiff(comparison));
+                result.Add(compareRes.Diff ?? new NodeDiff(comparison));
             }
 
-            if (!compareRes.HasFlag(CompareResult.Skip))
+            if (!compareRes.Decision.HasFlag(CompareResultDecision.Skip))
             {
-                if (!compareRes.HasFlag(CompareResult.SkipAttributes))
+                if (!compareRes.Decision.HasFlag(CompareResultDecision.SkipAttributes))
                     result.AddRange(CompareElementAttributes(comparison));
-                if (!compareRes.HasFlag(CompareResult.SkipChildren))
+                if (!compareRes.Decision.HasFlag(CompareResultDecision.SkipChildren))
                     result.AddRange(CompareChildNodes(comparison));
             }
 
@@ -191,8 +191,8 @@ namespace AngleSharp.Diffing.Core
             foreach (var comparison in comparisons)
             {
                 var compareRes = _diffingStrategy.Compare(comparison);
-                if (compareRes == CompareResult.Different)
-                    yield return new AttrDiff(comparison);
+                if (compareRes.Decision == CompareResultDecision.Different)
+                    yield return compareRes.Diff ?? new AttrDiff(comparison);
             }
         }
     }

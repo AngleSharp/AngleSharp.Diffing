@@ -1,11 +1,8 @@
-using System.Diagnostics;
-
 namespace AngleSharp.Diffing.Core
 {
     /// <summary>
     /// Represents an unexpected attribute found in the test DOM tree.
     /// </summary>
-    [DebuggerDisplay("Unexpected Attribute: Test = {Test.Path}")]
     public class UnexpectedAttrDiff : UnexpectedDiffBase<AttributeComparisonSource>
     {
         /// <summary>
@@ -13,6 +10,12 @@ namespace AngleSharp.Diffing.Core
         /// </summary>
         public UnexpectedAttrDiff(in AttributeComparisonSource test) : base(test, DiffTarget.Attribute)
         {
+        }
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            return $"Unexpected Attribute: Test = {Test.Path}";
         }
     }
 }

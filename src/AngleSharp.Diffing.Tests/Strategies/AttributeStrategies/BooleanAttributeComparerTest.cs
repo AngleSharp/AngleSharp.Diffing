@@ -23,7 +23,10 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
             var sut = new BooleanAttributeComparer(BooleanAttributeComparision.Strict);
             var comparison = ToAttributeComparison("<b foo>", "foo", "<b bar>", "bar");
 
-            sut.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Different);
+            var result = sut.Compare(comparison, CompareResult.Unknown);
+
+            result.Decision.ShouldBe(CompareResultDecision.Different);
+            result.Diff.ShouldBeEquivalentTo(new AttrNameDiff(comparison));
         }
 
         [Fact(DisplayName = "When attribute name is not an boolean attribute, its current result is returned")]
@@ -32,7 +35,7 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
             var sut = new BooleanAttributeComparer(BooleanAttributeComparision.Strict);
             var comparison = ToAttributeComparison(@"<b class="""">", "class", @"<b class="""">", "class");
 
-            sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
+            sut.Compare(comparison, CompareResult.Different()).ShouldBe(CompareResult.Different());
         }
 
         [Theory(DisplayName = "When attributes is boolean and mode is strict, " +

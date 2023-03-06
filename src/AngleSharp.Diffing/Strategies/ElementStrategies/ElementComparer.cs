@@ -17,7 +17,7 @@ namespace AngleSharp.Diffing.Strategies.ElementStrategies
                 return currentDecision;
             return comparison.Control.Node.NodeType == NodeType.Element && comparison.AreNodeTypesEqual
                 ? CompareResult.Same
-                : CompareResult.Different;
+                : CompareResult.Different(new NodeTypeDiff(comparison));
         }
     }
 }

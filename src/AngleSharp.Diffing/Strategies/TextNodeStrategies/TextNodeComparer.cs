@@ -46,12 +46,12 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
                 return currentDecision;
 
             if (comparison.TryGetNodesAsType<IText>(out var controlTextNode, out var testTextNode))
-                return Compare(controlTextNode, testTextNode);
+                return Compare(comparison, controlTextNode, testTextNode);
             else
                 return currentDecision;
         }
 
-        private CompareResult Compare(IText controlTextNode, IText testTextNode)
+        private CompareResult Compare(in Comparison comparison, IText controlTextNode, IText testTextNode)
         {
             var option = GetWhitespaceOption(controlTextNode);
             var compareMethod = GetCompareMethod(controlTextNode);
@@ -73,11 +73,11 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
             var isRegexCompare = GetIsRegexComparison(controlTextNode);
 
             return isRegexCompare
-                ? PerformRegexCompare(compareMethod, controlText, testText)
-                : PerformStringCompare(compareMethod, controlText, testText);
+                ? PerformRegexCompare(comparison, compareMethod, controlText, testText)
+                : PerformStringCompare(comparison, compareMethod, controlText, testText);
         }
 
-        private static CompareResult PerformRegexCompare(StringComparison compareMethod, string controlText, string testText)
+        private static CompareResult PerformRegexCompare(in Comparison comparison, StringComparison compareMethod, string controlText, string testText)
         {
             var regexOptions = compareMethod == StringComparison.OrdinalIgnoreCase
                 ? RegexOptions.IgnoreCase
@@ -85,14 +85,14 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
 
             return Regex.IsMatch(testText, controlText, regexOptions, TimeSpan.FromSeconds(5))
                 ? CompareResult.Same
-                : CompareResult.Different;
+                : CompareResult.Different(new TextDiff(comparison));
         }
 
-        private static CompareResult PerformStringCompare(StringComparison compareMethod, string controlText, string testText)
+        private static CompareResult PerformStringCompare(in Comparison comparison, StringComparison compareMethod, string controlText, string testText)
         {
             return controlText.Equals(testText, compareMethod)
                 ? CompareResult.Same
-                : CompareResult.Different;
+                : CompareResult.Different(new TextDiff(comparison));
         }
 
         private static bool GetIsRegexComparison(IText controlTextNode)

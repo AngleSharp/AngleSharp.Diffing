@@ -19,7 +19,7 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
             if (currentDecision.IsSameOrSkip())
                 return currentDecision;
             if (TryGetStyleDeclaretions(comparison, out var controlStyles, out var testStyles))
-                return Compare(controlStyles, testStyles);
+                return Compare(comparison, controlStyles, testStyles);
             else
                 return currentDecision;
         }
@@ -42,14 +42,14 @@ namespace AngleSharp.Diffing.Strategies.TextNodeStrategies
                 return false;
         }
 
-        private static CompareResult Compare(IStyleSheet controlStyles, IStyleSheet testStyles)
+        private static CompareResult Compare(in Comparison comparison, IStyleSheet controlStyles, IStyleSheet testStyles)
         {
             var control = controlStyles.ToCss();
             var test = testStyles.ToCss();
 
             return control.Equals(test, StringComparison.Ordinal)
                 ? CompareResult.Same
-                : CompareResult.Different;
+                : CompareResult.Different(new StylesheetDiff(comparison));
         }
     }
 }

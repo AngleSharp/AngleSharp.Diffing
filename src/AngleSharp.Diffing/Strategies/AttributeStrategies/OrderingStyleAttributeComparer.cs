@@ -32,7 +32,7 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
             var testStyle = testElm.GetStyle();
             return CompareCssStyleDeclarations(ctrlStyle, testStyle)
                 ? CompareResult.Same
-                : CompareResult.Different;
+                : CompareResult.Different(new DifferentAttrOrderDiff(comparison));
         }
 
         private static bool IsStyleAttributeComparison(in AttributeComparison comparison)

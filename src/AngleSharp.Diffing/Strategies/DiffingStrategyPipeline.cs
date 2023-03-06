@@ -62,10 +62,10 @@ namespace AngleSharp.Diffing.Strategies
         }
 
         /// <inheritdoc/>
-        public CompareResult Compare(in Comparison comparison) => Compare(comparison, _nodeComparers, CompareResult.Different);
+        public CompareResult Compare(in Comparison comparison) => Compare(comparison, _nodeComparers, CompareResult.Different());
 
         /// <inheritdoc/>
-        public CompareResult Compare(in AttributeComparison comparison) => Compare(comparison, _attrComparers, CompareResult.Different);
+        public CompareResult Compare(in AttributeComparison comparison) => Compare(comparison, _attrComparers, CompareResult.Different());
 
         /// <inheritdoc/>
         public IDiffingStrategyCollection AddFilter(FilterStrategy<ComparisonSource> filterStrategy, StrategyType strategyType)

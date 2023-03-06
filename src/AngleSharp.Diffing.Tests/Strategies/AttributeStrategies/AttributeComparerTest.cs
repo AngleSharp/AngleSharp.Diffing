@@ -36,7 +36,10 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
             var comparison = ToAttributeComparison(@"<b foo>", "foo",
                                                     "<b bar>", "bar");
 
-            AttributeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Different);
+            var result = AttributeComparer.Compare(comparison, CompareResult.Unknown);
+
+            result.Decision.ShouldBe(CompareResultDecision.Different);
+            result.Diff.ShouldBeEquivalentTo(new AttrNameDiff(comparison));
         }
 
         [Fact(DisplayName = "When two attribute values are the same, the compare result is Same")]
@@ -54,7 +57,10 @@ namespace AngleSharp.Diffing.Strategies.AttributeStrategies
             var comparison = ToAttributeComparison(@"<b foo=""bar"">", "foo",
                                                    @"<b foo=""baz"">", "foo");
 
-            AttributeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Different);
+            var result = AttributeComparer.Compare(comparison, CompareResult.Unknown);
+
+            result.Decision.ShouldBe(CompareResultDecision.Different);
+            result.Diff.ShouldBeEquivalentTo(new AttrValueDiff(comparison, AttributeValueKind.Unspecified));
         }
 
         [Fact(DisplayName = "When the control attribute is postfixed with :ignoreCase, " +

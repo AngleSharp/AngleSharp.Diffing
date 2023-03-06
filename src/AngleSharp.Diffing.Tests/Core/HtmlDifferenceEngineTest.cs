@@ -349,7 +349,7 @@ namespace AngleSharp.Diffing.Core
                 nodeComparer: SameResultNodeComparer,
                 attrMatcher: AttributeNameMatcher,
                 attrFilter: NoneAttrFilter,
-                attrComparer: c => c.Control.Attribute.Name == "id" ? CompareResult.Skip : CompareResult.Different
+                attrComparer: c => c.Control.Attribute.Name == "id" ? CompareResult.Skip : CompareResult.Different()
                 );
 
             var results = sut.Compare(ToNodeList(@"<p id=""foo""></p>"), ToNodeList(@"<p id=""bar""></p>"));
@@ -358,14 +358,14 @@ namespace AngleSharp.Diffing.Core
         }
 
         [Theory(DisplayName = "When comparer returns SkipChildren flag from an element comparison, child nodes are not compared")]
-        [InlineData(CompareResult.Same | CompareResult.SkipChildren)]
-        [InlineData(CompareResult.Skip | CompareResult.SkipChildren)]
-        public void Test3(CompareResult compareResult)
+        [InlineData(CompareResultDecision.Same | CompareResultDecision.SkipChildren)]
+        [InlineData(CompareResultDecision.Skip | CompareResultDecision.SkipChildren)]
+        public void Test3(CompareResultDecision decision)
         {
             var sut = CreateHtmlDiffer(
                 nodeMatcher: OneToOneNodeListMatcher,
                 nodeFilter: NoneNodeFilter,
-                nodeComparer: c => c.Control.Node.NodeName == "P" ? compareResult : throw new Exception("NODE COMPARER SHOULD NOT BE CALLED ON CHILD NODES"),
+                nodeComparer: c => c.Control.Node.NodeName == "P" ? new CompareResult(decision) : throw new Exception("NODE COMPARER SHOULD NOT BE CALLED ON CHILD NODES"),
                 attrMatcher: AttributeNameMatcher,
                 attrFilter: NoneAttrFilter,
                 attrComparer: SameResultAttrComparer
@@ -377,14 +377,14 @@ namespace AngleSharp.Diffing.Core
         }
 
         [Theory(DisplayName = "When comparer returns SkipAttributes flag from an element comparison, attributes are not compared")]
-        [InlineData(CompareResult.Same | CompareResult.SkipAttributes)]
-        [InlineData(CompareResult.Skip | CompareResult.SkipAttributes)]
-        public void Test4(CompareResult compareResult)
+        [InlineData(CompareResultDecision.Same | CompareResultDecision.SkipAttributes)]
+        [InlineData(CompareResultDecision.Skip | CompareResultDecision.SkipAttributes)]
+        public void Test4(CompareResultDecision decision)
         {
             var sut = CreateHtmlDiffer(
                 nodeMatcher: OneToOneNodeListMatcher,
                 nodeFilter: NoneNodeFilter,
-                nodeComparer: c => compareResult,
+                nodeComparer: c => new CompareResult(decision),
                 attrMatcher: AttributeNameMatcher,
                 attrFilter: NoneAttrFilter,
                 attrComparer: SameResultAttrComparer
@@ -419,7 +419,7 @@ namespace AngleSharp.Diffing.Core
 
         #region NodeComparers
         private static CompareResult SameResultNodeComparer(Comparison comparison) => CompareResult.Same;
-        private static CompareResult DiffResultNodeComparer(Comparison comparison) => CompareResult.Different;
+        private static CompareResult DiffResultNodeComparer(Comparison comparison) => CompareResult.Different();
         #endregion
 
         #region AttributeMatchers
@@ -460,7 +460,7 @@ namespace AngleSharp.Diffing.Core
 
         #region AttributeComparers
         public static CompareResult SameResultAttrComparer(AttributeComparison comparison) => CompareResult.Same;
-        public static CompareResult DiffResultAttrComparer(AttributeComparison comparison) => CompareResult.Different;
+        public static CompareResult DiffResultAttrComparer(AttributeComparison comparison) => CompareResult.Different();
         #endregion
     }
 }
