@@ -120,6 +120,35 @@ public class HtmlDifferenceEngineTest : DiffingEngineTestBase
         );
     }
 
+    [Fact(DisplayName = "When matched control/test nodes are different, a custom diff is returned")]
+    public void WhenNodesAreDifferentADiffIsReturnedWithCustomDiff()
+    {
+        var nodes = ToNodeList("<p></p><!--comment-->textnode");
+        var sut = CreateHtmlDiffer(
+            nodeMatcher: OneToOneNodeListMatcher,
+            nodeFilter: NoneNodeFilter,
+            nodeComparer: DiffResultCustomNodeComparer);
+
+        var results = sut.Compare(nodes, nodes).ToList();
+
+        results.Count.ShouldBe(3);
+        results[0].ShouldBeOfType<CustomNodeDiff>().ShouldSatisfyAllConditions(
+            diff => diff.Control.Node.NodeName.ShouldBe("P"),
+            diff => diff.Result.ShouldBe(DiffResult.Different),
+            diff => diff.Target.ShouldBe(DiffTarget.Element)
+        );
+        results[1].ShouldBeOfType<CustomNodeDiff>().ShouldSatisfyAllConditions(
+            diff => diff.Control.Node.NodeName.ShouldBe("#comment"),
+            diff => diff.Result.ShouldBe(DiffResult.Different),
+            diff => diff.Target.ShouldBe(DiffTarget.Comment)
+        );
+        results[2].ShouldBeOfType<CustomNodeDiff>().ShouldSatisfyAllConditions(
+            diff => diff.Control.Node.NodeName.ShouldBe("#text"),
+            diff => diff.Result.ShouldBe(DiffResult.Different),
+            diff => diff.Target.ShouldBe(DiffTarget.Text)
+        );
+    }
+
     [Fact(DisplayName = "When matched control/test nodes are the same, no diffs are returned")]
     public void WhenNodesAreSameNoDiffIsReturned()
     {
@@ -230,6 +259,30 @@ public class HtmlDifferenceEngineTest : DiffingEngineTestBase
 
         results.Count.ShouldBe(1);
         results[0].ShouldBeOfType<AttrDiff>().ShouldSatisfyAllConditions(
+            diff => diff.Control.Attribute.Name.ShouldBe("id"),
+            diff => diff.Test.Attribute.Name.ShouldBe("id"),
+            diff => diff.Result.ShouldBe(DiffResult.Different),
+            diff => diff.Target.ShouldBe(DiffTarget.Attribute)
+        );
+    }
+
+    [Fact(DisplayName = "When matched control/test attributes are different, a diff is returned with custom diff")]
+    public void WhenMatchedAttrsAreDiffAttrDiffIsReturnedWithCustomDiff()
+    {
+        var nodes = ToNodeList(@"<p id=""foo""></p>");
+
+        var sut = CreateHtmlDiffer(
+            nodeMatcher: OneToOneNodeListMatcher,
+            nodeFilter: NoneNodeFilter,
+            nodeComparer: SameResultNodeComparer,
+            attrMatcher: AttributeNameMatcher,
+            attrFilter: NoneAttrFilter,
+            attrComparer: DiffResultCustomAttrComparer);
+
+        var results = sut.Compare(nodes, nodes).ToList();
+
+        results.Count.ShouldBe(1);
+        results[0].ShouldBeOfType<CustomAttrDiff>().ShouldSatisfyAllConditions(
             diff => diff.Control.Attribute.Name.ShouldBe("id"),
             diff => diff.Test.Attribute.Name.ShouldBe("id"),
             diff => diff.Result.ShouldBe(DiffResult.Different),
@@ -411,6 +464,7 @@ public class HtmlDifferenceEngineTest : DiffingEngineTestBase
     #region NodeComparers
     private static CompareResult SameResultNodeComparer(Comparison comparison) => CompareResult.Same;
     private static CompareResult DiffResultNodeComparer(Comparison comparison) => CompareResult.Different(null);
+    private static CompareResult DiffResultCustomNodeComparer(Comparison comparison) => CompareResult.Different(new CustomNodeDiff(comparison));
     #endregion
 
     #region AttributeMatchers
@@ -452,5 +506,22 @@ public class HtmlDifferenceEngineTest : DiffingEngineTestBase
     #region AttributeComparers
     public static CompareResult SameResultAttrComparer(AttributeComparison comparison) => CompareResult.Same;
     public static CompareResult DiffResultAttrComparer(AttributeComparison comparison) => CompareResult.Different(null);
+    public static CompareResult DiffResultCustomAttrComparer(AttributeComparison comparison) => CompareResult.Different(new CustomAttrDiff(comparison));
+    #endregion
+
+    #region CustomDiff
+    public class CustomNodeDiff : NodeDiff
+    {
+        public CustomNodeDiff(in Comparison comparison) : base(comparison)
+        {
+        }
+    }
+
+    public class CustomAttrDiff : AttrDiff
+    {
+        public CustomAttrDiff(in AttributeComparison comparison) : base(comparison)
+        {
+        }
+    }
     #endregion
 }

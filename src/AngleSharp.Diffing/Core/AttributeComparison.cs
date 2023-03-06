@@ -5,4 +5,9 @@ namespace AngleSharp.Diffing.Core;
 /// </summary>
 public readonly record struct AttributeComparison(in AttributeComparisonSource Control, in AttributeComparisonSource Test)
 {
+    /// <summary>
+    /// Returns the control and test elements which the control and test attributes belongs to.
+    /// </summary>
+    public (IElement ControlElement, IElement TestElement) GetAttributeElements()
+        => ((IElement)Control.ElementSource.Node, (IElement)Test.ElementSource.Node);
 }
