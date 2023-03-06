@@ -1,7 +1,9 @@
 ﻿namespace AngleSharp.Diffing.Core;
 
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-public record struct CompareResult(CompareResultDecision Decision, IDiff? Diff = null)
+/// <summary>
+/// Represents a result of a comparison.
+/// </summary>
+public readonly record struct CompareResult(CompareResultDecision Decision, IDiff? Diff = null)
 {
     /// <summary>
     /// Use when the compare result is unknown.
@@ -12,11 +14,6 @@ public record struct CompareResult(CompareResultDecision Decision, IDiff? Diff =
     /// Use when the two compared nodes or attributes are the same.
     /// </summary>
     public static readonly CompareResult Same = new CompareResult(CompareResultDecision.Same);
-
-    /// <summary>
-    /// Use when the two compared nodes or attributes are the different.
-    /// </summary>
-    public static CompareResult Different(IDiff? diff = null) => new CompareResult(CompareResultDecision.Different, diff);
 
     /// <summary>
     /// Use when the comparison should be skipped and any child-nodes or attributes skipped as well.
@@ -33,11 +30,14 @@ public record struct CompareResult(CompareResultDecision Decision, IDiff? Diff =
     /// </summary>
     public static readonly CompareResult SkipAttributes = new CompareResult(CompareResultDecision.SkipAttributes);
 
+    /// <summary>
+    /// Use when the two compared nodes or attributes are the different.
+    /// </summary>
+    public static CompareResult Different(IDiff? diff) => new CompareResult(CompareResultDecision.Different, diff);
 }
-#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 /// <summary>
-/// Represents a result of a comparison.
+/// Represents the decision of a comparison.
 /// </summary>
 [Flags]
 public enum CompareResultDecision

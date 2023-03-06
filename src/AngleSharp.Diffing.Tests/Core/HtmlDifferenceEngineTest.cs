@@ -340,7 +340,7 @@ public class HtmlDifferenceEngineTest : DiffingEngineTestBase
             nodeComparer: SameResultNodeComparer,
             attrMatcher: AttributeNameMatcher,
             attrFilter: NoneAttrFilter,
-            attrComparer: c => c.Control.Attribute.Name == "id" ? CompareResult.Skip : CompareResult.Different()
+            attrComparer: c => c.Control.Attribute.Name == "id" ? CompareResult.Skip : CompareResult.Different(null)
             );
 
         var results = sut.Compare(ToNodeList(@"<p id=""foo""></p>"), ToNodeList(@"<p id=""bar""></p>"));
@@ -410,7 +410,7 @@ public class HtmlDifferenceEngineTest : DiffingEngineTestBase
 
     #region NodeComparers
     private static CompareResult SameResultNodeComparer(Comparison comparison) => CompareResult.Same;
-    private static CompareResult DiffResultNodeComparer(Comparison comparison) => CompareResult.Different();
+    private static CompareResult DiffResultNodeComparer(Comparison comparison) => CompareResult.Different(null);
     #endregion
 
     #region AttributeMatchers
@@ -451,6 +451,6 @@ public class HtmlDifferenceEngineTest : DiffingEngineTestBase
 
     #region AttributeComparers
     public static CompareResult SameResultAttrComparer(AttributeComparison comparison) => CompareResult.Same;
-    public static CompareResult DiffResultAttrComparer(AttributeComparison comparison) => CompareResult.Different();
+    public static CompareResult DiffResultAttrComparer(AttributeComparison comparison) => CompareResult.Different(null);
     #endregion
 }
