@@ -21,7 +21,7 @@ public class AttrValueDiff : AttrDiff
     /// <inheritdoc />
     public override string ToString()
     {
-        return $"Attribute value diff: Control = {Control.Path}, Test = {Test.Path}, Kind = {Kind}";
+        return $"Attribute value diff: Kind = {Kind}, Control = {Control.Path}, Test = {Test.Path}";
     }
 }
 
