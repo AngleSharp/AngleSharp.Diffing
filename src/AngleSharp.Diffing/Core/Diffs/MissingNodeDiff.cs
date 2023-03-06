@@ -1,21 +1,20 @@
-namespace AngleSharp.Diffing.Core
+namespace AngleSharp.Diffing.Core;
+
+/// <summary>
+/// Represents a missing node in the test DOM tree.
+/// </summary>
+public class MissingNodeDiff : MissingDiffBase<ComparisonSource>
 {
     /// <summary>
-    /// Represents a missing node in the test DOM tree.
+    /// Creates a <see cref="MissingNodeDiff"></see>.
     /// </summary>
-    public class MissingNodeDiff : MissingDiffBase<ComparisonSource>
+    public MissingNodeDiff(in ComparisonSource control) : base(control, control.Node.NodeType.ToDiffTarget())
     {
-        /// <summary>
-        /// Creates a <see cref="MissingNodeDiff"></see>.
-        /// </summary>
-        public MissingNodeDiff(in ComparisonSource control) : base(control, control.Node.NodeType.ToDiffTarget())
-        {
-        }
+    }
 
-        /// <inheritdoc />
-        public override string ToString()
-        {
-            return $"Missing {Target}: Control = {Control.Path}";
-        }
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return $"Missing {Target}: Control = {Control.Path}";
     }
 }

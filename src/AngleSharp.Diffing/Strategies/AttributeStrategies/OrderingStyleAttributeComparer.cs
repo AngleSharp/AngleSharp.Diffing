@@ -1,55 +1,49 @@
-﻿using System;
-using System.Linq;
+﻿using AngleSharp.Diffing.Core;
 
-using AngleSharp.Css.Dom;
-using AngleSharp.Diffing.Core;
-using AngleSharp.Dom;
+namespace AngleSharp.Diffing.Strategies.AttributeStrategies;
 
-namespace AngleSharp.Diffing.Strategies.AttributeStrategies
+/// <summary>
+/// Represents the style attribute comparer strategy which orders the styles before comparing them.
+/// </summary>
+public static class OrderingStyleAttributeComparer
 {
     /// <summary>
-    /// Represents the style attribute comparer strategy which orders the styles before comparing them.
+    /// The style attribute comparer strategy.
     /// </summary>
-    public static class OrderingStyleAttributeComparer
+    public static CompareResult Compare(in AttributeComparison comparison, CompareResult currentDecision)
     {
-        /// <summary>
-        /// The style attribute comparer strategy.
-        /// </summary>
-        public static CompareResult Compare(in AttributeComparison comparison, CompareResult currentDecision)
-        {
-            if (currentDecision.IsSameOrSkip())
-                return currentDecision;
+        if (currentDecision.IsSameOrSkip())
+            return currentDecision;
 
-            return IsStyleAttributeComparison(comparison)
-                ? CompareElementStyle(comparison)
-                : currentDecision;
-        }
+        return IsStyleAttributeComparison(comparison)
+            ? CompareElementStyle(comparison)
+            : currentDecision;
+    }
 
-        private static CompareResult CompareElementStyle(in AttributeComparison comparison)
-        {
-            var (ctrlElm, testElm) = comparison.GetAttributeElements();
-            var ctrlStyle = ctrlElm.GetStyle();
-            var testStyle = testElm.GetStyle();
-            return CompareCssStyleDeclarations(ctrlStyle, testStyle)
-                ? CompareResult.Same
-                : CompareResult.Different(new DifferentAttrOrderDiff(comparison));
-        }
+    private static CompareResult CompareElementStyle(in AttributeComparison comparison)
+    {
+        var (ctrlElm, testElm) = comparison.GetAttributeElements();
+        var ctrlStyle = ctrlElm.GetStyle();
+        var testStyle = testElm.GetStyle();
+        return CompareCssStyleDeclarations(ctrlStyle, testStyle)
+            ? CompareResult.Same
+            : CompareResult.Different(new AttrValueDiff(comparison, AttrValueDiffKind.StylesOrder));
+    }
 
-        private static bool IsStyleAttributeComparison(in AttributeComparison comparison)
-        {
-            return comparison.Control.Attribute.Name.Equals(AttributeNames.Style, StringComparison.Ordinal) &&
-                comparison.Test.Attribute.Name.Equals(AttributeNames.Style, StringComparison.Ordinal);
-        }
+    private static bool IsStyleAttributeComparison(in AttributeComparison comparison)
+    {
+        return comparison.Control.Attribute.Name.Equals(AttributeNames.Style, StringComparison.Ordinal) &&
+            comparison.Test.Attribute.Name.Equals(AttributeNames.Style, StringComparison.Ordinal);
+    }
 
-        private static bool CompareCssStyleDeclarations(ICssStyleDeclaration control, ICssStyleDeclaration test)
-        {
-            if (control.Length != test.Length)
-                return false;
+    private static bool CompareCssStyleDeclarations(ICssStyleDeclaration control, ICssStyleDeclaration test)
+    {
+        if (control.Length != test.Length)
+            return false;
 
-            var orderedControl = control.CssText.Split(';').Select(x => x.Trim()).OrderBy(x => x);
-            var orderedTest = test.CssText.Split(';').Select(x => x.Trim()).OrderBy(x => x);
+        var orderedControl = control.CssText.Split(';').Select(x => x.Trim()).OrderBy(x => x);
+        var orderedTest = test.CssText.Split(';').Select(x => x.Trim()).OrderBy(x => x);
 
-            return orderedControl.SequenceEqual(orderedTest, StringComparer.Ordinal);
-        }
+        return orderedControl.SequenceEqual(orderedTest, StringComparer.Ordinal);
     }
 }

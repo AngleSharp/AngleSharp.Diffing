@@ -1,21 +1,20 @@
-namespace AngleSharp.Diffing.Core
+namespace AngleSharp.Diffing.Core;
+
+/// <summary>
+/// Represents a difference between two texts.
+/// </summary>
+public class TextDiff : NodeDiff
 {
     /// <summary>
-    /// Represents a difference between two texts.
+    /// Creates a <see cref="NodeDiff"/>.
     /// </summary>
-    public class TextDiff : NodeDiff
+    public TextDiff(in Comparison comparison) : base(comparison)
     {
-        /// <summary>
-        /// Creates a <see cref="NodeDiff"/>.
-        /// </summary>
-        public TextDiff(in Comparison comparison) : base(comparison)
-        {
-        }
+    }
 
-        /// <inheritdoc />
-        public override string ToString()
-        {
-            return $"Text diff: Control = {Control.Path}, Test = {Test.Path}";
-        }
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return $"Text diff: Control = {Control.Path}, Test = {Test.Path}";
     }
 }

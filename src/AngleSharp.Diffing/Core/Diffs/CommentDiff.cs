@@ -1,21 +1,20 @@
-namespace AngleSharp.Diffing.Core
+namespace AngleSharp.Diffing.Core;
+
+/// <summary>
+/// Represents a difference between two nodes.
+/// </summary>
+public class CommentDiff : NodeDiff
 {
     /// <summary>
-    /// Represents a difference between two nodes.
+    /// Creates a <see cref="NodeDiff"/>.
     /// </summary>
-    public class CommentDiff : NodeDiff
+    public CommentDiff(in Comparison comparison) : base(comparison)
     {
-        /// <summary>
-        /// Creates a <see cref="NodeDiff"/>.
-        /// </summary>
-        public CommentDiff(in Comparison comparison) : base(comparison)
-        {
-        }
+    }
 
-        /// <inheritdoc />
-        public override string ToString()
-        {
-            return $"Comment diff: Control = {Control.Path}, Test = {Test.Path}";
-        }
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return $"Comment diff: Control = {Control.Path}, Test = {Test.Path}";
     }
 }

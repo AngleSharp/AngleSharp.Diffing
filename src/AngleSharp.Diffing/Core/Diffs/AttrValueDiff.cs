@@ -1,50 +1,57 @@
-﻿namespace AngleSharp.Diffing.Core
+﻿namespace AngleSharp.Diffing.Core;
+
+/// <summary>
+/// Represents an attribute difference with different values
+/// </summary>
+public class AttrValueDiff : AttrDiff
 {
     /// <summary>
-    /// Represents an attribute difference with different values
+    /// The kind of the diff.
     /// </summary>
-    public class AttrValueDiff : AttrDiff
-    {
-        /// <summary>
-        /// The kind of the value.
-        /// </summary>
-        public AttributeValueKind ValueKind { get; }
-
-        /// <summary>
-        /// Creates an <see cref="AttrValueDiff"/>.
-        /// </summary>
-        public AttrValueDiff(in AttributeComparison comparison, AttributeValueKind valueKind) : base(comparison)
-        {
-            ValueKind = valueKind;
-        }
-
-        /// <inheritdoc />
-        public override string ToString()
-        {
-            return $"Attribute value diff: Control = {Control.Path}, Test = {Test.Path}, Kind = {ValueKind}";
-        }
-    }
+    public AttrValueDiffKind Kind { get; }
 
     /// <summary>
-    /// Defines the type of attribute.
+    /// Creates an <see cref="AttrValueDiff"/>.
     /// </summary>
-    public enum AttributeValueKind
+    public AttrValueDiff(in AttributeComparison comparison, AttrValueDiffKind kind) : base(comparison)
     {
-        /// <summary>
-        /// The value is not further specified.
-        /// </summary>
-        Unspecified,
-        /// <summary>
-        /// The value is a boolean.
-        /// </summary>
-        Boolean,
-        /// <summary>
-        /// The value is a class.
-        /// </summary>
-        Class,
-        /// <summary>
-        /// The value is a style name.
-        /// </summary>
-        Style
+        Kind = kind;
     }
+
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return $"Attribute value diff: Control = {Control.Path}, Test = {Test.Path}, Kind = {Kind}";
+    }
+}
+
+/// <summary>
+/// Defines the reason of the diff.
+/// </summary>
+public enum AttrValueDiffKind
+{
+    /// <summary>
+    /// The values are different.
+    /// </summary>
+    value,
+    /// <summary>
+    /// The boolean values are different.
+    /// </summary>
+    BooleanValue,
+    /// <summary>
+    /// The classes have different length.
+    /// </summary>
+    ClassCount,
+    /// <summary>
+    /// The value is a class.
+    /// </summary>
+    Classes,
+    /// <summary>
+    /// The styles are different.
+    /// </summary>
+    Styles,
+    /// <summary>
+    /// The styles do not have the same order.
+    /// </summary>
+    StylesOrder
 }

@@ -1,52 +1,45 @@
-using System;
-using System.Collections.Generic;
+namespace AngleSharp.Diffing.Strategies.NodeStrategies;
 
-using AngleSharp.Diffing.Core;
-using AngleSharp.Diffing.Extensions;
-
-namespace AngleSharp.Diffing.Strategies.NodeStrategies
+/// <summary>
+/// Represents the forward searching node matcher strategy.
+/// </summary>
+public static class ForwardSearchingNodeMatcher
 {
     /// <summary>
-    /// Represents the forward searching node matcher strategy.
+    /// The forward searching node matcher strategy.
     /// </summary>
-    public static class ForwardSearchingNodeMatcher
+    public static IEnumerable<Comparison> Match(IDiffContext context,
+                                         SourceCollection controlSources,
+                                         SourceCollection testSources)
     {
-        /// <summary>
-        /// The forward searching node matcher strategy.
-        /// </summary>
-        public static IEnumerable<Comparison> Match(IDiffContext context,
-                                             SourceCollection controlSources,
-                                             SourceCollection testSources)
+        if (controlSources is null)
+            throw new ArgumentNullException(nameof(controlSources));
+        if (testSources is null)
+            throw new ArgumentNullException(nameof(testSources));
+
+        var lastMatchedTestNodeIndex = -1;
+        foreach (var control in controlSources.GetUnmatched())
         {
-            if (controlSources is null)
-                throw new ArgumentNullException(nameof(controlSources));
-            if (testSources is null)
-                throw new ArgumentNullException(nameof(testSources));
-
-            var lastMatchedTestNodeIndex = -1;
-            foreach (var control in controlSources.GetUnmatched())
+            var comparison = TryFindMatchingNodes(control, testSources, lastMatchedTestNodeIndex + 1);
+            if (comparison.HasValue)
             {
-                var comparison = TryFindMatchingNodes(control, testSources, lastMatchedTestNodeIndex + 1);
-                if (comparison.HasValue)
-                {
-                    yield return comparison.Value;
-                    lastMatchedTestNodeIndex = comparison.Value.Test.Index;
-                }
+                yield return comparison.Value;
+                lastMatchedTestNodeIndex = comparison.Value.Test.Index;
             }
-
-            yield break;
         }
 
-        private static Comparison? TryFindMatchingNodes(in ComparisonSource control, SourceCollection testSources, int startIndex)
+        yield break;
+    }
+
+    private static Comparison? TryFindMatchingNodes(in ComparisonSource control, SourceCollection testSources, int startIndex)
+    {
+        foreach (var test in testSources.GetUnmatched(startIndex))
         {
-            foreach (var test in testSources.GetUnmatched(startIndex))
+            if (control.Node.IsSameTypeAs(test.Node))
             {
-                if (control.Node.IsSameTypeAs(test.Node))
-                {
-                    return new Comparison(control, test);
-                }
+                return new Comparison(control, test);
             }
-            return null;
         }
+        return null;
     }
 }
