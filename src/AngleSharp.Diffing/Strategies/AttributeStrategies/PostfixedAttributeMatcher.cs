@@ -1,64 +1,57 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
+namespace AngleSharp.Diffing.Strategies.AttributeStrategies;
 
-using AngleSharp.Diffing.Core;
-
-namespace AngleSharp.Diffing.Strategies.AttributeStrategies
+/// <summary>
+/// Represents the post fixed attribute matcher.
+/// </summary>
+public static class PostfixedAttributeMatcher
 {
+    private readonly static string[] POSTFIXES = new string[] {
+        ":ignore",
+        ":ignorecase",
+        ":regex"
+    };
+
     /// <summary>
-    /// Represents the post fixed attribute matcher.
+    /// The post fixed attribute matcher.
     /// </summary>
-    public static class PostfixedAttributeMatcher
+    public static IEnumerable<AttributeComparison> Match(IDiffContext context, SourceMap controlSources, SourceMap testSources)
     {
-        private readonly static string[] POSTFIXES = new string[] {
-            ":ignore",
-            ":ignorecase",
-            ":regex"
-        };
+        if (controlSources is null)
+            throw new ArgumentNullException(nameof(controlSources));
+        if (testSources is null)
+            throw new ArgumentNullException(nameof(testSources));
 
-        /// <summary>
-        /// The post fixed attribute matcher.
-        /// </summary>
-        public static IEnumerable<AttributeComparison> Match(IDiffContext context, SourceMap controlSources, SourceMap testSources)
+        foreach (var control in controlSources.GetUnmatched())
         {
-            if (controlSources is null)
-                throw new ArgumentNullException(nameof(controlSources));
-            if (testSources is null)
-                throw new ArgumentNullException(nameof(testSources));
+            var ctrlName = control.Attribute.Name;
+            if (!NameHasPostfixSeparator(ctrlName))
+                continue;
 
-            foreach (var control in controlSources.GetUnmatched())
+            ctrlName = RemovePostfixFromName(ctrlName);
+
+            if (testSources.Contains(ctrlName) && testSources.IsUnmatched(ctrlName))
+                yield return new AttributeComparison(control, testSources[ctrlName]);
+        }
+
+        yield break;
+    }
+
+    private static bool NameHasPostfixSeparator(string ctrlName)
+    {
+        return ctrlName.Contains(':');
+    }
+
+    private static string RemovePostfixFromName(string ctrlName)
+    {
+        for (int index = 0; index < POSTFIXES.Length; index++)
+        {
+            if (ctrlName.EndsWith(POSTFIXES[index], StringComparison.Ordinal))
             {
-                var ctrlName = control.Attribute.Name;
-                if (!NameHasPostfixSeparator(ctrlName))
-                    continue;
-
-                ctrlName = RemovePostfixFromName(ctrlName);
-
-                if (testSources.Contains(ctrlName) && testSources.IsUnmatched(ctrlName))
-                    yield return new AttributeComparison(control, testSources[ctrlName]);
+                ctrlName = ctrlName.Substring(0, ctrlName.Length - POSTFIXES[index].Length);
+                index = NameHasPostfixSeparator(ctrlName) ? -1 : POSTFIXES.Length;
             }
-
-            yield break;
         }
 
-        private static bool NameHasPostfixSeparator(string ctrlName)
-        {
-            return ctrlName.Contains(':');
-        }
-
-        private static string RemovePostfixFromName(string ctrlName)
-        {
-            for (int index = 0; index < POSTFIXES.Length; index++)
-            {
-                if (ctrlName.EndsWith(POSTFIXES[index], StringComparison.Ordinal))
-                {
-                    ctrlName = ctrlName.Substring(0, ctrlName.Length - POSTFIXES[index].Length);
-                    index = NameHasPostfixSeparator(ctrlName) ? -1 : POSTFIXES.Length;
-                }
-            }
-
-            return ctrlName;
-        }
+        return ctrlName;
     }
 }

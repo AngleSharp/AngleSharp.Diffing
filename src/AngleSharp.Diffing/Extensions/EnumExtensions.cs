@@ -1,19 +1,16 @@
-﻿using System;
+﻿namespace AngleSharp.Diffing.Extensions;
 
-namespace AngleSharp.Diffing.Extensions
+/// <summary>
+/// Helper methods for enums
+/// </summary>
+public static class EnumExtensions
 {
     /// <summary>
-    /// Helper methods for enums
+    /// Parse a string to an enum.
     /// </summary>
-    public static class EnumExtensions
+    public static TEnum Parse<TEnum>(this string enumString) where TEnum : System.Enum
     {
-        /// <summary>
-        /// Parse a string to an enum.
-        /// </summary>
-        public static TEnum Parse<TEnum>(this string enumString) where TEnum : System.Enum
-        {
-            return (TEnum)Enum.Parse(typeof(TEnum), enumString, true);
-        }
-
+        return (TEnum)Enum.Parse(typeof(TEnum), enumString, true);
     }
+
 }

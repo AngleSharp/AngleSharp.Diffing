@@ -1,18 +1,15 @@
-using System.Diagnostics;
+namespace AngleSharp.Diffing.Core;
 
-namespace AngleSharp.Diffing.Core
+/// <summary>
+/// Represents a missing attribute in a test node.
+/// </summary>
+[DebuggerDisplay("Missing Attribute: Control = {Control.Path}")]
+public class MissingAttrDiff : MissingDiffBase<AttributeComparisonSource>
 {
     /// <summary>
-    /// Represents a missing attribute in a test node.
+    /// Creates a <see cref="MissingAttrDiff"/>.
     /// </summary>
-    [DebuggerDisplay("Missing Attribute: Control = {Control.Path}")]
-    public class MissingAttrDiff : MissingDiffBase<AttributeComparisonSource>
+    public MissingAttrDiff(in AttributeComparisonSource control) : base(control, DiffTarget.Attribute)
     {
-        /// <summary>
-        /// Creates a <see cref="MissingAttrDiff"/>.
-        /// </summary>
-        public MissingAttrDiff(in AttributeComparisonSource control) : base(control, DiffTarget.Attribute)
-        {
-        }
     }
 }

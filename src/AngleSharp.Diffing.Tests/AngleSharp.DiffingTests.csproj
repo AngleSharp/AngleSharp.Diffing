@@ -6,7 +6,7 @@
     <AssemblyName>AngleSharp.Diffing.Tests</AssemblyName>
     <RootNamespace>AngleSharp.Diffing</RootNamespace>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies> <!-- https://github.com/Tyrrrz/GitHubActionsTestLogger/issues/5 -->
-    <Nullable>annotations</Nullable>
+    <Nullable>annotations</Nullable>    
   </PropertyGroup>
 
   <ItemGroup>

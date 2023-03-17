@@ -1,27 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace AngleSharp.Diffing.Extensions;
 
-namespace AngleSharp.Diffing.Extensions
+/// <summary>
+/// Helper methods for <see cref="ICollection{T}"/>.
+/// </summary>
+public static class CollectionExtensions
 {
     /// <summary>
-    /// Helper methods for <see cref="ICollection{T}"/>.
+    /// Adds a range of items to the target.
     /// </summary>
-    public static class CollectionExtensions
+    public static void AddRange<T>(this ICollection<T> target, IEnumerable<T> source)
     {
-        /// <summary>
-        /// Adds a range of items to the target.
-        /// </summary>
-        public static void AddRange<T>(this ICollection<T> target, IEnumerable<T> source)
-        {
-            if (target is null)
-                throw new ArgumentNullException(nameof(target));
-            if (source is null)
-                throw new ArgumentNullException(nameof(source));
+        if (target is null)
+            throw new ArgumentNullException(nameof(target));
+        if (source is null)
+            throw new ArgumentNullException(nameof(source));
 
-            foreach (var item in source)
-            {
-                target.Add(item);
-            }
+        foreach (var item in source)
+        {
+            target.Add(item);
         }
     }
 }
