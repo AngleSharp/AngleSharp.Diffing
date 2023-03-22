@@ -49,9 +49,5 @@ public enum AttrValueDiffKind
     /// <summary>
     /// The styles are different.
     /// </summary>
-    Styles,
-    /// <summary>
-    /// The styles do not have the same order.
-    /// </summary>
-    StylesOrder
+    Styles
 }

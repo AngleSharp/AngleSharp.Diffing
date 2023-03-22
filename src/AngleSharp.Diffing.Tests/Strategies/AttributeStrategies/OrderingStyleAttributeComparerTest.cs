@@ -27,7 +27,7 @@ public class OrderingStyleAttributeComparerTest : DiffingTestBase
         var result = OrderingStyleAttributeComparer.Compare(comparison, CompareResult.Unknown);
 
         result.Decision.ShouldBe(CompareDecision.Different);
-        result.Diff.ShouldBeEquivalentTo(new AttrValueDiff(comparison, AttrValueDiffKind.StylesOrder));
+        result.Diff.ShouldBeEquivalentTo(new AttrValueDiff(comparison, AttrValueDiffKind.Styles));
     }
 
     [Fact(DisplayName = "Comparer should correctly ignore insignificant whitespace")]

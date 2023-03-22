@@ -27,7 +27,7 @@ public static class OrderingStyleAttributeComparer
         var testStyle = testElm.GetStyle();
         return CompareCssStyleDeclarations(ctrlStyle, testStyle)
             ? CompareResult.Same
-            : CompareResult.FromDiff(new AttrValueDiff(comparison, AttrValueDiffKind.StylesOrder));
+            : CompareResult.FromDiff(new AttrValueDiff(comparison, AttrValueDiffKind.Styles));
     }
 
     private static bool IsStyleAttributeComparison(in AttributeComparison comparison)
