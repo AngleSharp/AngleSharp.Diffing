@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents an attribute difference with different values
 /// </summary>
-public class AttrValueDiff : AttrDiff
+public record AttrValueDiff : AttrDiff
 {
     /// <summary>
     /// The kind of the diff.
@@ -16,12 +16,6 @@ public class AttrValueDiff : AttrDiff
     public AttrValueDiff(in AttributeComparison comparison, AttrValueDiffKind kind) : base(comparison)
     {
         Kind = kind;
-    }
-
-    /// <inheritdoc />
-    public override string ToString()
-    {
-        return $"Attribute value diff: Kind = {Kind}, Control = {Control.Path}, Test = {Test.Path}";
     }
 }
 

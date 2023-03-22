@@ -510,14 +510,14 @@ public class HtmlDifferenceEngineTest : DiffingEngineTestBase
     #endregion
 
     #region CustomDiff
-    public class CustomNodeDiff : NodeDiff
+    public record CustomNodeDiff : NodeDiff
     {
         public CustomNodeDiff(in Comparison comparison) : base(comparison)
         {
         }
     }
 
-    public class CustomAttrDiff : AttrDiff
+    public record CustomAttrDiff : AttrDiff
     {
         public CustomAttrDiff(in AttributeComparison comparison) : base(comparison)
         {

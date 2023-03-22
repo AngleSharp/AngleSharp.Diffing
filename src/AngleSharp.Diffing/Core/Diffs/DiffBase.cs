@@ -4,32 +4,11 @@ namespace AngleSharp.Diffing.Core;
 /// Represents a difference found during comparison.
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public abstract class DiffBase<T> : IDiff where T : struct
+/// <param name="Control">Gets the control source in the comparison.</param>
+/// <param name="Test">Gets the test source in the comparison.</param>
+/// <param name="Target"> Gets the target type in that failed the comparison.</param>
+public abstract record DiffBase<T>(T Control, T Test, DiffTarget Target) : IDiff where T : struct
 {
-    /// <summary>
-    /// Gets the control source in the comparison.
-    /// </summary>
-    public T Control { get; }
-
-    /// <summary>
-    /// Gets the test source in the comparison.
-    /// </summary>
-    public T Test { get; }
-
     /// <inheritdoc/>
-    public DiffResult Result { get; }
-
-    /// <inheritdoc/>
-    public DiffTarget Target { get; }
-
-    /// <summary>
-    /// Instantiate the <see cref="DiffBase{T}"/>
-    /// </summary>
-    protected DiffBase(in T control, in T test, DiffTarget target)
-    {
-        Control = control;
-        Test = test;
-        Result = DiffResult.Different;
-        Target = target;
-    }
+    public DiffResult Result => DiffResult.Different;
 }
