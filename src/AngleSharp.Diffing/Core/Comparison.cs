@@ -3,6 +3,8 @@ namespace AngleSharp.Diffing.Core;
 /// <summary>
 /// Represent a comparison between two nodes.
 /// </summary>
+/// <param name="Control">Gets the control source in the comparison.</param>
+/// <param name="Test">Gets the test source in the comparison.</param>
 public readonly record struct Comparison(in ComparisonSource Control, in ComparisonSource Test)
 {
     /// <summary>
