@@ -3,6 +3,8 @@
 /// <summary>
 /// Represents a result of a comparison.
 /// </summary>
+/// <param name="Decision">Gets the latest <see cref="CompareResultDecision"/> of the comparison.</param>
+/// <param name="Diff">Gets the optional <see cref="IDiff"/> related to the current <paramref name="Decision"/>.</param>
 public readonly record struct CompareResult(CompareResultDecision Decision, IDiff? Diff = null)
 {
     /// <summary>
