@@ -15,7 +15,7 @@ public class IgnoreChildrenElementComparerTest : DiffingTestBase
     {
         var comparison = ToComparison(controlHtml, "<p></p>");
 
-        IgnoreChildrenElementComparer.Compare(comparison, CompareResult.Different(null)).ShouldBe(CompareResult.Different(null));
+        IgnoreChildrenElementComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
         IgnoreChildrenElementComparer.Compare(comparison, CompareResult.Same).ShouldBe(CompareResult.Same);
         IgnoreChildrenElementComparer.Compare(comparison, CompareResult.Skip).ShouldBe(CompareResult.Skip);
     }

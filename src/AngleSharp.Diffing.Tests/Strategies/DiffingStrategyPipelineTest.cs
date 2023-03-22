@@ -174,8 +174,8 @@ public class DiffingStrategyPipelineTest : DiffingTestBase
     {
         var sut = new DiffingStrategyPipeline();
 
-        sut.Compare(new Comparison()).ShouldBe(CompareResult.Different(null));
-        sut.Compare(new AttributeComparison()).ShouldBe(CompareResult.Different(null));
+        sut.Compare(new Comparison()).ShouldBe(CompareResult.Different);
+        sut.Compare(new AttributeComparison()).ShouldBe(CompareResult.Different);
     }
 
     [Theory(DisplayName = "Specialized comparers are executed in the order they are added in")]

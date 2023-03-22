@@ -14,6 +14,6 @@ public static class CommentComparer
             return currentDecision;
         return comparison.Control.Node.NodeType == NodeType.Comment && comparison.AreNodeTypesEqual
             ? CompareResult.Same
-            : CompareResult.Different(new CommentDiff(comparison));
+            : CompareResult.FromDiff(new CommentDiff(comparison));
     }
 }

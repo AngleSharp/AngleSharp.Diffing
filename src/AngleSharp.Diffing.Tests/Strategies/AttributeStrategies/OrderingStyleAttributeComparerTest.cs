@@ -10,7 +10,7 @@ public class OrderingStyleAttributeComparerTest : DiffingTestBase
     public void Test001()
     {
         var comparison = ToAttributeComparison(@"<p foo=""bar"">", "foo", @"<p foo=""zab"">", "foo");
-        StyleAttributeComparer.Compare(comparison, CompareResult.Different(null)).ShouldBe(CompareResult.Different(null));
+        StyleAttributeComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
         StyleAttributeComparer.Compare(comparison, CompareResult.Same).ShouldBe(CompareResult.Same);
         StyleAttributeComparer.Compare(comparison, CompareResult.Skip).ShouldBe(CompareResult.Skip);
     }

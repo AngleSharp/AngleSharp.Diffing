@@ -26,7 +26,7 @@ public class BooleanAttributeComparerTest : DiffingTestBase
         var sut = new BooleanAttributeComparer(BooleanAttributeComparision.Strict);
         var comparison = ToAttributeComparison(@"<b class="""">", "class", @"<b class="""">", "class");
 
-        sut.Compare(comparison, CompareResult.Different(null)).ShouldBe(CompareResult.Different(null));
+        sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
     }
 
     [Theory(DisplayName = "When attributes is boolean and mode is strict, " +

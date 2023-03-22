@@ -11,7 +11,7 @@ public class StyleSheetTextNodeComparerTest : TextNodeTestBase
     {
         var comparison = ToComparison("<p></p>", "<p></p>");
 
-        StyleSheetTextNodeComparer.Compare(comparison, CompareResult.Different(null)).ShouldBe(CompareResult.Different(null));
+        StyleSheetTextNodeComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
         StyleSheetTextNodeComparer.Compare(comparison, CompareResult.Same).ShouldBe(CompareResult.Same);
         StyleSheetTextNodeComparer.Compare(comparison, CompareResult.Skip).ShouldBe(CompareResult.Skip);
     }
@@ -21,7 +21,7 @@ public class StyleSheetTextNodeComparerTest : TextNodeTestBase
     {
         var comparison = ToComparison("<p>h1{background:#000;}</p>", "<p>h1{background:#000;}</p>");
 
-        StyleSheetTextNodeComparer.Compare(comparison, CompareResult.Different(null)).ShouldBe(CompareResult.Different(null));
+        StyleSheetTextNodeComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
         StyleSheetTextNodeComparer.Compare(comparison, CompareResult.Same).ShouldBe(CompareResult.Same);
         StyleSheetTextNodeComparer.Compare(comparison, CompareResult.Skip).ShouldBe(CompareResult.Skip);
     }

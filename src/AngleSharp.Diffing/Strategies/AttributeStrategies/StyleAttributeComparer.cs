@@ -25,7 +25,7 @@ public static class StyleAttributeComparer
         var testStyle = testElm.GetStyle();
         return CompareCssStyleDeclarations(ctrlStyle, testStyle)
             ? CompareResult.Same
-            : CompareResult.Different(new AttrValueDiff(comparison, AttrValueDiffKind.Styles));
+            : CompareResult.FromDiff(new AttrValueDiff(comparison, AttrValueDiffKind.Styles));
     }
 
     private static bool IsStyleAttributeComparison(in AttributeComparison comparison)

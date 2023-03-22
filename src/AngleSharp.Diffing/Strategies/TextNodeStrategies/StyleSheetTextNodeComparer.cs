@@ -43,6 +43,6 @@ public static class StyleSheetTextNodeComparer
 
         return control.Equals(test, StringComparison.Ordinal)
             ? CompareResult.Same
-            : CompareResult.Different(new StylesheetDiff(comparison));
+            : CompareResult.FromDiff(new StylesheetDiff(comparison));
     }
 }

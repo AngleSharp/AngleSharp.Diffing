@@ -35,7 +35,14 @@ public readonly record struct CompareResult(CompareDecision Decision, IDiff? Dif
     /// <summary>
     /// Use when the two compared nodes or attributes are the different.
     /// </summary>
-    public static CompareResult Different(IDiff? diff) => new CompareResult(CompareDecision.Different, diff);
+    public static CompareResult Different => new CompareResult(CompareDecision.Different);
+
+    /// <summary>
+    /// Use when the two compared nodes or attributes are the different.
+    /// </summary>
+    /// <param name="diff">The associated <see cref="IDiff"/> describing the difference.</param>
+    /// <returns>Returns a <see cref="CompareResult"/> with <see cref="CompareResult.Decision"/> set to <see cref="CompareDecision.Different"/>.</returns>
+    public static CompareResult FromDiff(IDiff diff) => new CompareResult(CompareDecision.Different, diff);
 
     /// <summary>
     /// Checks if a <see cref="CompareResult"/> is either a <see cref="CompareResult.Same"/> or <see cref="CompareResult.Skip"/>.

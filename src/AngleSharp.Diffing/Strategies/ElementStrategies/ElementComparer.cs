@@ -35,7 +35,7 @@ public class ElementComparer
 
         var result = comparison.Control.Node.NodeType == NodeType.Element && comparison.AreNodeTypesEqual
             ? CompareResult.Same
-            : CompareResult.Different(new NodeTypeDiff(comparison));
+            : CompareResult.FromDiff(new NodeTypeDiff(comparison));
 
         if (EnforceTagClosing && result == CompareResult.Same)
         {
@@ -47,7 +47,7 @@ public class ElementComparer
 
             return testTag.IsSelfClosing == controlTag.IsSelfClosing
                 ? result
-                : CompareResult.Different(new NodeClosingDiff(comparison));
+                : CompareResult.FromDiff(new NodeClosingDiff(comparison));
         }
 
         return result;

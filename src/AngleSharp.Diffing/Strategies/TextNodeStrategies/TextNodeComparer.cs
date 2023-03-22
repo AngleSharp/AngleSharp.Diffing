@@ -80,14 +80,14 @@ public class TextNodeComparer
 
         return Regex.IsMatch(testText, controlText, regexOptions, TimeSpan.FromSeconds(5))
             ? CompareResult.Same
-            : CompareResult.Different(new TextDiff(comparison));
+            : CompareResult.FromDiff(new TextDiff(comparison));
     }
 
     private static CompareResult PerformStringCompare(in Comparison comparison, StringComparison compareMethod, string controlText, string testText)
     {
         return controlText.Equals(testText, compareMethod)
             ? CompareResult.Same
-            : CompareResult.Different(new TextDiff(comparison));
+            : CompareResult.FromDiff(new TextDiff(comparison));
     }
 
     private static bool GetIsRegexComparison(IText controlTextNode)

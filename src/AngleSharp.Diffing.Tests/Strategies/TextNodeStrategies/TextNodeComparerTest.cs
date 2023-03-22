@@ -12,7 +12,7 @@ public class TextNodeComparerTest : TextNodeTestBase
         var comparison = ToComparison("<p></p>", "<p></p>");
         var sut = new TextNodeComparer();
 
-        sut.Compare(comparison, CompareResult.Different(null)).ShouldBe(CompareResult.Different(null));
+        sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
         sut.Compare(comparison, CompareResult.Same).ShouldBe(CompareResult.Same);
         sut.Compare(comparison, CompareResult.Skip).ShouldBe(CompareResult.Skip);
     }
@@ -28,7 +28,7 @@ public class TextNodeComparerTest : TextNodeTestBase
         sut.Compare(comparison, CompareResult.Same).ShouldBe(CompareResult.Same);
         sut.Compare(comparison, CompareResult.Skip).ShouldBe(CompareResult.Skip);
 
-        var diff = sut.Compare(comparison, CompareResult.Different(null));
+        var diff = sut.Compare(comparison, CompareResult.Different);
 
         diff.Decision.ShouldBe(CompareDecision.Different);
         diff.Diff.ShouldBeEquivalentTo(new TextDiff(comparison));

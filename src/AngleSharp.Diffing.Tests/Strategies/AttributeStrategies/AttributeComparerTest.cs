@@ -46,7 +46,7 @@ public class AttributeComparerTest : DiffingTestBase
         var comparison = ToAttributeComparison(@"<b foo=""bar"">", "foo",
                                                @"<b foo=""bar"">", "foo");
 
-        AttributeComparer.Compare(comparison, CompareResult.Different(null)).ShouldBe(CompareResult.Same);
+        AttributeComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Same);
     }
 
     [Fact(DisplayName = "When two attribute values are different, the compare result is Different")]
