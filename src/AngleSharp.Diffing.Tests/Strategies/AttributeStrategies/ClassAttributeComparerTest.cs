@@ -29,7 +29,7 @@ public class ClassAttributeComparerTest : DiffingTestBase
 
         var result = ClassAttributeComparer.Compare(comparison, CompareResult.Unknown);
 
-        result.Decision.ShouldBe(CompareResultDecision.Different);
+        result.Decision.ShouldBe(CompareDecision.Different);
         result.Diff.ShouldBeEquivalentTo(new AttrNameDiff(comparison));
     }
 
@@ -43,7 +43,7 @@ public class ClassAttributeComparerTest : DiffingTestBase
 
         var result = ClassAttributeComparer.Compare(comparison, CompareResult.Unknown);
 
-        result.Decision.ShouldBe(CompareResultDecision.Different);
+        result.Decision.ShouldBe(CompareDecision.Different);
         result.Diff.ShouldBeEquivalentTo(new AttrValueDiff(comparison, AttrValueDiffKind.ClassCount));
     }
 
@@ -59,7 +59,7 @@ public class ClassAttributeComparerTest : DiffingTestBase
 
         var result = ClassAttributeComparer.Compare(comparison, CompareResult.Unknown);
 
-        result.Decision.ShouldBe(CompareResultDecision.Different);
+        result.Decision.ShouldBe(CompareDecision.Different);
         result.Diff.ShouldBeEquivalentTo(new AttrValueDiff(comparison, AttrValueDiffKind.ClassCount));
     }
 }

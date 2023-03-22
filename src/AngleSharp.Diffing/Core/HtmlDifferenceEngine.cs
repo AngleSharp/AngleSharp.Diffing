@@ -85,7 +85,7 @@ public class HtmlDifferenceEngine
         }
 
         var compareRes = _diffingStrategy.Compare(comparison);
-        if (compareRes.Decision.HasFlag(CompareResultDecision.Different))
+        if (compareRes.Decision.HasFlag(CompareDecision.Different))
         {
             if (compareRes.Diff != null && compareRes.Diff is not NodeDiff)
             {
@@ -104,7 +104,7 @@ public class HtmlDifferenceEngine
         var result = new List<IDiff>();
 
         var compareRes = _diffingStrategy.Compare(comparison);
-        if (compareRes.Decision.HasFlag(CompareResultDecision.Different))
+        if (compareRes.Decision.HasFlag(CompareDecision.Different))
         {
             if (compareRes.Diff != null && compareRes.Diff is not NodeDiff)
             {
@@ -114,11 +114,11 @@ public class HtmlDifferenceEngine
             result.Add(compareRes.Diff ?? new NodeDiff(comparison));
         }
 
-        if (!compareRes.Decision.HasFlag(CompareResultDecision.Skip))
+        if (!compareRes.Decision.HasFlag(CompareDecision.Skip))
         {
-            if (!compareRes.Decision.HasFlag(CompareResultDecision.SkipAttributes))
+            if (!compareRes.Decision.HasFlag(CompareDecision.SkipAttributes))
                 result.AddRange(CompareElementAttributes(comparison));
-            if (!compareRes.Decision.HasFlag(CompareResultDecision.SkipChildren))
+            if (!compareRes.Decision.HasFlag(CompareDecision.SkipChildren))
                 result.AddRange(CompareChildNodes(comparison));
         }
 
@@ -194,7 +194,7 @@ public class HtmlDifferenceEngine
         foreach (var comparison in comparisons)
         {
             var compareRes = _diffingStrategy.Compare(comparison);
-            if (compareRes.Decision == CompareResultDecision.Different)
+            if (compareRes.Decision == CompareDecision.Different)
             {
                 if (compareRes.Diff != null && compareRes.Diff is not AttrDiff)
                 {

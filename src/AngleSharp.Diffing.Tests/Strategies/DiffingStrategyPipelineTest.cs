@@ -179,9 +179,9 @@ public class DiffingStrategyPipelineTest : DiffingTestBase
     }
 
     [Theory(DisplayName = "Specialized comparers are executed in the order they are added in")]
-    [InlineData(CompareResultDecision.Different, CompareResultDecision.Same)]
-    [InlineData(CompareResultDecision.Same, CompareResultDecision.Different)]
-    public void Test8(CompareResultDecision first, CompareResultDecision final)
+    [InlineData(CompareDecision.Different, CompareDecision.Same)]
+    [InlineData(CompareDecision.Same, CompareDecision.Different)]
+    public void Test8(CompareDecision first, CompareDecision final)
     {
         var sut = new DiffingStrategyPipeline();
 
@@ -195,9 +195,9 @@ public class DiffingStrategyPipelineTest : DiffingTestBase
     }
 
     [Theory(DisplayName = "Generalized comparers are executed in the reverse order they are added in")]
-    [InlineData(CompareResultDecision.Different, CompareResultDecision.Same)]
-    [InlineData(CompareResultDecision.Same, CompareResultDecision.Different)]
-    public void Test12321(CompareResultDecision first, CompareResultDecision final)
+    [InlineData(CompareDecision.Different, CompareDecision.Same)]
+    [InlineData(CompareDecision.Same, CompareDecision.Different)]
+    public void Test12321(CompareDecision first, CompareDecision final)
     {
         var sut = new DiffingStrategyPipeline();
 
@@ -211,9 +211,9 @@ public class DiffingStrategyPipelineTest : DiffingTestBase
     }
 
     [Theory(DisplayName = "Generalized comparers are always executed before specialized comparers")]
-    [InlineData(CompareResultDecision.Different, CompareResultDecision.Same)]
-    [InlineData(CompareResultDecision.Same, CompareResultDecision.Different)]
-    public void Test8314(CompareResultDecision first, CompareResultDecision final)
+    [InlineData(CompareDecision.Different, CompareDecision.Same)]
+    [InlineData(CompareDecision.Same, CompareDecision.Different)]
+    public void Test8314(CompareDecision first, CompareDecision final)
     {
         var sut = new DiffingStrategyPipeline();
 

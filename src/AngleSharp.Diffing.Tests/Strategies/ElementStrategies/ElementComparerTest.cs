@@ -34,7 +34,7 @@ public class ElementComparerTest : DiffingTestBase
 
         var result = new ElementComparer(enforceTagClosing).Compare(comparison, CompareResult.Unknown);
 
-        result.Decision.ShouldBe(CompareResultDecision.Different);
+        result.Decision.ShouldBe(CompareDecision.Different);
         result.Diff.ShouldBeEquivalentTo(new NodeTypeDiff(comparison));
     }
 
@@ -47,7 +47,7 @@ public class ElementComparerTest : DiffingTestBase
 
         var result = new ElementComparer(enforceTagClosing).Compare(comparison, CompareResult.Unknown);
 
-        result.Decision.ShouldBe(CompareResultDecision.Different);
+        result.Decision.ShouldBe(CompareDecision.Different);
         result.Diff.ShouldBeEquivalentTo(new NodeClosingDiff(comparison));
     }
 

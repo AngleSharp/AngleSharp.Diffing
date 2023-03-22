@@ -26,7 +26,7 @@ public class StyleAttributeComparerTest : DiffingTestBase
 
         var result = StyleAttributeComparer.Compare(comparison, CompareResult.Unknown);
 
-        result.Decision.ShouldBe(CompareResultDecision.Different);
+        result.Decision.ShouldBe(CompareDecision.Different);
         result.Diff.ShouldBeEquivalentTo(new AttrValueDiff(comparison, AttrValueDiffKind.Styles));
     }
 

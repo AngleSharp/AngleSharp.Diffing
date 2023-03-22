@@ -36,7 +36,7 @@ public class AttributeComparerTest : DiffingTestBase
 
         var result = AttributeComparer.Compare(comparison, CompareResult.Unknown);
 
-        result.Decision.ShouldBe(CompareResultDecision.Different);
+        result.Decision.ShouldBe(CompareDecision.Different);
         result.Diff.ShouldBeEquivalentTo(new AttrNameDiff(comparison));
     }
 
@@ -57,7 +57,7 @@ public class AttributeComparerTest : DiffingTestBase
 
         var result = AttributeComparer.Compare(comparison, CompareResult.Unknown);
 
-        result.Decision.ShouldBe(CompareResultDecision.Different);
+        result.Decision.ShouldBe(CompareDecision.Different);
         result.Diff.ShouldBeEquivalentTo(new AttrValueDiff(comparison, AttrValueDiffKind.value));
     }
 

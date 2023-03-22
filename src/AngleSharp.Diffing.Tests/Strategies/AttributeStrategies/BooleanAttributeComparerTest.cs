@@ -16,7 +16,7 @@ public class BooleanAttributeComparerTest : DiffingTestBase
 
         var result = sut.Compare(comparison, CompareResult.Unknown);
 
-        result.Decision.ShouldBe(CompareResultDecision.Different);
+        result.Decision.ShouldBe(CompareDecision.Different);
         result.Diff.ShouldBeEquivalentTo(new AttrNameDiff(comparison));
     }
 

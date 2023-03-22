@@ -402,9 +402,9 @@ public class HtmlDifferenceEngineTest : DiffingEngineTestBase
     }
 
     [Theory(DisplayName = "When comparer returns SkipChildren flag from an element comparison, child nodes are not compared")]
-    [InlineData(CompareResultDecision.Same | CompareResultDecision.SkipChildren)]
-    [InlineData(CompareResultDecision.Skip | CompareResultDecision.SkipChildren)]
-    public void Test3(CompareResultDecision decision)
+    [InlineData(CompareDecision.Same | CompareDecision.SkipChildren)]
+    [InlineData(CompareDecision.Skip | CompareDecision.SkipChildren)]
+    public void Test3(CompareDecision decision)
     {
         var sut = CreateHtmlDiffer(
             nodeMatcher: OneToOneNodeListMatcher,
@@ -421,9 +421,9 @@ public class HtmlDifferenceEngineTest : DiffingEngineTestBase
     }
 
     [Theory(DisplayName = "When comparer returns SkipAttributes flag from an element comparison, attributes are not compared")]
-    [InlineData(CompareResultDecision.Same | CompareResultDecision.SkipAttributes)]
-    [InlineData(CompareResultDecision.Skip | CompareResultDecision.SkipAttributes)]
-    public void Test4(CompareResultDecision decision)
+    [InlineData(CompareDecision.Same | CompareDecision.SkipAttributes)]
+    [InlineData(CompareDecision.Skip | CompareDecision.SkipAttributes)]
+    public void Test4(CompareDecision decision)
     {
         var sut = CreateHtmlDiffer(
             nodeMatcher: OneToOneNodeListMatcher,

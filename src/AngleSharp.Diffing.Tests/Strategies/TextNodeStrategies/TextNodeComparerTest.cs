@@ -30,7 +30,7 @@ public class TextNodeComparerTest : TextNodeTestBase
 
         var diff = sut.Compare(comparison, CompareResult.Different(null));
 
-        diff.Decision.ShouldBe(CompareResultDecision.Different);
+        diff.Decision.ShouldBe(CompareDecision.Different);
         diff.Diff.ShouldBeEquivalentTo(new TextDiff(comparison));
     }
 
@@ -128,7 +128,7 @@ public class TextNodeComparerTest : TextNodeTestBase
 
         var result = sut.Compare(comparison, CompareResult.Unknown);
 
-        result.Decision.ShouldBe(CompareResultDecision.Different);
+        result.Decision.ShouldBe(CompareDecision.Different);
         result.Diff.ShouldBeEquivalentTo(new TextDiff(comparison));
     }
 
@@ -196,7 +196,7 @@ public class TextNodeComparerTest : TextNodeTestBase
 
         var result = sut.Compare(comparison, CompareResult.Unknown);
 
-        result.Decision.ShouldBe(CompareResultDecision.Different);
+        result.Decision.ShouldBe(CompareDecision.Different);
         result.Diff.ShouldBeEquivalentTo(new TextDiff(comparison));
     }
 

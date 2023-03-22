@@ -34,7 +34,7 @@ public class StyleSheetTextNodeComparerTest : TextNodeTestBase
 
         var result = StyleSheetTextNodeComparer.Compare(comparison, CompareResult.Unknown);
 
-        result.Decision.ShouldBe(CompareResultDecision.Different);
+        result.Decision.ShouldBe(CompareDecision.Different);
         result.Diff.ShouldBeEquivalentTo(new StylesheetDiff(comparison));
     }
 
