@@ -519,7 +519,7 @@ public class HtmlDifferenceEngineTest : DiffingEngineTestBase
 
     public record CustomAttrDiff : AttrDiff
     {
-        public CustomAttrDiff(in AttributeComparison comparison) : base(comparison)
+        public CustomAttrDiff(in AttributeComparison comparison) : base(comparison, AttrDiffKind.Unspecified)
         {
         }
     }

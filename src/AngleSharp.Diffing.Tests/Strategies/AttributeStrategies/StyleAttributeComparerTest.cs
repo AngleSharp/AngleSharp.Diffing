@@ -27,7 +27,7 @@ public class StyleAttributeComparerTest : DiffingTestBase
         var result = StyleAttributeComparer.Compare(comparison, CompareResult.Unknown);
 
         result.Decision.ShouldBe(CompareDecision.Different);
-        result.Diff.ShouldBeEquivalentTo(new AttrValueDiff(comparison, AttrValueDiffKind.Styles));
+        result.Diff.ShouldBeEquivalentTo(new AttrDiff(comparison, AttrDiffKind.Value));
     }
 
     [Fact(DisplayName = "Comparer should correctly ignore insignificant whitespace")]

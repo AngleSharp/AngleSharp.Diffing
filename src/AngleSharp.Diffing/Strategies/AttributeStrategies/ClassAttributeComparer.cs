@@ -16,15 +16,15 @@ public static class ClassAttributeComparer
             return currentDecision;
 
         if (!IsBothClassAttributes(comparison))
-            return CompareResult.FromDiff(new AttrNameDiff(comparison));
+            return CompareResult.FromDiff(new AttrDiff(comparison, AttrDiffKind.Name));
 
         var (ctrlElm, testElm) = comparison.GetAttributeElements();
         if (ctrlElm.ClassList.Length != testElm.ClassList.Length)
-            return CompareResult.FromDiff(new AttrValueDiff(comparison, AttrValueDiffKind.ClassCount));
+            return CompareResult.FromDiff(new AttrDiff(comparison, AttrDiffKind.Value));
 
         return ctrlElm.ClassList.All(x => testElm.ClassList.Contains(x))
             ? CompareResult.Same
-            : CompareResult.FromDiff(new AttrValueDiff(comparison, AttrValueDiffKind.ClassCount));
+            : CompareResult.FromDiff(new AttrDiff(comparison, AttrDiffKind.Value));
     }
 
     private static bool IsBothClassAttributes(in AttributeComparison comparison)

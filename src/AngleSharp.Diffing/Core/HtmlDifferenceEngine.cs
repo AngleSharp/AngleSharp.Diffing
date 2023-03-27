@@ -201,7 +201,7 @@ public class HtmlDifferenceEngine
                     throw new InvalidOperationException("Comparison must return AttrDiff or inherited type.");
                 }
 
-                yield return compareRes.Diff ?? new AttrDiff(comparison);
+                yield return compareRes.Diff ?? new AttrDiff(comparison, AttrDiffKind.Unspecified);
             }
         }
     }

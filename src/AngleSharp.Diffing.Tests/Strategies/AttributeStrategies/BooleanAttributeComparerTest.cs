@@ -17,7 +17,7 @@ public class BooleanAttributeComparerTest : DiffingTestBase
         var result = sut.Compare(comparison, CompareResult.Unknown);
 
         result.Decision.ShouldBe(CompareDecision.Different);
-        result.Diff.ShouldBeEquivalentTo(new AttrNameDiff(comparison));
+        result.Diff.ShouldBeEquivalentTo(new AttrDiff(comparison, AttrDiffKind.Name));
     }
 
     [Fact(DisplayName = "When attribute name is not an boolean attribute, its current result is returned")]

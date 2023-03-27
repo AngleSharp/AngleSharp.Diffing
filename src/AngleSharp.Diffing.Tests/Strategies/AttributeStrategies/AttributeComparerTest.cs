@@ -37,7 +37,7 @@ public class AttributeComparerTest : DiffingTestBase
         var result = AttributeComparer.Compare(comparison, CompareResult.Unknown);
 
         result.Decision.ShouldBe(CompareDecision.Different);
-        result.Diff.ShouldBeEquivalentTo(new AttrNameDiff(comparison));
+        result.Diff.ShouldBeEquivalentTo(new AttrDiff(comparison, AttrDiffKind.Name));
     }
 
     [Fact(DisplayName = "When two attribute values are the same, the compare result is Same")]
@@ -58,7 +58,7 @@ public class AttributeComparerTest : DiffingTestBase
         var result = AttributeComparer.Compare(comparison, CompareResult.Unknown);
 
         result.Decision.ShouldBe(CompareDecision.Different);
-        result.Diff.ShouldBeEquivalentTo(new AttrValueDiff(comparison, AttrValueDiffKind.value));
+        result.Diff.ShouldBeEquivalentTo(new AttrDiff(comparison, AttrDiffKind.Value));
     }
 
     [Fact(DisplayName = "When the control attribute is postfixed with :ignoreCase, " +

@@ -30,7 +30,7 @@ public class ClassAttributeComparerTest : DiffingTestBase
         var result = ClassAttributeComparer.Compare(comparison, CompareResult.Unknown);
 
         result.Decision.ShouldBe(CompareDecision.Different);
-        result.Diff.ShouldBeEquivalentTo(new AttrNameDiff(comparison));
+        result.Diff.ShouldBeEquivalentTo(new AttrDiff(comparison, AttrDiffKind.Name));
     }
 
     [Theory(DisplayName = "When there are different number of classes in the class attributes the result is different")]
@@ -44,7 +44,7 @@ public class ClassAttributeComparerTest : DiffingTestBase
         var result = ClassAttributeComparer.Compare(comparison, CompareResult.Unknown);
 
         result.Decision.ShouldBe(CompareDecision.Different);
-        result.Diff.ShouldBeEquivalentTo(new AttrValueDiff(comparison, AttrValueDiffKind.ClassCount));
+        result.Diff.ShouldBeEquivalentTo(new AttrDiff(comparison, AttrDiffKind.Value));
     }
 
     [Theory(DisplayName = "When the classes in the class attributes are different the result is different")]
@@ -60,6 +60,6 @@ public class ClassAttributeComparerTest : DiffingTestBase
         var result = ClassAttributeComparer.Compare(comparison, CompareResult.Unknown);
 
         result.Decision.ShouldBe(CompareDecision.Different);
-        result.Diff.ShouldBeEquivalentTo(new AttrValueDiff(comparison, AttrValueDiffKind.ClassCount));
+        result.Diff.ShouldBeEquivalentTo(new AttrDiff(comparison, AttrDiffKind.Value));
     }
 }
