@@ -46,7 +46,11 @@ public readonly struct AttributeComparisonSource : IEquatable<AttributeCompariso
 
     #region Equals and HashCode
     /// <inheritdoc/>
-    public bool Equals(AttributeComparisonSource other) => Object.ReferenceEquals(Attribute, other.Attribute) && Path.Equals(other.Path, StringComparison.Ordinal) && ElementSource.Equals(other.ElementSource);
+    public bool Equals(AttributeComparisonSource other)
+        => ReferenceEquals(Attribute, other.Attribute) // AngleSharp overrides Equals and == for it's types, so we're using ReferenceEquals to check if the instances are the same.
+        && Path.Equals(other.Path, StringComparison.Ordinal)
+        && ElementSource.Equals(other.ElementSource);
+
     /// <inheritdoc/>
     public override int GetHashCode() => (Attribute, ElementSource).GetHashCode();
     /// <inheritdoc/>
