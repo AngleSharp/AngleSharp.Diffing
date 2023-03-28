@@ -1,7 +1,4 @@
-﻿using Shouldly;
-
-namespace AngleSharp.Diffing.Strategies.AttributeStrategies;
-
+﻿namespace AngleSharp.Diffing.Strategies.AttributeStrategies;
 
 public class AttributeComparerTest : DiffingTestBase
 {
