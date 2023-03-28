@@ -6,6 +6,18 @@ public class ClassAttributeComparerTest : DiffingTestBase
     {
     }
 
+    [Theory(DisplayName = "When current result is same or skip, the current decision is returned")]
+    [MemberData(nameof(SameAndSkipCompareResult))]
+    public void Test000(CompareResult currentResult)
+    {
+        var comparison = ToAttributeComparison($@"<p class=""foo"">", "class",
+                                               $@"<p class=""foo"">", "class");
+
+        ClassAttributeComparer
+            .Compare(comparison, currentResult)
+            .ShouldBe(currentResult);
+    }
+
     [Theory(DisplayName = "When a class attribute is compared, the order of individual " +
                           "classes and multiple whitespace is ignored")]
     [InlineData("", "")]
@@ -18,7 +30,9 @@ public class ClassAttributeComparerTest : DiffingTestBase
         var comparison = ToAttributeComparison($@"<p class=""{controlClasses}"">", "class",
                                                $@"<p class=""{testClasses}"">", "class");
 
-        ClassAttributeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Same);
+        ClassAttributeComparer
+            .Compare(comparison, CompareResult.Unknown)
+            .ShouldBe(CompareResult.Same);
     }
 
     [Fact(DisplayName = "When a class attribute is matched up with another attribute, the result is different")]
@@ -27,7 +41,9 @@ public class ClassAttributeComparerTest : DiffingTestBase
         var comparison = ToAttributeComparison(@"<p class=""foo"">", "class",
                                                @"<p bar=""bar"">", "bar");
 
-        ClassAttributeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Different);
+        ClassAttributeComparer
+            .Compare(comparison, CompareResult.Unknown)
+            .ShouldBe(CompareResult.FromDiff(new AttrDiff(comparison, AttrDiffKind.Name)));
     }
 
     [Theory(DisplayName = "When there are different number of classes in the class attributes the result is different")]
@@ -38,7 +54,9 @@ public class ClassAttributeComparerTest : DiffingTestBase
         var comparison = ToAttributeComparison($@"<p class=""{controlClasses}"">", "class",
                                                $@"<p class=""{testClasses}"">", "class");
 
-        ClassAttributeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Different);
+        ClassAttributeComparer
+            .Compare(comparison, CompareResult.Unknown)
+            .ShouldBe(CompareResult.FromDiff(new AttrDiff(comparison, AttrDiffKind.Value)));
     }
 
     [Theory(DisplayName = "When the classes in the class attributes are different the result is different")]
@@ -51,6 +69,8 @@ public class ClassAttributeComparerTest : DiffingTestBase
         var comparison = ToAttributeComparison($@"<p class=""{controlClasses}"">", "class",
                                                $@"<p class=""{testClasses}"">", "class");
 
-        ClassAttributeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Different);
+        ClassAttributeComparer
+            .Compare(comparison, CompareResult.Unknown)
+            .ShouldBe(CompareResult.FromDiff(new AttrDiff(comparison, AttrDiffKind.Value)));
     }
 }

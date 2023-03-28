@@ -30,7 +30,6 @@ public readonly struct AttributeComparisonSource : IEquatable<AttributeCompariso
     /// </summary>
     /// <param name="attributeName">Name of the attribute.</param>
     /// <param name="elementSource">The source of the element the attribute belongs to.</param>
-    [SuppressMessage("Globalization", "CA1308:Normalize strings to uppercase", Justification = "Path should be in lower case")]
     public AttributeComparisonSource(string attributeName, in ComparisonSource elementSource)
     {
         if (string.IsNullOrEmpty(attributeName))
@@ -44,16 +43,24 @@ public readonly struct AttributeComparisonSource : IEquatable<AttributeCompariso
         Path = $"{elementSource.Path}[{attribute.Name.ToLowerInvariant()}]";
     }
 
-    #region Equals and HashCode
     /// <inheritdoc/>
-    public bool Equals(AttributeComparisonSource other) => Object.ReferenceEquals(Attribute, other.Attribute) && Path.Equals(other.Path, StringComparison.Ordinal) && ElementSource.Equals(other.ElementSource);
+    public override string ToString() => $"{{ Type = Attribute, Path = {Path} }}";
+
+    /// <inheritdoc/>
+    public bool Equals(AttributeComparisonSource other)
+        => ReferenceEquals(Attribute, other.Attribute) // AngleSharp overrides Equals and == for it's types, so we're using ReferenceEquals to check if the instances are the same.
+        && Path.Equals(other.Path, StringComparison.Ordinal)
+        && ElementSource.Equals(other.ElementSource);
+
     /// <inheritdoc/>
     public override int GetHashCode() => (Attribute, ElementSource).GetHashCode();
+
     /// <inheritdoc/>
     public override bool Equals(object? obj) => obj is AttributeComparisonSource other && Equals(other);
+
     /// <inheritdoc/>
     public static bool operator ==(AttributeComparisonSource left, AttributeComparisonSource right) => left.Equals(right);
+
     /// <inheritdoc/>
     public static bool operator !=(AttributeComparisonSource left, AttributeComparisonSource right) => !left.Equals(right);
-    #endregion
 }

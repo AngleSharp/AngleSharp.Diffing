@@ -71,8 +71,6 @@ public class DiffingStrategyPipelineTest : DiffingTestBase
         sut.Filter(new AttributeComparisonSource()).ShouldBe(expected);
     }
 
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
     [Fact(DisplayName = "When no matcher strategy have been added, no comparisons are returned")]
     public void Test2()
     {
@@ -81,8 +79,6 @@ public class DiffingStrategyPipelineTest : DiffingTestBase
         sut.Match(null, null, (SourceCollection)null).ShouldBeEmpty();
         sut.Match(null, null, (SourceMap)null).ShouldBeEmpty();
     }
-#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
     [Fact(DisplayName = "Specialized node matchers are executed in the reverse order they are added in")]
     public void Test61()
@@ -179,51 +175,51 @@ public class DiffingStrategyPipelineTest : DiffingTestBase
     }
 
     [Theory(DisplayName = "Specialized comparers are executed in the order they are added in")]
-    [InlineData(CompareResult.Different, CompareResult.Same)]
-    [InlineData(CompareResult.Same, CompareResult.Different)]
-    public void Test8(CompareResult first, CompareResult final)
+    [InlineData(CompareDecision.Different, CompareDecision.Same)]
+    [InlineData(CompareDecision.Same, CompareDecision.Different)]
+    public void Test8(CompareDecision first, CompareDecision final)
     {
         var sut = new DiffingStrategyPipeline();
 
-        sut.AddComparer((in Comparison c, CompareResult current) => first, StrategyType.Specialized);
-        sut.AddComparer((in Comparison c, CompareResult current) => final, StrategyType.Specialized);
-        sut.AddComparer((in AttributeComparison c, CompareResult current) => first, StrategyType.Specialized);
-        sut.AddComparer((in AttributeComparison c, CompareResult current) => final, StrategyType.Specialized);
+        sut.AddComparer((in Comparison c, CompareResult current) => new CompareResult(first), StrategyType.Specialized);
+        sut.AddComparer((in Comparison c, CompareResult current) => new CompareResult(final), StrategyType.Specialized);
+        sut.AddComparer((in AttributeComparison c, CompareResult current) => new CompareResult(first), StrategyType.Specialized);
+        sut.AddComparer((in AttributeComparison c, CompareResult current) => new CompareResult(final), StrategyType.Specialized);
 
-        sut.Compare(new Comparison()).ShouldBe(final);
-        sut.Compare(new AttributeComparison()).ShouldBe(final);
+        sut.Compare(new Comparison()).ShouldBe(new CompareResult(final));
+        sut.Compare(new AttributeComparison()).ShouldBe(new CompareResult(final));
     }
 
     [Theory(DisplayName = "Generalized comparers are executed in the reverse order they are added in")]
-    [InlineData(CompareResult.Different, CompareResult.Same)]
-    [InlineData(CompareResult.Same, CompareResult.Different)]
-    public void Test12321(CompareResult first, CompareResult final)
+    [InlineData(CompareDecision.Different, CompareDecision.Same)]
+    [InlineData(CompareDecision.Same, CompareDecision.Different)]
+    public void Test12321(CompareDecision first, CompareDecision final)
     {
         var sut = new DiffingStrategyPipeline();
 
-        sut.AddComparer((in Comparison c, CompareResult current) => final, StrategyType.Generalized);
-        sut.AddComparer((in Comparison c, CompareResult current) => first, StrategyType.Generalized);
-        sut.AddComparer((in AttributeComparison c, CompareResult current) => final, StrategyType.Generalized);
-        sut.AddComparer((in AttributeComparison c, CompareResult current) => first, StrategyType.Generalized);
+        sut.AddComparer((in Comparison c, CompareResult current) => new CompareResult(final), StrategyType.Generalized);
+        sut.AddComparer((in Comparison c, CompareResult current) => new CompareResult(first), StrategyType.Generalized);
+        sut.AddComparer((in AttributeComparison c, CompareResult current) => new CompareResult(final), StrategyType.Generalized);
+        sut.AddComparer((in AttributeComparison c, CompareResult current) => new CompareResult(first), StrategyType.Generalized);
 
-        sut.Compare(new Comparison()).ShouldBe(final);
-        sut.Compare(new AttributeComparison()).ShouldBe(final);
+        sut.Compare(new Comparison()).ShouldBe(new CompareResult(final));
+        sut.Compare(new AttributeComparison()).ShouldBe(new CompareResult(final));
     }
 
     [Theory(DisplayName = "Generalized comparers are always executed before specialized comparers")]
-    [InlineData(CompareResult.Different, CompareResult.Same)]
-    [InlineData(CompareResult.Same, CompareResult.Different)]
-    public void Test8314(CompareResult first, CompareResult final)
+    [InlineData(CompareDecision.Different, CompareDecision.Same)]
+    [InlineData(CompareDecision.Same, CompareDecision.Different)]
+    public void Test8314(CompareDecision first, CompareDecision final)
     {
         var sut = new DiffingStrategyPipeline();
 
-        sut.AddComparer((in Comparison c, CompareResult current) => first, StrategyType.Generalized);
-        sut.AddComparer((in Comparison c, CompareResult current) => final, StrategyType.Specialized);
-        sut.AddComparer((in AttributeComparison c, CompareResult current) => first, StrategyType.Generalized);
-        sut.AddComparer((in AttributeComparison c, CompareResult current) => final, StrategyType.Specialized);
+        sut.AddComparer((in Comparison c, CompareResult current) => new CompareResult(first), StrategyType.Generalized);
+        sut.AddComparer((in Comparison c, CompareResult current) => new CompareResult(final), StrategyType.Specialized);
+        sut.AddComparer((in AttributeComparison c, CompareResult current) => new CompareResult(first), StrategyType.Generalized);
+        sut.AddComparer((in AttributeComparison c, CompareResult current) => new CompareResult(final), StrategyType.Specialized);
 
-        sut.Compare(new Comparison()).ShouldBe(final);
-        sut.Compare(new AttributeComparison()).ShouldBe(final);
+        sut.Compare(new Comparison()).ShouldBe(new CompareResult(final));
+        sut.Compare(new AttributeComparison()).ShouldBe(new CompareResult(final));
     }
 
     [Fact(DisplayName = "After two nodes has been matched, they are marked as matched in the source collection")]

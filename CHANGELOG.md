@@ -1,3 +1,8 @@
+# 0.18.2
+
+- Changed `CompareStrategy` such that it now can control the `IDiff` type that should be returned in case a difference is found in a comparison. This allows a comparer to embed additional context in the `IDiff` object. By [@SebastianStehle](https://github.com/SebastianStehle).
+- Changed `ElementComparer` to skip comparing two nodes of different types. By [@SebastianStehle](https://github.com/SebastianStehle).
+
 # 0.18.1
 
 - Fixed element comparer such that it can strictly check if the closing tags in the source markup is the same.

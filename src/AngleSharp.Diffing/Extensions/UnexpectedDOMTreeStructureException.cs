@@ -1,6 +1,4 @@
-﻿using System.Runtime.Serialization;
-
-namespace AngleSharp.Diffing.Extensions;
+﻿namespace AngleSharp.Diffing.Extensions;
 
 /// <summary>
 /// Represents an exception that is thrown when a part of the DOM tree is not as expected.

@@ -3,7 +3,6 @@ namespace AngleSharp.Diffing.Core;
 /// <summary>
 /// Represents a node source in a comparison.
 /// </summary>    
-[DebuggerDisplay("{Index} : {Path}")]
 public readonly struct ComparisonSource : IEquatable<ComparisonSource>, IComparisonSource
 {
     private readonly int _hashCode;
@@ -65,7 +64,6 @@ public readonly struct ComparisonSource : IEquatable<ComparisonSource>, ICompari
     /// </summary>
     /// <param name="node"></param>
     /// <returns></returns>
-    [SuppressMessage("Globalization", "CA1308:Normalize strings to uppercase", Justification = "Path should be in lower case")]
     public static string GetNodePathSegment(INode node)
     {
         var index = GetPathIndex(node);
@@ -123,16 +121,21 @@ public readonly struct ComparisonSource : IEquatable<ComparisonSource>, ICompari
         throw new InvalidOperationException("Unexpected node tree state. The node was not found in its parents child nodes collection.");
     }
 
-    #region Equals and HashCode
+    /// <inheritdoc/>
+    public override string ToString() => $"{{ Type = {Node.NodeType}, Index = {Index}, Path = {Path} }}";
+
     /// <inheritdoc/>
     public bool Equals(ComparisonSource other) => Object.ReferenceEquals(Node, other.Node) && Index == other.Index && Path.Equals(other.Path, StringComparison.Ordinal) && SourceType == other.SourceType;
+
     /// <inheritdoc/>
     public override int GetHashCode() => _hashCode;
+
     /// <inheritdoc/>
     public override bool Equals(object? obj) => obj is ComparisonSource other && Equals(other);
+
     /// <inheritdoc/>
     public static bool operator ==(ComparisonSource left, ComparisonSource right) => left.Equals(right);
+
     /// <inheritdoc/>
     public static bool operator !=(ComparisonSource left, ComparisonSource right) => !left.Equals(right);
-    #endregion
 }

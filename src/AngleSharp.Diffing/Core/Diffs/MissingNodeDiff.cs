@@ -3,8 +3,7 @@ namespace AngleSharp.Diffing.Core;
 /// <summary>
 /// Represents a missing node in the test DOM tree.
 /// </summary>
-[DebuggerDisplay("Missing {Target}: Control = {Control.Path}")]
-public class MissingNodeDiff : MissingDiffBase<ComparisonSource>
+public record class MissingNodeDiff : MissingDiffBase<ComparisonSource>
 {
     /// <summary>
     /// Creates a <see cref="MissingNodeDiff"></see>.

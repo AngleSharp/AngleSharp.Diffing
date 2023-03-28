@@ -10,12 +10,18 @@ public static class StyleAttributeComparer
     /// </summary>
     public static CompareResult Compare(in AttributeComparison comparison, CompareResult currentDecision)
     {
-        if (currentDecision.IsSameOrSkip())
+        if (currentDecision.IsSameOrSkip)
             return currentDecision;
 
         return IsStyleAttributeComparison(comparison)
             ? CompareElementStyle(comparison)
             : currentDecision;
+    }
+
+    private static bool IsStyleAttributeComparison(in AttributeComparison comparison)
+    {
+        return comparison.Control.Attribute.Name.Equals(AttributeNames.Style, StringComparison.Ordinal) &&
+            comparison.Test.Attribute.Name.Equals(AttributeNames.Style, StringComparison.Ordinal);
     }
 
     private static CompareResult CompareElementStyle(in AttributeComparison comparison)
@@ -25,13 +31,7 @@ public static class StyleAttributeComparer
         var testStyle = testElm.GetStyle();
         return CompareCssStyleDeclarations(ctrlStyle, testStyle)
             ? CompareResult.Same
-            : CompareResult.Different;
-    }
-
-    private static bool IsStyleAttributeComparison(in AttributeComparison comparison)
-    {
-        return comparison.Control.Attribute.Name.Equals(AttributeNames.Style, StringComparison.Ordinal) &&
-            comparison.Test.Attribute.Name.Equals(AttributeNames.Style, StringComparison.Ordinal);
+            : CompareResult.FromDiff(new AttrDiff(comparison, AttrDiffKind.Value));
     }
 
     private static bool CompareCssStyleDeclarations(ICssStyleDeclaration control, ICssStyleDeclaration test)

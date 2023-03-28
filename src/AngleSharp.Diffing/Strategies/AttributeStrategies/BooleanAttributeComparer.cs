@@ -55,10 +55,10 @@ public class BooleanAttributeComparer
     /// </summary>
     public CompareResult Compare(in AttributeComparison comparison, CompareResult currentDecision)
     {
-        if (currentDecision.IsSameOrSkip())
+        if (currentDecision.IsSameOrSkip)
             return currentDecision;
         if (!IsAttributeNamesEqual(comparison))
-            return CompareResult.Different;
+            return CompareResult.FromDiff(new AttrDiff(comparison, AttrDiffKind.Name));
         if (!BooleanAttributesSet.Contains(comparison.Control.Attribute.Name))
             return currentDecision;
 
@@ -66,7 +66,9 @@ public class BooleanAttributeComparer
             ? CompareStrict(comparison)
             : true;
 
-        return hasSameValue ? CompareResult.Same : CompareResult.Different;
+        return hasSameValue ?
+            CompareResult.Same :
+            CompareResult.FromDiff(new AttrDiff(comparison, AttrDiffKind.Value));
     }
 
     private static bool IsAttributeNamesEqual(in AttributeComparison comparison)

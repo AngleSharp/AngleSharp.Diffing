@@ -8,6 +8,20 @@ public class IgnoreAttributeComparerTest : DiffingTestBase
     {
     }
 
+    [Theory(DisplayName = "When current result is same or skip, the current decision is returned")]
+    [MemberData(nameof(SameAndSkipCompareResult))]
+    public void Test000(CompareResult currentResult)
+    {
+        var comparison = ToAttributeComparison(
+            @"<p foo=""bar""></p>", "foo",
+            @"<p foo=""bar""></p>", "foo"
+        );
+
+        IgnoreAttributeComparer
+            .Compare(comparison, currentResult)
+            .ShouldBe(currentResult);
+    }
+
     [Fact(DisplayName = "When a attribute does not contain have the ':ignore' postfix, the current decision is returned")]
     public void Test003()
     {

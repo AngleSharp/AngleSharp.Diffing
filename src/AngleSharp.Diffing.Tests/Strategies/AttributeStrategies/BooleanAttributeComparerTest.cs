@@ -8,13 +8,25 @@ public class BooleanAttributeComparerTest : DiffingTestBase
     {
     }
 
+    [Theory(DisplayName = "When current result is same or skip, the current decision is returned")]
+    [MemberData(nameof(SameAndSkipCompareResult))]
+    public void Test000(CompareResult currentResult)
+    {
+        var comparison = ToAttributeComparison(@"<b allowfullscreen=""false"">", "allowfullscreen", @"<b allowfullscreen>", "allowfullscreen");
+
+        new BooleanAttributeComparer(BooleanAttributeComparision.Strict)
+            .Compare(comparison, currentResult)
+            .ShouldBe(currentResult);
+    }
+
     [Fact(DisplayName = "When attribute names are not the same comparer returns different")]
     public void Test001()
     {
         var sut = new BooleanAttributeComparer(BooleanAttributeComparision.Strict);
         var comparison = ToAttributeComparison("<b foo>", "foo", "<b bar>", "bar");
 
-        sut.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Different);
+        sut.Compare(comparison, CompareResult.Unknown)
+            .ShouldBe(CompareResult.FromDiff(new AttrDiff(comparison, AttrDiffKind.Name)));
     }
 
     [Fact(DisplayName = "When attribute name is not an boolean attribute, its current result is returned")]
