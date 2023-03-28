@@ -3,7 +3,7 @@ namespace AngleSharp.Diffing.Core;
 /// <summary>
 /// Represents a difference between two nodes.
 /// </summary>
-public record NodeDiff : DiffBase<ComparisonSource>
+public record class NodeDiff : DiffBase<ComparisonSource>
 {
     /// <summary>
     /// Creates a <see cref="NodeDiff"/>.

@@ -1,3 +1,5 @@
+using AngleSharp.Diffing.Core.Diffs;
+
 namespace AngleSharp.Diffing.Core;
 
 /// <summary>
@@ -101,7 +103,7 @@ public class HtmlDifferenceEngine
         var compareRes = _diffingStrategy.Compare(comparison);
         if (compareRes.Decision.HasFlag(CompareDecision.Different))
         {
-            result.Add(compareRes.Diff ?? new NodeDiff(comparison));
+            result.Add(compareRes.Diff ?? new ElementDiff(comparison, ElementDiffKind.Unspecified));
         }
 
         if (!compareRes.Decision.HasFlag(CompareDecision.Skip))

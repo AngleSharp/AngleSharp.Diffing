@@ -3,7 +3,7 @@ namespace AngleSharp.Diffing.Core;
 /// <summary>
 /// Represents a difference between the applied style of two nodes
 /// </summary>
-public record StylesheetDiff : NodeDiff
+public record class StylesheetDiff : NodeDiff
 {
     /// <summary>
     /// Creates a <see cref="StylesheetDiff"/>.

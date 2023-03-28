@@ -3,7 +3,7 @@ namespace AngleSharp.Diffing.Core;
 /// <summary>
 /// Represents a missing attribute in a test node.
 /// </summary>
-public record MissingAttrDiff : MissingDiffBase<AttributeComparisonSource>
+public record class MissingAttrDiff : MissingDiffBase<AttributeComparisonSource>
 {
     /// <summary>
     /// Creates a <see cref="MissingAttrDiff"/>.

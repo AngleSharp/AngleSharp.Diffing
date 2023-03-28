@@ -103,17 +103,17 @@ public class HtmlDifferenceEngineTest : DiffingEngineTestBase
         var results = sut.Compare(nodes, nodes).ToList();
 
         results.Count.ShouldBe(3);
-        results[0].ShouldBeOfType<NodeDiff>().ShouldSatisfyAllConditions(
+        results[0].ShouldBeAssignableTo<NodeDiff>().ShouldSatisfyAllConditions(
             diff => diff.Control.Node.NodeName.ShouldBe("P"),
             diff => diff.Result.ShouldBe(DiffResult.Different),
             diff => diff.Target.ShouldBe(DiffTarget.Element)
         );
-        results[1].ShouldBeOfType<NodeDiff>().ShouldSatisfyAllConditions(
+        results[1].ShouldBeAssignableTo<NodeDiff>().ShouldSatisfyAllConditions(
             diff => diff.Control.Node.NodeName.ShouldBe("#comment"),
             diff => diff.Result.ShouldBe(DiffResult.Different),
             diff => diff.Target.ShouldBe(DiffTarget.Comment)
         );
-        results[2].ShouldBeOfType<NodeDiff>().ShouldSatisfyAllConditions(
+        results[2].ShouldBeAssignableTo<NodeDiff>().ShouldSatisfyAllConditions(
             diff => diff.Control.Node.NodeName.ShouldBe("#text"),
             diff => diff.Result.ShouldBe(DiffResult.Different),
             diff => diff.Target.ShouldBe(DiffTarget.Text)
@@ -321,11 +321,11 @@ public class HtmlDifferenceEngineTest : DiffingEngineTestBase
         var results = sut.Compare(nodes, nodes).ToList();
 
         results.Count.ShouldBe(5);
-        results[0].ShouldBeOfType<NodeDiff>().Control.Node.NodeName.ShouldBe("MAIN");
-        results[1].ShouldBeOfType<NodeDiff>().Control.Node.NodeName.ShouldBe("H1");
-        results[2].ShouldBeOfType<NodeDiff>().Control.Node.NodeValue.ShouldBe("foobar");
-        results[3].ShouldBeOfType<NodeDiff>().Control.Node.NodeName.ShouldBe("P");
-        results[4].ShouldBeOfType<NodeDiff>().Control.Node.NodeName.ShouldBe("#text");
+        results[0].ShouldBeAssignableTo<NodeDiff>().Control.Node.NodeName.ShouldBe("MAIN");
+        results[1].ShouldBeAssignableTo<NodeDiff>().Control.Node.NodeName.ShouldBe("H1");
+        results[2].ShouldBeAssignableTo<NodeDiff>().Control.Node.NodeValue.ShouldBe("foobar");
+        results[3].ShouldBeAssignableTo<NodeDiff>().Control.Node.NodeName.ShouldBe("P");
+        results[4].ShouldBeAssignableTo<NodeDiff>().Control.Node.NodeName.ShouldBe("#text");
     }
 
     [Theory(DisplayName = "When only one of the control or test node in a comparison has child nodes, a missing/unexpected diff is returned")]
@@ -341,7 +341,7 @@ public class HtmlDifferenceEngineTest : DiffingEngineTestBase
         var results = sut.Compare(ToNodeList(control), ToNodeList(test)).ToList();
 
         results.Count.ShouldBe(2);
-        results[0].ShouldBeOfType<NodeDiff>();
+        results[0].ShouldBeAssignableTo<NodeDiff>();
         results[1].ShouldBeOfType(expectedDiffType);
     }
 
@@ -362,8 +362,8 @@ public class HtmlDifferenceEngineTest : DiffingEngineTestBase
 
         results.Count.ShouldBe(2);
 
-        results[0].ShouldBeOfType<NodeDiff>().Control.SourceType.ShouldBe(ComparisonSourceType.Control);
-        results[0].ShouldBeOfType<NodeDiff>().Test.SourceType.ShouldBe(ComparisonSourceType.Test);
+        results[0].ShouldBeAssignableTo<NodeDiff>().Control.SourceType.ShouldBe(ComparisonSourceType.Control);
+        results[0].ShouldBeAssignableTo<NodeDiff>().Test.SourceType.ShouldBe(ComparisonSourceType.Test);
         results[1].ShouldBeOfType<AttrDiff>().Control.SourceType.ShouldBe(ComparisonSourceType.Control);
         results[1].ShouldBeOfType<AttrDiff>().Test.SourceType.ShouldBe(ComparisonSourceType.Test);
     }

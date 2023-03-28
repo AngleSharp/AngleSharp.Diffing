@@ -3,7 +3,7 @@ namespace AngleSharp.Diffing.Core;
 /// <summary>
 /// Represents an unexpected node in the test DOM tree.
 /// </summary>
-public record UnexpectedNodeDiff : UnexpectedDiffBase<ComparisonSource>
+public record class UnexpectedNodeDiff : UnexpectedDiffBase<ComparisonSource>
 {
     /// <summary>
     /// Creates a <see cref="UnexpectedNodeDiff"/>.

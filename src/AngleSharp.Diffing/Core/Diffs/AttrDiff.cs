@@ -3,7 +3,7 @@ namespace AngleSharp.Diffing.Core;
 /// <summary>
 /// Represents an attribute difference.
 /// </summary>
-public record AttrDiff : DiffBase<AttributeComparisonSource>
+public record class AttrDiff : DiffBase<AttributeComparisonSource>
 {
     /// <summary>
     /// Gets the kind of the diff.
