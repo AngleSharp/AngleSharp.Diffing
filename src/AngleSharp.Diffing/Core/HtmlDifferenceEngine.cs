@@ -87,11 +87,6 @@ public class HtmlDifferenceEngine
         var compareRes = _diffingStrategy.Compare(comparison);
         if (compareRes.Decision.HasFlag(CompareDecision.Different))
         {
-            if (compareRes.Diff != null && compareRes.Diff is not NodeDiff)
-            {
-                throw new InvalidOperationException("Comparison must return NodeDiff.");
-            }
-
             IDiff diff = compareRes.Diff ?? new NodeDiff(comparison);
             return new[] { diff };
         }
@@ -106,11 +101,6 @@ public class HtmlDifferenceEngine
         var compareRes = _diffingStrategy.Compare(comparison);
         if (compareRes.Decision.HasFlag(CompareDecision.Different))
         {
-            if (compareRes.Diff != null && compareRes.Diff is not NodeDiff)
-            {
-                throw new InvalidOperationException("Comparison must return NodeDiff or inherited type.");
-            }
-
             result.Add(compareRes.Diff ?? new NodeDiff(comparison));
         }
 
@@ -196,11 +186,6 @@ public class HtmlDifferenceEngine
             var compareRes = _diffingStrategy.Compare(comparison);
             if (compareRes.Decision == CompareDecision.Different)
             {
-                if (compareRes.Diff != null && compareRes.Diff is not AttrDiff)
-                {
-                    throw new InvalidOperationException("Comparison must return AttrDiff or inherited type.");
-                }
-
                 yield return compareRes.Diff ?? new AttrDiff(comparison, AttrDiffKind.Unspecified);
             }
         }
