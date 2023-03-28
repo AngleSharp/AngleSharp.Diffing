@@ -12,7 +12,7 @@ public static class ClassAttributeComparer
     /// </summary>
     public static CompareResult Compare(in AttributeComparison comparison, CompareResult currentDecision)
     {
-        if (currentDecision.IsSameOrSkip())
+        if (currentDecision.IsSameOrSkip)
             return currentDecision;
 
         if (!IsBothClassAttributes(comparison))

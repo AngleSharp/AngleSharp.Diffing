@@ -12,7 +12,7 @@ public static class IgnoreAttributeComparer
     /// </summary>
     public static CompareResult Compare(in AttributeComparison comparison, CompareResult currentDecision)
     {
-        if (currentDecision.IsSameOrSkip())
+        if (currentDecision.IsSameOrSkip)
             return currentDecision;
 
         return comparison.Control.Attribute.Name.EndsWith(DIFF_IGNORE_POSTFIX, StringComparison.OrdinalIgnoreCase)

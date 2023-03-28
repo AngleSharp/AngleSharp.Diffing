@@ -10,7 +10,7 @@ public static class StyleSheetTextNodeComparer
     /// </summary>
     public static CompareResult Compare(in Comparison comparison, CompareResult currentDecision)
     {
-        if (currentDecision.IsSameOrSkip())
+        if (currentDecision.IsSameOrSkip)
             return currentDecision;
         if (TryGetStyleDeclaretions(comparison, out var controlStyles, out var testStyles))
             return Compare(comparison, controlStyles, testStyles);

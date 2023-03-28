@@ -10,10 +10,14 @@ public static class CommentComparer
     /// </summary>
     public static CompareResult Compare(in Comparison comparison, CompareResult currentDecision)
     {
-        if (currentDecision.IsSameOrSkip())
+        if (currentDecision.IsSameOrSkip)
             return currentDecision;
-        return comparison.Control.Node.NodeType == NodeType.Comment && comparison.AreNodeTypesEqual
-            ? CompareResult.Same
-            : CompareResult.FromDiff(new CommentDiff(comparison));
+
+        if (comparison.TryGetNodesAsType<IComment>(out var controlComment, out var testComment))
+            return controlComment.Data.Equals(testComment.Data, StringComparison.Ordinal)
+                ? CompareResult.Same
+                : CompareResult.FromDiff(new CommentDiff(comparison));
+        else
+            return currentDecision;
     }
 }

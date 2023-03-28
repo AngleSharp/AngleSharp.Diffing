@@ -17,7 +17,7 @@ public static class AttributeComparer
     /// </summary>
     public static CompareResult Compare(in AttributeComparison comparison, CompareResult currentDecision)
     {
-        if (currentDecision.IsSameOrSkip())
+        if (currentDecision.IsSameOrSkip)
             return currentDecision;
 
         var (ignoreCase, isRegexValueCompare) = GetComparisonModifiers(comparison);

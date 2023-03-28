@@ -30,7 +30,7 @@ public class ElementComparer
     /// </summary>
     public CompareResult Compare(in Comparison comparison, CompareResult currentDecision)
     {
-        if (currentDecision.IsSameOrSkip())
+        if (currentDecision.IsSameOrSkip)
             return currentDecision;
 
         var result = comparison.Control.Node.NodeType == NodeType.Element && comparison.AreNodeTypesEqual

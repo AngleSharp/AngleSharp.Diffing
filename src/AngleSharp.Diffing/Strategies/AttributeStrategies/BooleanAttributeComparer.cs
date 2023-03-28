@@ -55,7 +55,7 @@ public class BooleanAttributeComparer
     /// </summary>
     public CompareResult Compare(in AttributeComparison comparison, CompareResult currentDecision)
     {
-        if (currentDecision.IsSameOrSkip())
+        if (currentDecision.IsSameOrSkip)
             return currentDecision;
         if (!IsAttributeNamesEqual(comparison))
             return CompareResult.FromDiff(new AttrDiff(comparison, AttrDiffKind.Name));

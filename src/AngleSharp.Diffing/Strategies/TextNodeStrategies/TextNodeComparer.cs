@@ -37,7 +37,7 @@ public class TextNodeComparer
     /// </summary>
     public CompareResult Compare(in Comparison comparison, CompareResult currentDecision)
     {
-        if (currentDecision.IsSameOrSkip())
+        if (currentDecision.IsSameOrSkip)
             return currentDecision;
 
         if (comparison.TryGetNodesAsType<IText>(out var controlTextNode, out var testTextNode))

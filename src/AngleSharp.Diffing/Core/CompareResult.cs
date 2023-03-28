@@ -47,5 +47,5 @@ public readonly record struct CompareResult(CompareDecision Decision, IDiff? Dif
     /// <summary>
     /// Checks if a <see cref="CompareResult"/> is either a <see cref="CompareResult.Same"/> or <see cref="CompareResult.Skip"/>.
     /// </summary>
-    public bool IsSameOrSkip() => this == Same || this == Skip;
+    public bool IsSameOrSkip => this == Same || this == Skip;
 }
