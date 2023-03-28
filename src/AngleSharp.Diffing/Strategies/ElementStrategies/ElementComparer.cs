@@ -1,3 +1,4 @@
+using AngleSharp.Diffing.Core.Diffs;
 using AngleSharp.Html.Parser.Tokens;
 
 namespace AngleSharp.Diffing.Strategies.ElementStrategies;
@@ -30,24 +31,27 @@ public class ElementComparer
     /// </summary>
     public CompareResult Compare(in Comparison comparison, CompareResult currentDecision)
     {
-        if (currentDecision.IsSameOrSkip())
+        if (currentDecision.IsSameOrSkip)
             return currentDecision;
 
-        var result = comparison.Control.Node.NodeType == NodeType.Element && comparison.AreNodeTypesEqual
+        if (!comparison.TryGetNodesAsType<IElement>(out var controlElement, out var testElement))
+            return currentDecision;
+
+        var result = comparison.AreNodeTypesEqual
             ? CompareResult.Same
-            : CompareResult.Different;
+            : CompareResult.FromDiff(new ElementDiff(comparison, ElementDiffKind.Name));
 
         if (EnforceTagClosing && result == CompareResult.Same)
         {
-            if (comparison.Test.Node is not IElement testElement || testElement.SourceReference is not HtmlTagToken testTag)
+            if (testElement.SourceReference is not HtmlTagToken testTag)
                 throw new InvalidOperationException("No source reference attached to test element, cannot determine element tag closing style.");
 
-            if (comparison.Control.Node is not IElement controlElement || controlElement.SourceReference is not HtmlTagToken controlTag)
+            if (controlElement.SourceReference is not HtmlTagToken controlTag)
                 throw new InvalidOperationException("No source reference attached to test element, cannot determine element tag closing style.");
 
             return testTag.IsSelfClosing == controlTag.IsSelfClosing
                 ? result
-                : CompareResult.Different;
+                : CompareResult.FromDiff(new ElementDiff(comparison, ElementDiffKind.ClosingStyle));
         }
 
         return result;

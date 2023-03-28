@@ -17,7 +17,7 @@ public static class AttributeComparer
     /// </summary>
     public static CompareResult Compare(in AttributeComparison comparison, CompareResult currentDecision)
     {
-        if (currentDecision.IsSameOrSkip())
+        if (currentDecision.IsSameOrSkip)
             return currentDecision;
 
         var (ignoreCase, isRegexValueCompare) = GetComparisonModifiers(comparison);
@@ -25,7 +25,7 @@ public static class AttributeComparer
         var hasSameName = CompareAttributeNames(comparison, ignoreCase, isRegexValueCompare);
 
         if (!hasSameName)
-            return CompareResult.Different;
+            return CompareResult.FromDiff(new AttrDiff(comparison, AttrDiffKind.Name));
 
         var hasSameValue = isRegexValueCompare
             ? CompareAttributeValuesByRegex(comparison, ignoreCase)
@@ -33,7 +33,7 @@ public static class AttributeComparer
 
         return hasSameValue
             ? CompareResult.Same
-            : CompareResult.Different;
+            : CompareResult.FromDiff(new AttrDiff(comparison, AttrDiffKind.Value));
     }
 
     private static (bool ignoreCase, bool isRegexCompare) GetComparisonModifiers(in AttributeComparison comparison)

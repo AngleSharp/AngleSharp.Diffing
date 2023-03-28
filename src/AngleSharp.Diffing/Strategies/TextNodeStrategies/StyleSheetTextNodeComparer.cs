@@ -10,10 +10,10 @@ public static class StyleSheetTextNodeComparer
     /// </summary>
     public static CompareResult Compare(in Comparison comparison, CompareResult currentDecision)
     {
-        if (currentDecision.IsSameOrSkip())
+        if (currentDecision.IsSameOrSkip)
             return currentDecision;
         if (TryGetStyleDeclaretions(comparison, out var controlStyles, out var testStyles))
-            return Compare(controlStyles, testStyles);
+            return Compare(comparison, controlStyles, testStyles);
         else
             return currentDecision;
     }
@@ -36,13 +36,13 @@ public static class StyleSheetTextNodeComparer
             return false;
     }
 
-    private static CompareResult Compare(IStyleSheet controlStyles, IStyleSheet testStyles)
+    private static CompareResult Compare(in Comparison comparison, IStyleSheet controlStyles, IStyleSheet testStyles)
     {
         var control = controlStyles.ToCss();
         var test = testStyles.ToCss();
 
         return control.Equals(test, StringComparison.Ordinal)
             ? CompareResult.Same
-            : CompareResult.Different;
+            : CompareResult.FromDiff(new StylesheetDiff(comparison));
     }
 }

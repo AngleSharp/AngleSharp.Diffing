@@ -12,19 +12,19 @@ public static class ClassAttributeComparer
     /// </summary>
     public static CompareResult Compare(in AttributeComparison comparison, CompareResult currentDecision)
     {
-        if (currentDecision.IsSameOrSkip())
+        if (currentDecision.IsSameOrSkip)
             return currentDecision;
 
         if (!IsBothClassAttributes(comparison))
-            return CompareResult.Different;
+            return CompareResult.FromDiff(new AttrDiff(comparison, AttrDiffKind.Name));
 
         var (ctrlElm, testElm) = comparison.GetAttributeElements();
         if (ctrlElm.ClassList.Length != testElm.ClassList.Length)
-            return CompareResult.Different;
+            return CompareResult.FromDiff(new AttrDiff(comparison, AttrDiffKind.Value));
 
         return ctrlElm.ClassList.All(x => testElm.ClassList.Contains(x))
             ? CompareResult.Same
-            : CompareResult.Different;
+            : CompareResult.FromDiff(new AttrDiff(comparison, AttrDiffKind.Value));
     }
 
     private static bool IsBothClassAttributes(in AttributeComparison comparison)

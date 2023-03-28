@@ -6,13 +6,23 @@ public class OrderingStyleAttributeComparerTest : DiffingTestBase
     {
     }
 
+    [Theory(DisplayName = "When current result is same or skip, the current decision is returned")]
+    [MemberData(nameof(SameAndSkipCompareResult))]
+    public void Test000(CompareResult currentResult)
+    {
+        var comparison = ToAttributeComparison(@"<p style=""color:red"">", "style", @"<p style=""color:red"">", "style");
+        OrderingStyleAttributeComparer
+            .Compare(comparison, currentResult)
+            .ShouldBe(currentResult);
+    }
+
     [Fact(DisplayName = "When attribute is not style the current decision is used")]
     public void Test001()
     {
         var comparison = ToAttributeComparison(@"<p foo=""bar"">", "foo", @"<p foo=""zab"">", "foo");
-        StyleAttributeComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
-        StyleAttributeComparer.Compare(comparison, CompareResult.Same).ShouldBe(CompareResult.Same);
-        StyleAttributeComparer.Compare(comparison, CompareResult.Skip).ShouldBe(CompareResult.Skip);
+        OrderingStyleAttributeComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
+        OrderingStyleAttributeComparer.Compare(comparison, CompareResult.Same).ShouldBe(CompareResult.Same);
+        OrderingStyleAttributeComparer.Compare(comparison, CompareResult.Skip).ShouldBe(CompareResult.Skip);
     }
 
     [Theory(DisplayName = "When style attributes has different values then Different is returned")]
@@ -23,7 +33,10 @@ public class OrderingStyleAttributeComparerTest : DiffingTestBase
     public void Test002(string control, string test)
     {
         var comparison = ToAttributeComparison(control, "style", test, "style");
-        OrderingStyleAttributeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Different);
+
+        OrderingStyleAttributeComparer
+            .Compare(comparison, CompareResult.Unknown)
+            .ShouldBe(CompareResult.FromDiff(new AttrDiff(comparison, AttrDiffKind.Value)));
     }
 
     [Fact(DisplayName = "Comparer should correctly ignore insignificant whitespace")]

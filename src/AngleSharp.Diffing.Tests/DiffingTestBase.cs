@@ -68,4 +68,10 @@ public abstract class DiffingTestBase : IClassFixture<DiffingTestFixture>
         var source = ToComparisonSource(html, sourceType);
         return new SourceMap(source);
     }
+
+    public static TheoryData<CompareResult> SameAndSkipCompareResult = new TheoryData<CompareResult>
+    {
+        CompareResult.Same,
+        CompareResult.Skip,
+    };
 }

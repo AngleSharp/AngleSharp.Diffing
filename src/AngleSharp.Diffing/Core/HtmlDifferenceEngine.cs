@@ -1,3 +1,5 @@
+using AngleSharp.Diffing.Core.Diffs;
+
 namespace AngleSharp.Diffing.Core;
 
 /// <summary>
@@ -85,9 +87,9 @@ public class HtmlDifferenceEngine
         }
 
         var compareRes = _diffingStrategy.Compare(comparison);
-        if (compareRes.HasFlag(CompareResult.Different))
+        if (compareRes.Decision.HasFlag(CompareDecision.Different))
         {
-            IDiff diff = new NodeDiff(comparison);
+            IDiff diff = compareRes.Diff ?? new NodeDiff(comparison);
             return new[] { diff };
         }
 
@@ -99,16 +101,16 @@ public class HtmlDifferenceEngine
         var result = new List<IDiff>();
 
         var compareRes = _diffingStrategy.Compare(comparison);
-        if (compareRes.HasFlag(CompareResult.Different))
+        if (compareRes.Decision.HasFlag(CompareDecision.Different))
         {
-            result.Add(new NodeDiff(comparison));
+            result.Add(compareRes.Diff ?? new ElementDiff(comparison, ElementDiffKind.Unspecified));
         }
 
-        if (!compareRes.HasFlag(CompareResult.Skip))
+        if (!compareRes.Decision.HasFlag(CompareDecision.Skip))
         {
-            if (!compareRes.HasFlag(CompareResult.SkipAttributes))
+            if (!compareRes.Decision.HasFlag(CompareDecision.SkipAttributes))
                 result.AddRange(CompareElementAttributes(comparison));
-            if (!compareRes.HasFlag(CompareResult.SkipChildren))
+            if (!compareRes.Decision.HasFlag(CompareDecision.SkipChildren))
                 result.AddRange(CompareChildNodes(comparison));
         }
 
@@ -184,8 +186,10 @@ public class HtmlDifferenceEngine
         foreach (var comparison in comparisons)
         {
             var compareRes = _diffingStrategy.Compare(comparison);
-            if (compareRes == CompareResult.Different)
-                yield return new AttrDiff(comparison);
+            if (compareRes.Decision == CompareDecision.Different)
+            {
+                yield return compareRes.Diff ?? new AttrDiff(comparison, AttrDiffKind.Unspecified);
+            }
         }
     }
 }

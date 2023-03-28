@@ -3,36 +3,16 @@ namespace AngleSharp.Diffing.Core;
 /// <summary>
 /// Represent a comparison between two nodes.
 /// </summary>
-[DebuggerDisplay("Control: {Control.Path} | Test: {Test.Path}")]
-public readonly struct Comparison : IEquatable<Comparison>
+/// <param name="Control">Gets the control source in the comparison.</param>
+/// <param name="Test">Gets the test source in the comparison.</param>
+public readonly record struct Comparison(in ComparisonSource Control, in ComparisonSource Test)
 {
-    /// <summary>
-    /// Gets the control source in the comparison.
-    /// </summary>
-    public ComparisonSource Control { get; }
-
-    /// <summary>
-    /// Gets the test source in the comparison
-    /// </summary>
-    public ComparisonSource Test { get; }
-
     /// <summary>
     /// Gets whether the control and test nodes are of the same type and has the same name.
     /// </summary>
     public bool AreNodeTypesEqual
         => Control.Node.NodeType == Test.Node.NodeType
         && Control.Node.NodeName.Equals(Test.Node.NodeName, StringComparison.OrdinalIgnoreCase);
-
-    /// <summary>
-    /// Creates a new comparison.
-    /// </summary>
-    /// <param name="control">The control source in the comparison.</param>
-    /// <param name="test">The tes tsource in the comparison.</param>
-    public Comparison(in ComparisonSource control, in ComparisonSource test)
-    {
-        Control = control;
-        Test = test;
-    }
 
     /// <summary>
     /// Try to get the control and test node as the <typeparamref name="TNode"/> type.
@@ -55,17 +35,4 @@ public readonly struct Comparison : IEquatable<Comparison>
             return false;
         }
     }
-
-    #region Equals and HashCode
-    /// <inheritdoc/>
-    public bool Equals(Comparison other) => Control.Equals(other.Control) && Test.Equals(other.Test);
-    /// <inheritdoc/>
-    public override bool Equals(object? obj) => obj is Comparison other && Equals(other);
-    /// <inheritdoc/>
-    public override int GetHashCode() => (Control, Test).GetHashCode();
-    /// <inheritdoc/>
-    public static bool operator ==(Comparison left, Comparison right) => left.Equals(right);
-    /// <inheritdoc/>
-    public static bool operator !=(Comparison left, Comparison right) => !left.Equals(right);
-    #endregion
 }

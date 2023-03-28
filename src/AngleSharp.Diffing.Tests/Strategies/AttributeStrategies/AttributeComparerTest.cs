@@ -1,20 +1,21 @@
 ﻿namespace AngleSharp.Diffing.Strategies.AttributeStrategies;
 
-
 public class AttributeComparerTest : DiffingTestBase
 {
     public AttributeComparerTest(DiffingTestFixture fixture) : base(fixture)
     {
     }
 
-    [Fact(DisplayName = "When compare is called with a current decision of Same or Skip, the current decision is returned")]
-    public void Test001()
+    [Theory(DisplayName = "When current result is same or skip, the current decision is returned")]
+    [MemberData(nameof(SameAndSkipCompareResult))]
+    public void Test001(CompareResult currentResult)
     {
         var comparison = ToAttributeComparison(@"<b foo>", "foo",
-                                                "<b bar>", "bar");
+                                        "<b bar>", "bar");
 
-        AttributeComparer.Compare(comparison, CompareResult.Same).ShouldBe(CompareResult.Same);
-        AttributeComparer.Compare(comparison, CompareResult.Skip).ShouldBe(CompareResult.Skip);
+        new BooleanAttributeComparer(BooleanAttributeComparision.Strict)
+            .Compare(comparison, currentResult)
+            .ShouldBe(currentResult);
     }
 
     [Fact(DisplayName = "When two attributes has the same name and no value, the compare result is Same")]
@@ -23,7 +24,9 @@ public class AttributeComparerTest : DiffingTestBase
         var comparison = ToAttributeComparison(@"<b foo>", "foo",
                                                 "<b foo>", "foo");
 
-        AttributeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Same);
+        AttributeComparer
+            .Compare(comparison, CompareResult.Unknown)
+            .ShouldBe(CompareResult.Same);
     }
 
     [Fact(DisplayName = "When two attributes does not have the same name, the compare result is Different")]
@@ -32,7 +35,9 @@ public class AttributeComparerTest : DiffingTestBase
         var comparison = ToAttributeComparison(@"<b foo>", "foo",
                                                 "<b bar>", "bar");
 
-        AttributeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Different);
+        AttributeComparer
+            .Compare(comparison, CompareResult.Unknown)
+            .ShouldBe(CompareResult.FromDiff(new AttrDiff(comparison, AttrDiffKind.Name)));
     }
 
     [Fact(DisplayName = "When two attribute values are the same, the compare result is Same")]
@@ -41,7 +46,9 @@ public class AttributeComparerTest : DiffingTestBase
         var comparison = ToAttributeComparison(@"<b foo=""bar"">", "foo",
                                                @"<b foo=""bar"">", "foo");
 
-        AttributeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Same);
+        AttributeComparer
+            .Compare(comparison, CompareResult.Unknown)
+            .ShouldBe(CompareResult.Same);
     }
 
     [Fact(DisplayName = "When two attribute values are different, the compare result is Different")]
@@ -50,7 +57,9 @@ public class AttributeComparerTest : DiffingTestBase
         var comparison = ToAttributeComparison(@"<b foo=""bar"">", "foo",
                                                @"<b foo=""baz"">", "foo");
 
-        AttributeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Different);
+        AttributeComparer
+            .Compare(comparison, CompareResult.Unknown)
+            .ShouldBe(CompareResult.FromDiff(new AttrDiff(comparison, AttrDiffKind.Value)));
     }
 
     [Fact(DisplayName = "When the control attribute is postfixed with :ignoreCase, " +

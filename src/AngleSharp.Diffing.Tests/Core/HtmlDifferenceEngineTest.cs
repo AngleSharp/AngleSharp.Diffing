@@ -103,17 +103,46 @@ public class HtmlDifferenceEngineTest : DiffingEngineTestBase
         var results = sut.Compare(nodes, nodes).ToList();
 
         results.Count.ShouldBe(3);
-        results[0].ShouldBeOfType<NodeDiff>().ShouldSatisfyAllConditions(
+        results[0].ShouldBeAssignableTo<NodeDiff>().ShouldSatisfyAllConditions(
             diff => diff.Control.Node.NodeName.ShouldBe("P"),
             diff => diff.Result.ShouldBe(DiffResult.Different),
             diff => diff.Target.ShouldBe(DiffTarget.Element)
         );
-        results[1].ShouldBeOfType<NodeDiff>().ShouldSatisfyAllConditions(
+        results[1].ShouldBeAssignableTo<NodeDiff>().ShouldSatisfyAllConditions(
             diff => diff.Control.Node.NodeName.ShouldBe("#comment"),
             diff => diff.Result.ShouldBe(DiffResult.Different),
             diff => diff.Target.ShouldBe(DiffTarget.Comment)
         );
-        results[2].ShouldBeOfType<NodeDiff>().ShouldSatisfyAllConditions(
+        results[2].ShouldBeAssignableTo<NodeDiff>().ShouldSatisfyAllConditions(
+            diff => diff.Control.Node.NodeName.ShouldBe("#text"),
+            diff => diff.Result.ShouldBe(DiffResult.Different),
+            diff => diff.Target.ShouldBe(DiffTarget.Text)
+        );
+    }
+
+    [Fact(DisplayName = "When matched control/test nodes are different, a custom diff is returned")]
+    public void WhenNodesAreDifferentADiffIsReturnedWithCustomDiff()
+    {
+        var nodes = ToNodeList("<p></p><!--comment-->textnode");
+        var sut = CreateHtmlDiffer(
+            nodeMatcher: OneToOneNodeListMatcher,
+            nodeFilter: NoneNodeFilter,
+            nodeComparer: DiffResultCustomNodeComparer);
+
+        var results = sut.Compare(nodes, nodes).ToList();
+
+        results.Count.ShouldBe(3);
+        results[0].ShouldBeOfType<CustomNodeDiff>().ShouldSatisfyAllConditions(
+            diff => diff.Control.Node.NodeName.ShouldBe("P"),
+            diff => diff.Result.ShouldBe(DiffResult.Different),
+            diff => diff.Target.ShouldBe(DiffTarget.Element)
+        );
+        results[1].ShouldBeOfType<CustomNodeDiff>().ShouldSatisfyAllConditions(
+            diff => diff.Control.Node.NodeName.ShouldBe("#comment"),
+            diff => diff.Result.ShouldBe(DiffResult.Different),
+            diff => diff.Target.ShouldBe(DiffTarget.Comment)
+        );
+        results[2].ShouldBeOfType<CustomNodeDiff>().ShouldSatisfyAllConditions(
             diff => diff.Control.Node.NodeName.ShouldBe("#text"),
             diff => diff.Result.ShouldBe(DiffResult.Different),
             diff => diff.Target.ShouldBe(DiffTarget.Text)
@@ -237,6 +266,30 @@ public class HtmlDifferenceEngineTest : DiffingEngineTestBase
         );
     }
 
+    [Fact(DisplayName = "When matched control/test attributes are different, a diff is returned with custom diff")]
+    public void WhenMatchedAttrsAreDiffAttrDiffIsReturnedWithCustomDiff()
+    {
+        var nodes = ToNodeList(@"<p id=""foo""></p>");
+
+        var sut = CreateHtmlDiffer(
+            nodeMatcher: OneToOneNodeListMatcher,
+            nodeFilter: NoneNodeFilter,
+            nodeComparer: SameResultNodeComparer,
+            attrMatcher: AttributeNameMatcher,
+            attrFilter: NoneAttrFilter,
+            attrComparer: DiffResultCustomAttrComparer);
+
+        var results = sut.Compare(nodes, nodes).ToList();
+
+        results.Count.ShouldBe(1);
+        results[0].ShouldBeOfType<CustomAttrDiff>().ShouldSatisfyAllConditions(
+            diff => diff.Control.Attribute.Name.ShouldBe("id"),
+            diff => diff.Test.Attribute.Name.ShouldBe("id"),
+            diff => diff.Result.ShouldBe(DiffResult.Different),
+            diff => diff.Target.ShouldBe(DiffTarget.Attribute)
+        );
+    }
+
     [Fact(DisplayName = "When matched control/test attributes are the same, no diffs are returned")]
     public void WhenMatchedAttrsAreSameNoDiffIsReturned()
     {
@@ -268,11 +321,11 @@ public class HtmlDifferenceEngineTest : DiffingEngineTestBase
         var results = sut.Compare(nodes, nodes).ToList();
 
         results.Count.ShouldBe(5);
-        results[0].ShouldBeOfType<NodeDiff>().Control.Node.NodeName.ShouldBe("MAIN");
-        results[1].ShouldBeOfType<NodeDiff>().Control.Node.NodeName.ShouldBe("H1");
-        results[2].ShouldBeOfType<NodeDiff>().Control.Node.NodeValue.ShouldBe("foobar");
-        results[3].ShouldBeOfType<NodeDiff>().Control.Node.NodeName.ShouldBe("P");
-        results[4].ShouldBeOfType<NodeDiff>().Control.Node.NodeName.ShouldBe("#text");
+        results[0].ShouldBeAssignableTo<NodeDiff>().Control.Node.NodeName.ShouldBe("MAIN");
+        results[1].ShouldBeAssignableTo<NodeDiff>().Control.Node.NodeName.ShouldBe("H1");
+        results[2].ShouldBeAssignableTo<NodeDiff>().Control.Node.NodeValue.ShouldBe("foobar");
+        results[3].ShouldBeAssignableTo<NodeDiff>().Control.Node.NodeName.ShouldBe("P");
+        results[4].ShouldBeAssignableTo<NodeDiff>().Control.Node.NodeName.ShouldBe("#text");
     }
 
     [Theory(DisplayName = "When only one of the control or test node in a comparison has child nodes, a missing/unexpected diff is returned")]
@@ -288,7 +341,7 @@ public class HtmlDifferenceEngineTest : DiffingEngineTestBase
         var results = sut.Compare(ToNodeList(control), ToNodeList(test)).ToList();
 
         results.Count.ShouldBe(2);
-        results[0].ShouldBeOfType<NodeDiff>();
+        results[0].ShouldBeAssignableTo<NodeDiff>();
         results[1].ShouldBeOfType(expectedDiffType);
     }
 
@@ -309,8 +362,8 @@ public class HtmlDifferenceEngineTest : DiffingEngineTestBase
 
         results.Count.ShouldBe(2);
 
-        results[0].ShouldBeOfType<NodeDiff>().Control.SourceType.ShouldBe(ComparisonSourceType.Control);
-        results[0].ShouldBeOfType<NodeDiff>().Test.SourceType.ShouldBe(ComparisonSourceType.Test);
+        results[0].ShouldBeAssignableTo<NodeDiff>().Control.SourceType.ShouldBe(ComparisonSourceType.Control);
+        results[0].ShouldBeAssignableTo<NodeDiff>().Test.SourceType.ShouldBe(ComparisonSourceType.Test);
         results[1].ShouldBeOfType<AttrDiff>().Control.SourceType.ShouldBe(ComparisonSourceType.Control);
         results[1].ShouldBeOfType<AttrDiff>().Test.SourceType.ShouldBe(ComparisonSourceType.Test);
     }
@@ -349,14 +402,14 @@ public class HtmlDifferenceEngineTest : DiffingEngineTestBase
     }
 
     [Theory(DisplayName = "When comparer returns SkipChildren flag from an element comparison, child nodes are not compared")]
-    [InlineData(CompareResult.Same | CompareResult.SkipChildren)]
-    [InlineData(CompareResult.Skip | CompareResult.SkipChildren)]
-    public void Test3(CompareResult compareResult)
+    [InlineData(CompareDecision.Same | CompareDecision.SkipChildren)]
+    [InlineData(CompareDecision.Skip | CompareDecision.SkipChildren)]
+    public void Test3(CompareDecision decision)
     {
         var sut = CreateHtmlDiffer(
             nodeMatcher: OneToOneNodeListMatcher,
             nodeFilter: NoneNodeFilter,
-            nodeComparer: c => c.Control.Node.NodeName == "P" ? compareResult : throw new Exception("NODE COMPARER SHOULD NOT BE CALLED ON CHILD NODES"),
+            nodeComparer: c => c.Control.Node.NodeName == "P" ? new CompareResult(decision) : throw new Exception("NODE COMPARER SHOULD NOT BE CALLED ON CHILD NODES"),
             attrMatcher: AttributeNameMatcher,
             attrFilter: NoneAttrFilter,
             attrComparer: SameResultAttrComparer
@@ -368,14 +421,14 @@ public class HtmlDifferenceEngineTest : DiffingEngineTestBase
     }
 
     [Theory(DisplayName = "When comparer returns SkipAttributes flag from an element comparison, attributes are not compared")]
-    [InlineData(CompareResult.Same | CompareResult.SkipAttributes)]
-    [InlineData(CompareResult.Skip | CompareResult.SkipAttributes)]
-    public void Test4(CompareResult compareResult)
+    [InlineData(CompareDecision.Same | CompareDecision.SkipAttributes)]
+    [InlineData(CompareDecision.Skip | CompareDecision.SkipAttributes)]
+    public void Test4(CompareDecision decision)
     {
         var sut = CreateHtmlDiffer(
             nodeMatcher: OneToOneNodeListMatcher,
             nodeFilter: NoneNodeFilter,
-            nodeComparer: c => compareResult,
+            nodeComparer: c => new CompareResult(decision),
             attrMatcher: AttributeNameMatcher,
             attrFilter: NoneAttrFilter,
             attrComparer: SameResultAttrComparer
@@ -411,6 +464,7 @@ public class HtmlDifferenceEngineTest : DiffingEngineTestBase
     #region NodeComparers
     private static CompareResult SameResultNodeComparer(Comparison comparison) => CompareResult.Same;
     private static CompareResult DiffResultNodeComparer(Comparison comparison) => CompareResult.Different;
+    private static CompareResult DiffResultCustomNodeComparer(Comparison comparison) => CompareResult.FromDiff(new CustomNodeDiff(comparison));
     #endregion
 
     #region AttributeMatchers
@@ -452,5 +506,22 @@ public class HtmlDifferenceEngineTest : DiffingEngineTestBase
     #region AttributeComparers
     public static CompareResult SameResultAttrComparer(AttributeComparison comparison) => CompareResult.Same;
     public static CompareResult DiffResultAttrComparer(AttributeComparison comparison) => CompareResult.Different;
+    public static CompareResult DiffResultCustomAttrComparer(AttributeComparison comparison) => CompareResult.FromDiff(new CustomAttrDiff(comparison));
+    #endregion
+
+    #region CustomDiff
+    public record CustomNodeDiff : NodeDiff
+    {
+        public CustomNodeDiff(in Comparison comparison) : base(comparison)
+        {
+        }
+    }
+
+    public record CustomAttrDiff : AttrDiff
+    {
+        public CustomAttrDiff(in AttributeComparison comparison) : base(comparison, AttrDiffKind.Unspecified)
+        {
+        }
+    }
     #endregion
 }
