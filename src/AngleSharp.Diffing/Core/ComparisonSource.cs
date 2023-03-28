@@ -59,9 +59,6 @@ public readonly struct ComparisonSource : IEquatable<ComparisonSource>, ICompari
         _hashCode = (Node, Index, Path, SourceType).GetHashCode();
     }
 
-    /// <inheritdoc/>
-    public override string ToString() => $"{{ Type = {Node.NodeType}, Index = {Index}, Path = {Path} }}";
-
     /// <summary>
     /// Create the last part of the node's path.
     /// </summary>
@@ -124,16 +121,21 @@ public readonly struct ComparisonSource : IEquatable<ComparisonSource>, ICompari
         throw new InvalidOperationException("Unexpected node tree state. The node was not found in its parents child nodes collection.");
     }
 
-    #region Equals and HashCode
+    /// <inheritdoc/>
+    public override string ToString() => $"{{ Type = {Node.NodeType}, Index = {Index}, Path = {Path} }}";
+
     /// <inheritdoc/>
     public bool Equals(ComparisonSource other) => Object.ReferenceEquals(Node, other.Node) && Index == other.Index && Path.Equals(other.Path, StringComparison.Ordinal) && SourceType == other.SourceType;
+
     /// <inheritdoc/>
     public override int GetHashCode() => _hashCode;
+
     /// <inheritdoc/>
     public override bool Equals(object? obj) => obj is ComparisonSource other && Equals(other);
+
     /// <inheritdoc/>
     public static bool operator ==(ComparisonSource left, ComparisonSource right) => left.Equals(right);
+
     /// <inheritdoc/>
     public static bool operator !=(ComparisonSource left, ComparisonSource right) => !left.Equals(right);
-    #endregion
 }
