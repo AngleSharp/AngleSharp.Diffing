@@ -3,7 +3,6 @@ namespace AngleSharp.Diffing.Core;
 /// <summary>
 /// Represents a node source in a comparison.
 /// </summary>    
-[DebuggerDisplay("{Index} : {Path}")]
 public readonly struct ComparisonSource : IEquatable<ComparisonSource>, IComparisonSource
 {
     private readonly int _hashCode;
@@ -60,12 +59,14 @@ public readonly struct ComparisonSource : IEquatable<ComparisonSource>, ICompari
         _hashCode = (Node, Index, Path, SourceType).GetHashCode();
     }
 
+    /// <inheritdoc/>
+    public override string ToString() => $"{{ Type = {Node.NodeType}, Index = {Index}, Path = {Path} }}";
+
     /// <summary>
     /// Create the last part of the node's path.
     /// </summary>
     /// <param name="node"></param>
     /// <returns></returns>
-    [SuppressMessage("Globalization", "CA1308:Normalize strings to uppercase", Justification = "Path should be in lower case")]
     public static string GetNodePathSegment(INode node)
     {
         var index = GetPathIndex(node);
