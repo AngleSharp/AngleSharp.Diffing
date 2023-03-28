@@ -6,6 +6,17 @@ public class ElementComparerTest : DiffingTestBase
     {
     }
 
+    [Theory(DisplayName = "When current result is same or skip, the current decision is returned")]
+    [MemberData(nameof(SameAndSkipCompareResult))]
+    public void Test000(CompareResult currentResult)
+    {
+        var comparison = ToComparison("<p>", "<div>");
+
+        new ElementComparer(enforceTagClosing: false)
+            .Compare(comparison, currentResult)
+            .ShouldBe(currentResult);
+    }
+
     [Theory(DisplayName = "When control and test nodes have the same type and name and enforceTagClosing is false, the result is Same")]
     [InlineData("<p>", "<p />")]
     [InlineData("<br>", "<br/>")]
@@ -32,10 +43,9 @@ public class ElementComparerTest : DiffingTestBase
     {
         var comparison = ToComparison(controlHtml, testHtml);
 
-        var result = new ElementComparer(enforceTagClosing).Compare(comparison, CompareResult.Unknown);
-
-        result.Decision.ShouldBe(CompareDecision.Different);
-        result.Diff.ShouldBeEquivalentTo(new NodeTypeDiff(comparison));
+        new ElementComparer(enforceTagClosing)
+            .Compare(comparison, CompareResult.Unknown)
+            .ShouldBe(CompareResult.FromDiff(new NodeTypeDiff(comparison)));
     }
 
     [Theory(DisplayName = "When control and test nodes have the a different closing style, the result is Different")]
@@ -45,10 +55,9 @@ public class ElementComparerTest : DiffingTestBase
     {
         var comparison = ToComparison(controlHtml, testHtml);
 
-        var result = new ElementComparer(enforceTagClosing).Compare(comparison, CompareResult.Unknown);
-
-        result.Decision.ShouldBe(CompareDecision.Different);
-        result.Diff.ShouldBeEquivalentTo(new NodeClosingDiff(comparison));
+        new ElementComparer(enforceTagClosing)
+            .Compare(comparison, CompareResult.Unknown)
+            .ShouldBe(CompareResult.FromDiff(new NodeClosingDiff(comparison)));
     }
 
     [Theory(DisplayName = "When unknown node is used in comparison, but node name is equal, the result is Same")]

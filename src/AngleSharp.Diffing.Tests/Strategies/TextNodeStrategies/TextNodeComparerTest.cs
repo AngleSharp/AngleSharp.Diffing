@@ -6,6 +6,17 @@ public class TextNodeComparerTest : TextNodeTestBase
     {
     }
 
+    [Theory(DisplayName = "When current result is same or skip, the current decision is returned")]
+    [MemberData(nameof(SameAndSkipCompareResult))]
+    public void Test000(CompareResult currentResult)
+    {
+        var comparison = ToComparison("hello world", "   hello   world  ");
+
+        new TextNodeComparer(WhitespaceOption.Preserve)
+            .Compare(comparison, currentResult)
+            .ShouldBe(currentResult);
+    }
+
     [Fact(DisplayName = "When input node is not a IText node, comparer does not run nor change the current decision")]
     public void Test2()
     {
@@ -15,23 +26,6 @@ public class TextNodeComparerTest : TextNodeTestBase
         sut.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
         sut.Compare(comparison, CompareResult.Same).ShouldBe(CompareResult.Same);
         sut.Compare(comparison, CompareResult.Skip).ShouldBe(CompareResult.Skip);
-    }
-
-    [Theory(DisplayName = "When option is Preserve or RemoveWhitespaceNodes, comparer does not run nor change the current decision")]
-    [InlineData(WhitespaceOption.Preserve)]
-    [InlineData(WhitespaceOption.RemoveWhitespaceNodes)]
-    public void Test5(WhitespaceOption whitespaceOption)
-    {
-        var comparison = ToComparison("hello world", "   hello   world  ");
-        var sut = new TextNodeComparer(whitespaceOption);
-
-        sut.Compare(comparison, CompareResult.Same).ShouldBe(CompareResult.Same);
-        sut.Compare(comparison, CompareResult.Skip).ShouldBe(CompareResult.Skip);
-
-        var diff = sut.Compare(comparison, CompareResult.Different);
-
-        diff.Decision.ShouldBe(CompareDecision.Different);
-        diff.Diff.ShouldBeEquivalentTo(new TextDiff(comparison));
     }
 
     [Fact(DisplayName = "When option is Normalize and current decision is Same or Skip, compare uses the current decision")]
@@ -126,10 +120,8 @@ public class TextNodeComparerTest : TextNodeTestBase
         var testSource = ToComparisonSource("foo bar", ComparisonSourceType.Test);
         var comparison = new Comparison(controlSource, testSource);
 
-        var result = sut.Compare(comparison, CompareResult.Unknown);
-
-        result.Decision.ShouldBe(CompareDecision.Different);
-        result.Diff.ShouldBeEquivalentTo(new TextDiff(comparison));
+        sut.Compare(comparison, CompareResult.Unknown)
+            .ShouldBe(CompareResult.FromDiff(new TextDiff(comparison)));
     }
 
     [Theory(DisplayName = "When the parent element is <pre/script/style> and the whitespace option is set " +
@@ -194,10 +186,8 @@ public class TextNodeComparerTest : TextNodeTestBase
         var testSource = ToComparisonSource("hello world", ComparisonSourceType.Test);
         var comparison = new Comparison(controlSource, testSource);
 
-        var result = sut.Compare(comparison, CompareResult.Unknown);
-
-        result.Decision.ShouldBe(CompareDecision.Different);
-        result.Diff.ShouldBeEquivalentTo(new TextDiff(comparison));
+        sut.Compare(comparison, CompareResult.Unknown)
+            .ShouldBe(CompareResult.FromDiff(new TextDiff(comparison)));
     }
 
     [Theory(DisplayName = "When diff:regex attribute is found on the immediate parent element, the control text is expected to a regex and that used when comparing to the test text node.")]
@@ -239,5 +229,3 @@ public class TextNodeComparerTest : TextNodeTestBase
         sut.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Same);
     }
 }
-
-

@@ -71,8 +71,6 @@ public class DiffingStrategyPipelineTest : DiffingTestBase
         sut.Filter(new AttributeComparisonSource()).ShouldBe(expected);
     }
 
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
     [Fact(DisplayName = "When no matcher strategy have been added, no comparisons are returned")]
     public void Test2()
     {
@@ -81,8 +79,6 @@ public class DiffingStrategyPipelineTest : DiffingTestBase
         sut.Match(null, null, (SourceCollection)null).ShouldBeEmpty();
         sut.Match(null, null, (SourceMap)null).ShouldBeEmpty();
     }
-#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
     [Fact(DisplayName = "Specialized node matchers are executed in the reverse order they are added in")]
     public void Test61()

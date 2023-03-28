@@ -6,6 +6,16 @@ public class StyleAttributeComparerTest : DiffingTestBase
     {
     }
 
+    [Theory(DisplayName = "When current result is same or skip, the current decision is returned")]
+    [MemberData(nameof(SameAndSkipCompareResult))]
+    public void Test000(CompareResult currentResult)
+    {
+        var comparison = ToAttributeComparison(@"<p style=""color:red"">", "style", @"<p style=""color:red"">", "style");
+        StyleAttributeComparer
+            .Compare(comparison, currentResult)
+            .ShouldBe(currentResult);
+    }
+
     [Fact(DisplayName = "When attribute is not style the current decision is used")]
     public void Test001()
     {
@@ -14,6 +24,7 @@ public class StyleAttributeComparerTest : DiffingTestBase
         StyleAttributeComparer.Compare(comparison, CompareResult.Same).ShouldBe(CompareResult.Same);
         StyleAttributeComparer.Compare(comparison, CompareResult.Skip).ShouldBe(CompareResult.Skip);
     }
+
 
     [Theory(DisplayName = "When style attributes has different values then Different is returned")]
     [InlineData(@"<p style=""color: red"">", @"<p style=""color: black"">")]
@@ -24,10 +35,9 @@ public class StyleAttributeComparerTest : DiffingTestBase
     {
         var comparison = ToAttributeComparison(control, "style", test, "style");
 
-        var result = StyleAttributeComparer.Compare(comparison, CompareResult.Unknown);
-
-        result.Decision.ShouldBe(CompareDecision.Different);
-        result.Diff.ShouldBeEquivalentTo(new AttrDiff(comparison, AttrDiffKind.Value));
+        StyleAttributeComparer
+            .Compare(comparison, CompareResult.Unknown)
+            .ShouldBe(CompareResult.FromDiff(new AttrDiff(comparison, AttrDiffKind.Value)));
     }
 
     [Fact(DisplayName = "Comparer should correctly ignore insignificant whitespace")]
