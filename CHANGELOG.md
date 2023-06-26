@@ -1,3 +1,8 @@
+# 0.19.0
+
+- Update AngleSharp dependency to 1.0.4
+- Update AngleSharp.Css dependency to 1.0.0-alpha-99
+ 
 # 0.18.2
 
 - Changed `CompareStrategy` such that it now can control the `IDiff` type that should be returned in case a difference is found in a comparison. This allows a comparer to embed additional context in the `IDiff` object. By [@SebastianStehle](https://github.com/SebastianStehle).
