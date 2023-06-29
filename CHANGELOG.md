@@ -1,4 +1,4 @@
-# 0.19.0
+# 1.0.0
 
 - Update AngleSharp dependency to 1.0.4
 - Update AngleSharp.Css dependency to 1.0.0-alpha-99
