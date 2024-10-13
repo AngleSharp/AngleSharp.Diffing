@@ -1,3 +1,7 @@
+# 0.18.3
+
+- Enabled using `diff:ignoreAttributes` and `diff:ignoreChildren` together on the same element.
+
 # 0.18.2
 
 - Changed `CompareStrategy` such that it now can control the `IDiff` type that should be returned in case a difference is found in a comparison. This allows a comparer to embed additional context in the `IDiff` object. By [@SebastianStehle](https://github.com/SebastianStehle).

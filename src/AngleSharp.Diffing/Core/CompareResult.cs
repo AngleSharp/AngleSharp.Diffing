@@ -33,6 +33,11 @@ public readonly record struct CompareResult(CompareDecision Decision, IDiff? Dif
     public static readonly CompareResult SkipAttributes = new CompareResult(CompareDecision.SkipAttributes);
 
     /// <summary>
+    /// Use when the comparison should skip any attributes.
+    /// </summary>
+    public static readonly CompareResult SkipChildrenAndAttributes = new CompareResult(CompareDecision.SkipChildren | CompareDecision.SkipAttributes);
+
+    /// <summary>
     /// Use when the two compared nodes or attributes are the different.
     /// </summary>
     public static CompareResult Different => new CompareResult(CompareDecision.Different);
