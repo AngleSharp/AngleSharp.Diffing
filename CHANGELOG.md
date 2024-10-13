@@ -1,7 +1,8 @@
-# 0.18.3
+# 1.0.0
 
 - Enabled using `diff:ignoreAttributes` and `diff:ignoreChildren` together on the same element.
 - Corrected list of attributes that is considered as boolean attributes. Removed `hidden`, added `inert`, `playsinline`, `shadowrootclonable`, `shadowrootdelegatesfocus`, and `shadowrootserializable`.
+- Upgrade to v1.x of AngleSharp.
 
 # 0.18.2
 

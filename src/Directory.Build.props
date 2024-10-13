@@ -1,6 +1,6 @@
 <Project>
 	<PropertyGroup>
-		<Version>0.18.3</Version>
+		<Version>1.0.0</Version>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -20,7 +20,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AngleSharp" Version="0.17.0" />
-		<PackageReference Include="AngleSharp.Css" Version="0.17.0" />
+		<PackageReference Include="AngleSharp" Version="1.1.2" />
+		<PackageReference Include="AngleSharp.Css" Version="1.0.0-beta.144" />
 	</ItemGroup>
 </Project>
