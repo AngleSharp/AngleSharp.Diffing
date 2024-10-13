@@ -10,7 +10,7 @@ public readonly record struct CompareResult(CompareDecision Decision, IDiff? Dif
     /// <summary>
     /// Use when the compare result is unknown.
     /// </summary>
-    public static readonly CompareResult Unknown = default;
+    public static readonly CompareResult Unknown;
 
     /// <summary>
     /// Use when the two compared nodes or attributes are the same.

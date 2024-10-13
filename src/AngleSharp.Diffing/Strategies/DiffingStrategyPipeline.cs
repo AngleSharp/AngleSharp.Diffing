@@ -123,7 +123,7 @@ public class DiffingStrategyPipeline : IDiffingStrategy, IDiffingStrategyCollect
         return this;
     }
 
-    private FilterDecision Filter<T>(in T source, List<FilterStrategy<T>> filterStrategies)
+    private static FilterDecision Filter<T>(in T source, List<FilterStrategy<T>> filterStrategies)
     {
         var result = FilterDecision.Keep;
         for (int i = 0; i < filterStrategies.Count; i++)
@@ -133,7 +133,7 @@ public class DiffingStrategyPipeline : IDiffingStrategy, IDiffingStrategyCollect
         return result;
     }
 
-    private CompareResult Compare<TComparison>(in TComparison comparison, List<CompareStrategy<TComparison>> compareStrategies, CompareResult initialResult)
+    private static CompareResult Compare<TComparison>(in TComparison comparison, List<CompareStrategy<TComparison>> compareStrategies, CompareResult initialResult)
     {
         var result = initialResult;
         foreach (var comparer in compareStrategies)

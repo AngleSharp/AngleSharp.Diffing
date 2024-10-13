@@ -18,7 +18,7 @@ public static class ClassAttributeComparer
         if (!IsBothClassAttributes(comparison))
             return CompareResult.FromDiff(new AttrDiff(comparison, AttrDiffKind.Name));
 
-        var (ctrlElm, testElm) = comparison.GetAttributeElements();
+        var (ctrlElm, testElm) = comparison.AttributeElements;
         if (ctrlElm.ClassList.Length != testElm.ClassList.Length)
             return CompareResult.FromDiff(new AttrDiff(comparison, AttrDiffKind.Value));
 

@@ -10,6 +10,6 @@ public readonly record struct AttributeComparison(in AttributeComparisonSource C
     /// <summary>
     /// Returns the control and test elements which the control and test attributes belongs to.
     /// </summary>
-    public (IElement ControlElement, IElement TestElement) GetAttributeElements()
+    public readonly (IElement ControlElement, IElement TestElement) AttributeElements
         => ((IElement)Control.ElementSource.Node, (IElement)Test.ElementSource.Node);
 }

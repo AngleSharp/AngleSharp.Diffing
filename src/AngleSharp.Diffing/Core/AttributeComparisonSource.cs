@@ -30,6 +30,7 @@ public readonly struct AttributeComparisonSource : IEquatable<AttributeCompariso
     /// </summary>
     /// <param name="attributeName">Name of the attribute.</param>
     /// <param name="elementSource">The source of the element the attribute belongs to.</param>
+    [SuppressMessage("Globalization", "CA1308:Normalize strings to uppercase", Justification = "Attribute names should be safe to lowercase.")]
     public AttributeComparisonSource(string attributeName, in ComparisonSource elementSource)
     {
         if (string.IsNullOrEmpty(attributeName))

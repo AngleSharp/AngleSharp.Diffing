@@ -64,6 +64,7 @@ public readonly struct ComparisonSource : IEquatable<ComparisonSource>, ICompari
     /// </summary>
     /// <param name="node"></param>
     /// <returns></returns>
+    [SuppressMessage("Globalization", "CA1308:Normalize strings to uppercase", Justification = "Nodenames are safe to lower case.")]
     public static string GetNodePathSegment(INode node)
     {
         var index = GetPathIndex(node);

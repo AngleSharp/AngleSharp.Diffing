@@ -6,7 +6,7 @@ public class DiffingStrategyPipelineTest : DiffingTestBase
     {
     }
 
-    private FilterDecision NegateDecision(FilterDecision decision) => decision switch
+    private static FilterDecision NegateDecision(FilterDecision decision) => decision switch
     {
         FilterDecision.Keep => FilterDecision.Exclude,
         FilterDecision.Exclude => FilterDecision.Keep,

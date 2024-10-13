@@ -18,7 +18,7 @@ public abstract class TextNodeTestBase : DiffingTestBase
 
     public static readonly IEnumerable<object[]> WhitespaceCharStrings = AllWhitespaceCharacters.Select(c => new string[] { c.ToString(CultureInfo.InvariantCulture) }).ToArray();
 
-    public TextNodeTestBase(DiffingTestFixture fixture) : base(fixture)
+    protected TextNodeTestBase(DiffingTestFixture fixture) : base(fixture)
     {
     }
 }

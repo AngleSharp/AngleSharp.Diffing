@@ -20,7 +20,7 @@ public static class IgnoreAttributesElementComparer
 
         return currentDecision.Decision switch
         {
-            CompareDecision.Unknown => CompareResult.SkipAttributes,
+            CompareDecision.None => CompareResult.SkipAttributes,
             CompareDecision.Same => CompareResult.SkipAttributes,
             CompareDecision.Different => CompareResult.SkipAttributes,
             CompareDecision.SkipChildren => CompareResult.SkipChildrenAndAttributes,
