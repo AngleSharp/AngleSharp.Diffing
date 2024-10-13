@@ -5,7 +5,7 @@ public abstract class DiffingTestBase : IClassFixture<DiffingTestFixture>
     private readonly DiffingTestFixture _testFixture;
 
 
-    public static readonly TheoryData<CompareResult> SameAndSkipCompareResult = new TheoryData<CompareResult>
+    public static readonly TheoryData<CompareResult> SameAndSkipCompareResult = new()
     {
         CompareResult.Same,
         CompareResult.Skip,

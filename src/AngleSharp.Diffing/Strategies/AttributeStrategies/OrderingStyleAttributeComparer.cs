@@ -39,8 +39,8 @@ public static class OrderingStyleAttributeComparer
         if (control.Length != test.Length)
             return false;
 
-        var orderedControl = control.CssText.Split(';').Select(x => x.Trim()).OrderBy(x => x);
-        var orderedTest = test.CssText.Split(';').Select(x => x.Trim()).OrderBy(x => x);
+        var orderedControl = control.CssText.Split(';').Select(x => x.Trim()).OrderBy(x => x, StringComparer.Ordinal);
+        var orderedTest = test.CssText.Split(';').Select(x => x.Trim()).OrderBy(x => x, StringComparer.Ordinal);
 
         return orderedControl.SequenceEqual(orderedTest, StringComparer.Ordinal);
     }

@@ -20,8 +20,8 @@ public class DiffBuilderTest
     [Fact(DisplayName = "Builder throws if null is passed to control and test")]
     public void Test002()
     {
-        Should.Throw<ArgumentNullException>(() => DiffBuilder.Compare(null!)).ParamName.ShouldBe(nameof(DiffBuilder.Control));
-        Should.Throw<ArgumentNullException>(() => DiffBuilder.Compare("").WithTest(null!)).ParamName.ShouldBe(nameof(DiffBuilder.Test));
+        Should.Throw<ArgumentNullException>(() => DiffBuilder.Compare(null!)).ParamName.ShouldBe("value");
+        Should.Throw<ArgumentNullException>(() => DiffBuilder.Compare("").WithTest(null!)).ParamName.ShouldBe("value");
     }
 
     [Fact(DisplayName = "Calling Build() with DefaultOptions() returns expected diffs")]

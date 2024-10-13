@@ -1,39 +1,43 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <Description>Provides a complete diffing model of HTML.</Description>
-    <Product>AngleSharp.Diffing</Product>
-    <Authors>AngleSharp</Authors>
-    <PackageId>AngleSharp.Diffing</PackageId>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://anglesharp.github.io</PackageProjectUrl>
-    <PackageIcon>logo.png</PackageIcon>
-    <PackageIconUrl>https://raw.github.com/AngleSharp/AngleSharp.Diffing/master/logo.png</PackageIconUrl>
-    <PackageTags>html html5 css css3 dom library diffing anglesharp diff difference compare comparison testing</PackageTags>
-    <Copyright>Egil Hansen</Copyright>
-    <RepositoryUrl>https://github.com/AngleSharp/AngleSharp.Diffing</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-  </PropertyGroup>
+	<PropertyGroup>
+		<Description>Provides a complete diffing model of HTML.</Description>
+		<Product>AngleSharp.Diffing</Product>
+		<Authors>AngleSharp</Authors>
+		<PackageId>AngleSharp.Diffing</PackageId>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageProjectUrl>https://anglesharp.github.io</PackageProjectUrl>
+		<PackageIcon>logo.png</PackageIcon>
+		<PackageIconUrl>https://raw.github.com/AngleSharp/AngleSharp.Diffing/master/logo.png</PackageIconUrl>
+		<PackageTags>html html5 css css3 dom library diffing anglesharp diff difference compare comparison testing</PackageTags>
+		<Copyright>Egil Hansen</Copyright>
+		<RepositoryUrl>https://github.com/AngleSharp/AngleSharp.Diffing</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="TunnelVisionLabs.ReferenceAssemblyAnnotator" Version="1.0.0-alpha.160" PrivateAssets="all" />
-    <PackageDownload Include="Microsoft.NETCore.App.Ref" Version="[5.0.0]" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Meziantou.Analyzer" Version="2.0.169">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="TunnelVisionLabs.ReferenceAssemblyAnnotator" Version="1.0.0-alpha.160" PrivateAssets="all" />
+		<PackageDownload Include="Microsoft.NETCore.App.Ref" Version="[5.0.0]" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Include="..\..\logo.png" Pack="true" PackagePath="\" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\logo.png" Pack="true" PackagePath="\" />
+	</ItemGroup>
 
 </Project>

@@ -34,5 +34,5 @@ public static class AngleSharpDomExtensions
     /// Creates a comparison source from a node.
     /// </summary>
     public static ComparisonSource ToComparisonSource(this INode node, int index, ComparisonSourceType sourceType, string path = "")
-        => new ComparisonSource(node, index, path, sourceType);
+        => new(node, index, path, sourceType);
 }
