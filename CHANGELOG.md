@@ -1,6 +1,7 @@
 # 0.18.3
 
 - Enabled using `diff:ignoreAttributes` and `diff:ignoreChildren` together on the same element.
+- Corrected list of attributes that is considered as boolean attributes. Removed `hidden`, added `inert`, `playsinline`, `shadowrootclonable`, `shadowrootdelegatesfocus`, and `shadowrootserializable`.
 
 # 0.18.2
 
