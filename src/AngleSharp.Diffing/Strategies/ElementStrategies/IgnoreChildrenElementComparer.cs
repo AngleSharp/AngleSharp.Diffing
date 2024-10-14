@@ -12,12 +12,20 @@ public static class IgnoreChildrenElementComparer
     /// </summary>
     public static CompareResult Compare(in Comparison comparison, CompareResult currentDecision)
     {
-        if (currentDecision == CompareResult.Skip)
+        if (currentDecision == CompareResult.Skip || currentDecision == CompareResult.SkipChildren || currentDecision == CompareResult.SkipChildrenAndAttributes)
             return currentDecision;
 
-        return ControlHasTruthyIgnoreChildrenAttribute(comparison)
-            ? CompareResult.SkipChildren
-            : currentDecision;
+        if (!ControlHasTruthyIgnoreChildrenAttribute(comparison))
+            return currentDecision;
+
+        return currentDecision.Decision switch
+        {
+            CompareDecision.None => CompareResult.SkipChildren,
+            CompareDecision.Same => CompareResult.SkipChildren,
+            CompareDecision.Different => CompareResult.SkipChildren,
+            CompareDecision.SkipAttributes => CompareResult.SkipChildrenAndAttributes,
+            _ => currentDecision,
+        };
     }
 
     private static bool ControlHasTruthyIgnoreChildrenAttribute(in Comparison comparison)

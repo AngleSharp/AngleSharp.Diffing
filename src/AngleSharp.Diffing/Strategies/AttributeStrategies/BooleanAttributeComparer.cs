@@ -5,7 +5,7 @@
 /// </summary>
 public class BooleanAttributeComparer
 {
-    private static readonly HashSet<string> BooleanAttributesSet = new HashSet<string>()
+    private static readonly HashSet<string> BooleanAttributesSet = new(StringComparer.OrdinalIgnoreCase)
     {
         "allowfullscreen",
         "allowpaymentrequest",
@@ -18,7 +18,7 @@ public class BooleanAttributeComparer
         "defer",
         "disabled",
         "formnovalidate",
-        "hidden",
+        "inert",
         "ismap",
         "itemscope",
         "loop",
@@ -27,10 +27,14 @@ public class BooleanAttributeComparer
         "nomodule",
         "novalidate",
         "open",
+        "playsinline",
         "readonly",
         "required",
         "reversed",
         "selected",
+        "shadowrootclonable",
+        "shadowrootdelegatesfocus",
+        "shadowrootserializable",
         "typemustmatch"
     };
 

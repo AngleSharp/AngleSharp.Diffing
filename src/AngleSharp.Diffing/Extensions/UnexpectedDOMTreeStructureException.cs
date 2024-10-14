@@ -13,6 +13,17 @@ public sealed class UnexpectedDOMTreeStructureException : Exception
     public UnexpectedDOMTreeStructureException()
         : base("The DOM tree structure was not as expected by AngleSharp.Diffing.") { }
 
-    private UnexpectedDOMTreeStructureException(SerializationInfo info, StreamingContext context)
-        : base(info, context) { }
+    /// <summary>
+    /// Creates an instance of the <see cref="UnexpectedDOMTreeStructureException"/>.
+    /// </summary>
+    public UnexpectedDOMTreeStructureException(string message) : base(message)
+    {
+    }
+
+    /// <summary>
+    /// Creates an instance of the <see cref="UnexpectedDOMTreeStructureException"/>.
+    /// </summary>
+    public UnexpectedDOMTreeStructureException(string message, Exception innerException) : base(message, innerException)
+    {
+    }
 }

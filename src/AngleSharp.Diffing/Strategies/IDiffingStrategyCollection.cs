@@ -3,6 +3,7 @@ namespace AngleSharp.Diffing.Strategies;
 /// <summary>
 /// Represents a collection of diffing strategies.
 /// </summary>
+[SuppressMessage("Naming", "CA1711:Identifiers should not have incorrect suffix", Justification = "Ignored.")]
 public interface IDiffingStrategyCollection
 {
     /// <summary>

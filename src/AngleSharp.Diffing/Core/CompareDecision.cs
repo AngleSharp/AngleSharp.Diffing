@@ -9,7 +9,7 @@ public enum CompareDecision
     /// <summary>
     /// Use when the compare result is unknown.
     /// </summary>
-    Unknown = 0,
+    None = 0,
     /// <summary>
     /// Use when the two compared nodes or attributes are the same.
     /// </summary>

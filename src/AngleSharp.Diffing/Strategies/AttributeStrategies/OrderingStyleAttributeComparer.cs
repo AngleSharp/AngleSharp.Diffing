@@ -26,7 +26,7 @@ public static class OrderingStyleAttributeComparer
 
     private static CompareResult CompareElementStyle(in AttributeComparison comparison)
     {
-        var (ctrlElm, testElm) = comparison.GetAttributeElements();
+        var (ctrlElm, testElm) = comparison.AttributeElements;
         var ctrlStyle = ctrlElm.GetStyle();
         var testStyle = testElm.GetStyle();
         return CompareCssStyleDeclarations(ctrlStyle, testStyle)
@@ -39,8 +39,8 @@ public static class OrderingStyleAttributeComparer
         if (control.Length != test.Length)
             return false;
 
-        var orderedControl = control.CssText.Split(';').Select(x => x.Trim()).OrderBy(x => x);
-        var orderedTest = test.CssText.Split(';').Select(x => x.Trim()).OrderBy(x => x);
+        var orderedControl = control.CssText.Split(';').Select(x => x.Trim()).OrderBy(x => x, StringComparer.Ordinal);
+        var orderedTest = test.CssText.Split(';').Select(x => x.Trim()).OrderBy(x => x, StringComparer.Ordinal);
 
         return orderedControl.SequenceEqual(orderedTest, StringComparer.Ordinal);
     }

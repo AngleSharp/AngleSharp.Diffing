@@ -6,12 +6,12 @@ namespace AngleSharp.Diffing.Strategies;
 /// </summary>
 public class DiffingStrategyPipeline : IDiffingStrategy, IDiffingStrategyCollection
 {
-    private readonly List<FilterStrategy<ComparisonSource>> _nodeFilters = new List<FilterStrategy<ComparisonSource>>();
-    private readonly List<FilterStrategy<AttributeComparisonSource>> _attrsFilters = new List<FilterStrategy<AttributeComparisonSource>>();
-    private readonly List<MatchStrategy<SourceCollection, Comparison>> _nodeMatchers = new List<MatchStrategy<SourceCollection, Comparison>>();
-    private readonly List<MatchStrategy<SourceMap, AttributeComparison>> _attrsMatchers = new List<MatchStrategy<SourceMap, AttributeComparison>>();
-    private readonly List<CompareStrategy<Comparison>> _nodeComparers = new List<CompareStrategy<Comparison>>();
-    private readonly List<CompareStrategy<AttributeComparison>> _attrComparers = new List<CompareStrategy<AttributeComparison>>();
+    private readonly List<FilterStrategy<ComparisonSource>> _nodeFilters = new();
+    private readonly List<FilterStrategy<AttributeComparisonSource>> _attrsFilters = new();
+    private readonly List<MatchStrategy<SourceCollection, Comparison>> _nodeMatchers = new();
+    private readonly List<MatchStrategy<SourceMap, AttributeComparison>> _attrsMatchers = new();
+    private readonly List<CompareStrategy<Comparison>> _nodeComparers = new();
+    private readonly List<CompareStrategy<AttributeComparison>> _attrComparers = new();
 
     /// <summary>
     /// Gets whether the pipeline have any matchers registered.
@@ -64,7 +64,7 @@ public class DiffingStrategyPipeline : IDiffingStrategy, IDiffingStrategyCollect
     public CompareResult Compare(in AttributeComparison comparison) => Compare(comparison, _attrComparers, CompareResult.Different);
 
     /// <inheritdoc/>
-    public IDiffingStrategyCollection AddFilter(FilterStrategy<ComparisonSource> filterStrategy, StrategyType strategyType)
+    public IDiffingStrategyCollection AddFilter(FilterStrategy<ComparisonSource> filterStrategy, StrategyType strategyType = StrategyType.Specialized)
     {
         if (strategyType == StrategyType.Specialized)
             _nodeFilters.Add(filterStrategy);
@@ -74,7 +74,7 @@ public class DiffingStrategyPipeline : IDiffingStrategy, IDiffingStrategyCollect
     }
 
     /// <inheritdoc/>
-    public IDiffingStrategyCollection AddFilter(FilterStrategy<AttributeComparisonSource> filterStrategy, StrategyType strategyType)
+    public IDiffingStrategyCollection AddFilter(FilterStrategy<AttributeComparisonSource> filterStrategy, StrategyType strategyType = StrategyType.Specialized)
     {
         if (strategyType == StrategyType.Specialized)
             _attrsFilters.Add(filterStrategy);
@@ -84,7 +84,7 @@ public class DiffingStrategyPipeline : IDiffingStrategy, IDiffingStrategyCollect
     }
 
     /// <inheritdoc/>
-    public IDiffingStrategyCollection AddMatcher(MatchStrategy<SourceCollection, Comparison> matchStrategy, StrategyType strategyType)
+    public IDiffingStrategyCollection AddMatcher(MatchStrategy<SourceCollection, Comparison> matchStrategy, StrategyType strategyType = StrategyType.Specialized)
     {
         if (strategyType == StrategyType.Specialized)
             _nodeMatchers.Insert(0, matchStrategy);
@@ -94,7 +94,7 @@ public class DiffingStrategyPipeline : IDiffingStrategy, IDiffingStrategyCollect
     }
 
     /// <inheritdoc/>
-    public IDiffingStrategyCollection AddMatcher(MatchStrategy<SourceMap, AttributeComparison> matchStrategy, StrategyType strategyType)
+    public IDiffingStrategyCollection AddMatcher(MatchStrategy<SourceMap, AttributeComparison> matchStrategy, StrategyType strategyType = StrategyType.Specialized)
     {
         if (strategyType == StrategyType.Specialized)
             _attrsMatchers.Insert(0, matchStrategy);
@@ -104,7 +104,7 @@ public class DiffingStrategyPipeline : IDiffingStrategy, IDiffingStrategyCollect
     }
 
     /// <inheritdoc/>
-    public IDiffingStrategyCollection AddComparer(CompareStrategy<Comparison> compareStrategy, StrategyType strategyType)
+    public IDiffingStrategyCollection AddComparer(CompareStrategy<Comparison> compareStrategy, StrategyType strategyType = StrategyType.Specialized)
     {
         if (strategyType == StrategyType.Specialized)
             _nodeComparers.Add(compareStrategy);
@@ -114,7 +114,7 @@ public class DiffingStrategyPipeline : IDiffingStrategy, IDiffingStrategyCollect
     }
 
     /// <inheritdoc/>
-    public IDiffingStrategyCollection AddComparer(CompareStrategy<AttributeComparison> compareStrategy, StrategyType strategyType)
+    public IDiffingStrategyCollection AddComparer(CompareStrategy<AttributeComparison> compareStrategy, StrategyType strategyType = StrategyType.Specialized)
     {
         if (strategyType == StrategyType.Specialized)
             _attrComparers.Add(compareStrategy);
@@ -123,7 +123,7 @@ public class DiffingStrategyPipeline : IDiffingStrategy, IDiffingStrategyCollect
         return this;
     }
 
-    private FilterDecision Filter<T>(in T source, List<FilterStrategy<T>> filterStrategies)
+    private static FilterDecision Filter<T>(in T source, List<FilterStrategy<T>> filterStrategies)
     {
         var result = FilterDecision.Keep;
         for (int i = 0; i < filterStrategies.Count; i++)
@@ -133,7 +133,7 @@ public class DiffingStrategyPipeline : IDiffingStrategy, IDiffingStrategyCollect
         return result;
     }
 
-    private CompareResult Compare<TComparison>(in TComparison comparison, List<CompareStrategy<TComparison>> compareStrategies, CompareResult initialResult)
+    private static CompareResult Compare<TComparison>(in TComparison comparison, List<CompareStrategy<TComparison>> compareStrategies, CompareResult initialResult)
     {
         var result = initialResult;
         foreach (var comparer in compareStrategies)

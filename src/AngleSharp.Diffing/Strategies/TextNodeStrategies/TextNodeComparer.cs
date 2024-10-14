@@ -11,7 +11,7 @@ public class TextNodeComparer
     private const string WHITESPACE_ATTR_NAME = "diff:whitespace";
     private const string IGNORECASE_ATTR_NAME = "diff:ignorecase";
     private const string REGEX_ATTR_NAME = "diff:regex";
-    private static readonly Regex WhitespaceReplace = new Regex(@"\s+", RegexOptions.Compiled | RegexOptions.CultureInvariant, TimeSpan.FromSeconds(5));
+    private static readonly Regex WhitespaceReplace = new(@"\s+", RegexOptions.Compiled | RegexOptions.CultureInvariant, TimeSpan.FromSeconds(5));
 
     /// <summary>
     /// Gets the whitespace option of the comparer instance.

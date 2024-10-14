@@ -26,7 +26,7 @@ public static class StyleAttributeComparer
 
     private static CompareResult CompareElementStyle(in AttributeComparison comparison)
     {
-        var (ctrlElm, testElm) = comparison.GetAttributeElements();
+        var (ctrlElm, testElm) = comparison.AttributeElements;
         var ctrlStyle = ctrlElm.GetStyle();
         var testStyle = testElm.GetStyle();
         return CompareCssStyleDeclarations(ctrlStyle, testStyle)

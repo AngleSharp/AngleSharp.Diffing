@@ -27,11 +27,4 @@ public class DiffMatchSelectorReturnedTooManyResultsException : Exception
     public DiffMatchSelectorReturnedTooManyResultsException(string message, Exception innerException) : base(message, innerException)
     {
     }
-
-    /// <summary>
-    /// Creates a <see cref="DiffMatchSelectorReturnedTooManyResultsException"/>.
-    /// </summary>
-    protected DiffMatchSelectorReturnedTooManyResultsException(SerializationInfo info, StreamingContext context) : base(info, context)
-    {
-    }
 }

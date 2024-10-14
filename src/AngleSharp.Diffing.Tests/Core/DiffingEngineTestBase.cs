@@ -2,7 +2,7 @@ namespace AngleSharp.Diffing.Core;
 
 public abstract class DiffingEngineTestBase : DiffingTestBase
 {
-    public DiffingEngineTestBase(DiffingTestFixture fixture) : base(fixture)
+    protected DiffingEngineTestBase(DiffingTestFixture fixture) : base(fixture)
     {
     }
 
@@ -24,7 +24,7 @@ public abstract class DiffingEngineTestBase : DiffingTestBase
         );
     }
 
-    private class MockDiffingStrategy : IDiffingStrategy
+    private sealed class MockDiffingStrategy : IDiffingStrategy
     {
         private readonly Func<ComparisonSource, FilterDecision>? _nodeFilter;
         private readonly Func<AttributeComparisonSource, FilterDecision>? _attrFilter;

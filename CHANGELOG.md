@@ -1,3 +1,9 @@
+# 1.0.0
+
+- Enabled using `diff:ignoreAttributes` and `diff:ignoreChildren` together on the same element.
+- Corrected list of attributes that is considered as boolean attributes. Removed `hidden`, added `inert`, `playsinline`, `shadowrootclonable`, `shadowrootdelegatesfocus`, and `shadowrootserializable`.
+- Upgrade to v1.x of AngleSharp.
+
 # 0.18.2
 
 - Changed `CompareStrategy` such that it now can control the `IDiff` type that should be returned in case a difference is found in a comparison. This allows a comparer to embed additional context in the `IDiff` object. By [@SebastianStehle](https://github.com/SebastianStehle).

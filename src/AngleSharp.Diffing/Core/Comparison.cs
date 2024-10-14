@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices;
+
 namespace AngleSharp.Diffing.Core;
 
 /// <summary>
@@ -5,6 +7,7 @@ namespace AngleSharp.Diffing.Core;
 /// </summary>
 /// <param name="Control">Gets the control source in the comparison.</param>
 /// <param name="Test">Gets the test source in the comparison.</param>
+[StructLayout(LayoutKind.Auto)]
 public readonly record struct Comparison(in ComparisonSource Control, in ComparisonSource Test)
 {
     /// <summary>

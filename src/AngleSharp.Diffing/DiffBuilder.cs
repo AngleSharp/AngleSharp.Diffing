@@ -17,12 +17,12 @@ public class DiffBuilder
     /// <summary>
     /// Gets or sets the control markup string.
     /// </summary>
-    public string Control { get => _control; set => _control = value ?? throw new ArgumentNullException(nameof(Control)); }
+    public string Control { get => _control; set => _control = value ?? throw new ArgumentNullException(nameof(value)); }
 
     /// <summary>
     /// Gets or sets the test markup string.
     /// </summary>
-    public string Test { get => _test; set => _test = value ?? throw new ArgumentNullException(nameof(Test)); }
+    public string Test { get => _test; set => _test = value ?? throw new ArgumentNullException(nameof(value)); }
 
     private DiffBuilder(string control)
     {

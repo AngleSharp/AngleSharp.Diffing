@@ -65,7 +65,7 @@ public class ComparisonTest : DiffingTestBase
         var test = ToAttributeComparisonSource(@"<br foo=""bar"">", "foo");
         var comparison = new AttributeComparison(control, test);
 
-        var (actualCtrlElm, actualTestElm) = comparison.GetAttributeElements();
+        var (actualCtrlElm, actualTestElm) = comparison.AttributeElements;
 
         actualCtrlElm.ShouldBe(control.ElementSource.Node);
         actualTestElm.ShouldBe(test.ElementSource.Node);
@@ -135,7 +135,7 @@ public class AttributeComparisonTest : DiffingTestBase
         var test = ToAttributeComparisonSource(@"<br foo=""bar"">", "foo");
         var comparison = new AttributeComparison(control, test);
 
-        var (actualCtrlElm, actualTestElm) = comparison.GetAttributeElements();
+        var (actualCtrlElm, actualTestElm) = comparison.AttributeElements;
 
         actualCtrlElm.ShouldBe(control.ElementSource.Node);
         actualTestElm.ShouldBe(test.ElementSource.Node);

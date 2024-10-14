@@ -4,11 +4,18 @@ public abstract class DiffingTestBase : IClassFixture<DiffingTestFixture>
 {
     private readonly DiffingTestFixture _testFixture;
 
+
+    public static readonly TheoryData<CompareResult> SameAndSkipCompareResult = new()
+    {
+        CompareResult.Same,
+        CompareResult.Skip,
+    };
+
     protected IDiffContext DummyContext { get; } = new DiffContext(default(IElement), default(IElement));
 
     protected INodeList EmptyNodeList => ToNodeList("");
 
-    public DiffingTestBase(DiffingTestFixture fixture)
+    protected DiffingTestBase(DiffingTestFixture fixture)
     {
         _testFixture = fixture;
     }
@@ -68,10 +75,4 @@ public abstract class DiffingTestBase : IClassFixture<DiffingTestFixture>
         var source = ToComparisonSource(html, sourceType);
         return new SourceMap(source);
     }
-
-    public static TheoryData<CompareResult> SameAndSkipCompareResult = new TheoryData<CompareResult>
-    {
-        CompareResult.Same,
-        CompareResult.Skip,
-    };
 }

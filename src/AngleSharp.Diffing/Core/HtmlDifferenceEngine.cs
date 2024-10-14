@@ -90,13 +90,13 @@ public class HtmlDifferenceEngine
         if (compareRes.Decision.HasFlag(CompareDecision.Different))
         {
             IDiff diff = compareRes.Diff ?? new NodeDiff(comparison);
-            return new[] { diff };
+            return [diff];
         }
 
         return Array.Empty<IDiff>();
     }
 
-    private IEnumerable<IDiff> CompareElement(in Comparison comparison)
+    private List<IDiff> CompareElement(in Comparison comparison)
     {
         var result = new List<IDiff>();
 

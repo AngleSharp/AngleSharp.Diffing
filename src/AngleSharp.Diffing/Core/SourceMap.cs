@@ -6,8 +6,8 @@ namespace AngleSharp.Diffing.Core;
 [SuppressMessage("Naming", "CA1710:Identifiers should have correct suffix")]
 public class SourceMap : IEnumerable<AttributeComparisonSource>
 {
-    private readonly HashSet<string> _matched = new HashSet<string>();
-    private readonly Dictionary<string, AttributeComparisonSource> _sources = new Dictionary<string, AttributeComparisonSource>();
+    private readonly HashSet<string> _matched = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, AttributeComparisonSource> _sources = new(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
     /// Gets the type of the sources in the collection.

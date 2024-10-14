@@ -451,7 +451,7 @@ public class HtmlDifferenceEngineTest : DiffingEngineTestBase
     private static Func<IDiffContext, SourceCollection, SourceCollection, IEnumerable<Comparison>> SpecificIndexNodeMatcher(int index)
         => (ctx, controlNodes, testNodes) =>
         {
-            return new List<Comparison> { new Comparison(controlNodes[index], testNodes[index]) };
+            return new List<Comparison> { new(controlNodes[index], testNodes[index]) };
         };
 
     private static IEnumerable<Comparison> OneToOneNodeListMatcher(
@@ -477,7 +477,7 @@ public class HtmlDifferenceEngineTest : DiffingEngineTestBase
     {
         return (ctx, ctrlAttrs, testAttrs) => new List<AttributeComparison>
         {
-            new AttributeComparison(ctrlAttrs[matchAttrName], testAttrs[matchAttrName] )
+            new(ctrlAttrs[matchAttrName], testAttrs[matchAttrName] )
         };
     }
 
@@ -510,14 +510,14 @@ public class HtmlDifferenceEngineTest : DiffingEngineTestBase
     #endregion
 
     #region CustomDiff
-    public record CustomNodeDiff : NodeDiff
+    public sealed record CustomNodeDiff : NodeDiff
     {
         public CustomNodeDiff(in Comparison comparison) : base(comparison)
         {
         }
     }
 
-    public record CustomAttrDiff : AttrDiff
+    public sealed record CustomAttrDiff : AttrDiff
     {
         public CustomAttrDiff(in AttributeComparison comparison) : base(comparison, AttrDiffKind.Unspecified)
         {
