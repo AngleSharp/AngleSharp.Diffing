@@ -1,4 +1,5 @@
 using AngleSharp.Diffing.Core.Diffs;
+using AngleSharp.Diffing.Strategies.AttributeStrategies;
 
 namespace AngleSharp.Diffing.Core;
 
@@ -160,7 +161,13 @@ public class HtmlDifferenceEngine
 
         void UpdateUnmatchedTracking()
         {
-            Context.MissingAttributeSources.AddRange(controls.GetUnmatched());
+            // Filter out unmatched :ignore attributes, they were meant to be ignored after all
+            // https://github.com/AngleSharp/AngleSharp.Diffing/issues/48
+            var controlsUnmatched = controls
+                .GetUnmatched()
+                .Where(c => !IgnoreAttributeComparer.IsIgnoreAttribute(c.Attribute));
+
+            Context.MissingAttributeSources.AddRange(controlsUnmatched);
             Context.UnexpectedAttributeSources.AddRange(tests.GetUnmatched());
         }
     }

@@ -116,4 +116,17 @@ public class DiffBuilderTest
 
         diffs.ShouldBeEmpty();
     }
+
+    [Theory(DisplayName = "When a control element has 'class:ignore', elements with and without class should return empty diffs")]
+    [InlineData("<div class=\"ian-fleming\"></div>")]
+    [InlineData("<div class=\"\"></div>")]
+    [InlineData("<div class></div>")]
+    [InlineData("<div></div>")]
+    public void Test007(string testHtml)
+    {
+        var controlHtml = "<div class:ignore></div>";
+        var diffs = DiffBuilder.Compare(controlHtml).WithTest(testHtml).Build();
+        Assert.Empty(diffs);
+    }
+
 }

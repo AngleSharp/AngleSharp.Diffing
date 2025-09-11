@@ -15,8 +15,13 @@ public static class IgnoreAttributeComparer
         if (currentDecision.IsSameOrSkip)
             return currentDecision;
 
-        return comparison.Control.Attribute.Name.EndsWith(DIFF_IGNORE_POSTFIX, StringComparison.OrdinalIgnoreCase)
+        return IsIgnoreAttribute(comparison.Control.Attribute)
             ? CompareResult.Same
             : currentDecision;
+    }
+
+    public static bool IsIgnoreAttribute(IAttr source)
+    {
+        return source.Name.EndsWith(DIFF_IGNORE_POSTFIX,  StringComparison.OrdinalIgnoreCase);
     }
 }

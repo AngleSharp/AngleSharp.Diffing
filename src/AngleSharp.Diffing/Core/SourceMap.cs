@@ -70,7 +70,7 @@ public class SourceMap : IEnumerable<AttributeComparisonSource>
     {
         foreach (var source in _sources.Values)
         {
-            if (!_matched.Contains(source.Attribute.Name))
+            if (IsUnmatched(source.Attribute.Name))
                 yield return source;
         }
     }
