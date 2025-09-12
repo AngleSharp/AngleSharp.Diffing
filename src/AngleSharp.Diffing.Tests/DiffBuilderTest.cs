@@ -117,14 +117,22 @@ public class DiffBuilderTest
         diffs.ShouldBeEmpty();
     }
 
-    [Theory(DisplayName = "When a control element has 'class:ignore', elements with and without class should return empty diffs")]
-    [InlineData("<div class=\"ian-fleming\"></div>")]
-    [InlineData("<div class=\"\"></div>")]
-    [InlineData("<div class></div>")]
-    [InlineData("<div></div>")]
-    public void Test007(string testHtml)
+    [Theory(DisplayName =
+        "When a control element has ':ignore', elements with and without that attribute should return empty diffs")]
+    [InlineData("<div class:ignore></div>", "<div class=\"ian-fleming\"></div>")]
+    [InlineData("<div class:ignore></div>", "<div class=\"\"></div>")]
+    [InlineData("<div class:ignore></div>", "<div class></div>")]
+    [InlineData("<div class:ignore></div>", "<div></div>")]
+    [InlineData("<input required:ignore/>", "<input required=\"required\"/>")]
+    [InlineData("<input required:ignore/>", "<input required=\"\"/>")]
+    [InlineData("<input required:ignore/>", "<input required/>")]
+    [InlineData("<input required:ignore/>", "<input/>")]
+    [InlineData("<button onclick:ignore/></button>", "<button onclick=\"alert(1)\"></button>")]
+    [InlineData("<button onclick:ignore/></button>", "<button/></button>")]
+    [InlineData("<a aria-disabled:ignore/></a>", "<a aria-disabled=\"true\"/></a>")]
+    [InlineData("<a aria-disabled:ignore/></a>", "<a/></a>")]
+    public void Test007(string controlHtml, string testHtml)
     {
-        var controlHtml = "<div class:ignore></div>";
         var diffs = DiffBuilder.Compare(controlHtml).WithTest(testHtml).Build();
         Assert.Empty(diffs);
     }
