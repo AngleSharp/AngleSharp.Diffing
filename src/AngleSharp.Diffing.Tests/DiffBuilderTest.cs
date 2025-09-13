@@ -1,3 +1,8 @@
+using AngleSharp.Diffing.Strategies;
+using AngleSharp.Diffing.Strategies.AttributeStrategies;
+using AngleSharp.Diffing.Strategies.TextNodeStrategies;
+using AngleSharp.Diffing.TestData;
+
 namespace AngleSharp.Diffing;
 
 
@@ -119,22 +124,35 @@ public class DiffBuilderTest
 
     [Theory(DisplayName =
         "When a control element has ':ignore', elements with and without that attribute should return empty diffs")]
-    [InlineData("<div class:ignore></div>", "<div class=\"ian-fleming\"></div>")]
-    [InlineData("<div class:ignore></div>", "<div class=\"\"></div>")]
-    [InlineData("<div class:ignore></div>", "<div class></div>")]
-    [InlineData("<div class:ignore></div>", "<div></div>")]
-    [InlineData("<input required:ignore/>", "<input required=\"required\"/>")]
-    [InlineData("<input required:ignore/>", "<input required=\"\"/>")]
-    [InlineData("<input required:ignore/>", "<input required/>")]
-    [InlineData("<input required:ignore/>", "<input/>")]
-    [InlineData("<button onclick:ignore/></button>", "<button onclick=\"alert(1)\"></button>")]
-    [InlineData("<button onclick:ignore/></button>", "<button/></button>")]
-    [InlineData("<a aria-disabled:ignore/></a>", "<a aria-disabled=\"true\"/></a>")]
-    [InlineData("<a aria-disabled:ignore/></a>", "<a/></a>")]
+    [MemberData(nameof(IgnoreAttributeTestData.ControlAndHtmlData), MemberType = typeof(IgnoreAttributeTestData))]
     public void Test007(string controlHtml, string testHtml)
     {
         var diffs = DiffBuilder.Compare(controlHtml).WithTest(testHtml).Build();
         Assert.Empty(diffs);
     }
 
+    [Theory(DisplayName =
+        "When a control element has ':ignore', but IgnoreAttributeComparer is not active, diffs should be found")]
+    [MemberData(nameof(IgnoreAttributeTestData.ControlHtmlAndDiffData), MemberType = typeof(IgnoreAttributeTestData))]
+    public void Test008(string controlHtml, string testHtml, DiffResult expectedDiffResult)
+    {
+        var diffs = DiffBuilder
+            .Compare(controlHtml)
+            .WithTest(testHtml)
+            .WithOptions(a => a // Most important thing to note here is we do not have a ignore attribute comparer
+                .AddSearchingNodeMatcher()
+                .AddAttributeNameMatcher()
+                .AddElementComparer(enforceTagClosing: false)
+                .AddMatcher(PostfixedAttributeMatcher.Match, StrategyType.Specialized)
+                .AddComparer(AttributeComparer.Compare, StrategyType.Generalized)
+                .AddClassAttributeComparer()
+                .AddBooleanAttributeComparer(BooleanAttributeComparision.Strict)
+                .AddStyleAttributeComparer())
+            .Build()
+            .ToList();
+
+        Assert.Single(diffs);
+        Assert.Equal(DiffTarget.Attribute, diffs[0].Target);
+        Assert.Equal(expectedDiffResult, diffs[0].Result);
+    }
 }
