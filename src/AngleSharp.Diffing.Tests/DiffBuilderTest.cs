@@ -141,7 +141,7 @@ public class DiffBuilderTest
             .WithTest(testHtml)
             .WithOptions(a => a // Most important thing to note here is we do not have a ignore attribute comparer
                 .AddSearchingNodeMatcher()
-                .AddAttributeNameMatcher()
+                .AddMatcher(AttributeNameMatcher.Match, StrategyType.Generalized)
                 .AddElementComparer(enforceTagClosing: false)
                 .AddMatcher(PostfixedAttributeMatcher.Match, StrategyType.Specialized)
                 .AddComparer(AttributeComparer.Compare, StrategyType.Generalized)

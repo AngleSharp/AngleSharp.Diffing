@@ -161,13 +161,7 @@ public class HtmlDifferenceEngine
 
         void UpdateUnmatchedTracking()
         {
-            // Filter out unmatched :ignore attributes, they were meant to be ignored after all
-            // https://github.com/AngleSharp/AngleSharp.Diffing/issues/48
-            var controlsUnmatched = controls
-                .GetUnmatched()
-                .Where(c => !IgnoreAttributeComparer.IsIgnoreAttribute(c.Attribute));
-
-            Context.MissingAttributeSources.AddRange(controlsUnmatched);
+            Context.MissingAttributeSources.AddRange(controls.GetUnmatched());
             Context.UnexpectedAttributeSources.AddRange(tests.GetUnmatched());
         }
     }
