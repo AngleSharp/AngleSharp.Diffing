@@ -3,9 +3,22 @@
 /// <summary>
 /// Ignore Attribute matcher strategy.
 /// </summary>
-public static class IgnoreAttributeMatcher
+public static class IgnoreAttributeStrategy
 {
     private const string DIFF_IGNORE_POSTFIX = ":ignore";
+
+    /// <summary>
+    /// The ignore attribute comparer.
+    /// </summary>
+    public static CompareResult Compare(in AttributeComparison comparison, CompareResult currentDecision)
+    {
+        if (currentDecision.IsSameOrSkip)
+            return currentDecision;
+
+        return IsIgnoreAttribute(comparison.Control.Attribute)
+            ? CompareResult.Same
+            : currentDecision;
+    }
 
     /// <summary>
     /// Attribute name matcher strategy.
@@ -25,5 +38,10 @@ public static class IgnoreAttributeMatcher
             if (control.Attribute.Name.EndsWith(DIFF_IGNORE_POSTFIX, StringComparison.OrdinalIgnoreCase))
                 yield return new AttributeComparison(control, control);
         }
+    }
+
+    private static bool IsIgnoreAttribute(IAttr source)
+    {
+        return source.Name.EndsWith(DIFF_IGNORE_POSTFIX,  StringComparison.OrdinalIgnoreCase);
     }
 }

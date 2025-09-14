@@ -3,6 +3,7 @@
 /// <summary>
 /// Represents the ignore attribute comparer.
 /// </summary>
+[Obsolete("Has been moved to IgnoreAttributeStrategy")]
 public static class IgnoreAttributeComparer
 {
     private const string DIFF_IGNORE_POSTFIX = ":ignore";
@@ -20,8 +21,8 @@ public static class IgnoreAttributeComparer
             : currentDecision;
     }
 
-    public static bool IsIgnoreAttribute(IAttr source)
+    private static bool IsIgnoreAttribute(IAttr source)
     {
-        return source.Name.EndsWith(DIFF_IGNORE_POSTFIX,  StringComparison.OrdinalIgnoreCase);
+        return source.Name.EndsWith(DIFF_IGNORE_POSTFIX, StringComparison.OrdinalIgnoreCase);
     }
 }
