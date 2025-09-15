@@ -10,9 +10,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E8E3C8B4-92C3-4DB7-B920-D28651E24A57}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
-		..\tools\anglesharp.cake = ..\tools\anglesharp.cake
-		..\build.cake = ..\build.cake
 		..\build.ps1 = ..\build.ps1
+		..\build.sh = ..\build.sh
 		..\CHANGELOG.md = ..\CHANGELOG.md
 		Directory.Build.props = Directory.Build.props
 		..\README.md = ..\README.md

@@ -1,99 +1,67 @@
 #!/usr/bin/env bash
-###############################################################
-# This is a modern .NET build script that replaces the legacy
-# Cake-based build system to avoid mono dependency on Linux.
-###############################################################
+
+bash --version 2>&1 | head -n 1
 
 set -eo pipefail
+SCRIPT_DIR=$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)
 
-# Define directories.
-SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-SRC_DIR=$SCRIPT_DIR/src
-SOLUTION_FILE=$SRC_DIR/AngleSharp.Diffing.sln
+###########################################################################
+# CONFIGURATION
+###########################################################################
 
-# Define default arguments.
-TARGET="Default"
-CONFIGURATION="Release"
-VERBOSITY="minimal"
-SHOW_VERSION=false
+BUILD_PROJECT_FILE="$SCRIPT_DIR/nuke/_build.csproj"
+TEMP_DIRECTORY="$SCRIPT_DIR//.nuke/temp"
 
-# Parse arguments.
-while [[ $# -gt 0 ]]; do
-    case $1 in
-        -t|--target) TARGET="$2"; shift 2 ;;
-        -c|--configuration) CONFIGURATION="$2"; shift 2 ;;
-        -v|--verbosity) VERBOSITY="$2"; shift 2 ;;
-        --version) SHOW_VERSION=true; shift ;;
-        --) shift; break ;;
-        *) shift ;;
-    esac
-done
+DOTNET_GLOBAL_FILE="$SCRIPT_DIR//global.json"
+DOTNET_INSTALL_URL="https://dot.net/v1/dotnet-install.sh"
+DOTNET_CHANNEL="STS"
 
-# Show dotnet version if requested
-if $SHOW_VERSION; then
-    dotnet --version
-    exit 0
-fi
+export DOTNET_CLI_TELEMETRY_OPTOUT=1
+export DOTNET_NOLOGO=1
 
-echo "Building AngleSharp.Diffing with target '$TARGET' and configuration '$CONFIGURATION'"
+###########################################################################
+# EXECUTION
+###########################################################################
 
-# Ensure we have dotnet CLI available
-if ! command -v dotnet &> /dev/null; then
-    echo "Error: dotnet CLI is not installed or not in PATH"
-    exit 1
-fi
+function FirstJsonValue {
+    perl -nle 'print $1 if m{"'"$1"'": "([^"]+)",?}' <<< "${@:2}"
+}
 
-echo "Using .NET SDK version: $(dotnet --version)"
+# If dotnet CLI is installed globally and it matches requested version, use for execution
+if [ -x "$(command -v dotnet)" ] && dotnet --version &>/dev/null; then
+    export DOTNET_EXE="$(command -v dotnet)"
+else
+    # Download install script
+    DOTNET_INSTALL_FILE="$TEMP_DIRECTORY/dotnet-install.sh"
+    mkdir -p "$TEMP_DIRECTORY"
+    curl -Lsfo "$DOTNET_INSTALL_FILE" "$DOTNET_INSTALL_URL"
+    chmod +x "$DOTNET_INSTALL_FILE"
 
-# Change to source directory
-cd $SRC_DIR
-
-# Build based on target
-case $TARGET in
-    "Clean")
-        echo "Cleaning build artifacts..."
-        dotnet clean $SOLUTION_FILE --configuration $CONFIGURATION --verbosity $VERBOSITY
-        ;;
-    "Restore"|"Restore-Packages")
-        echo "Restoring NuGet packages..."
-        dotnet restore $SOLUTION_FILE --verbosity $VERBOSITY
-        ;;
-    "Build")
-        echo "Building solution..."
-        dotnet build $SOLUTION_FILE --configuration $CONFIGURATION --verbosity $VERBOSITY
-        ;;
-    "Test"|"Run-Unit-Tests")
-        echo "Running tests..."
-        dotnet test $SOLUTION_FILE --configuration $CONFIGURATION --verbosity $VERBOSITY
-        ;;
-    "Package"|"Create-Package")
-        echo "Building and creating packages..."
-        dotnet build $SOLUTION_FILE --configuration $CONFIGURATION --verbosity $VERBOSITY
-        dotnet pack $SOLUTION_FILE --configuration $CONFIGURATION --no-build --verbosity $VERBOSITY
-        ;;
-    "Publish"|"Publish-Package")
-        echo "Building, testing, and publishing packages..."
-        dotnet build $SOLUTION_FILE --configuration $CONFIGURATION --verbosity $VERBOSITY
-        dotnet test $SOLUTION_FILE --configuration $CONFIGURATION --no-build --verbosity $VERBOSITY
-        dotnet pack $SOLUTION_FILE --configuration $CONFIGURATION --no-build --verbosity $VERBOSITY
-        
-        # Publish to NuGet if API key is available
-        if [ ! -z "$NUGET_API_KEY" ]; then
-            echo "Publishing packages to NuGet..."
-            for nupkg in $(find . -name "*.nupkg" -not -path "*/bin/Debug/*"); do
-                echo "Publishing $nupkg"
-                dotnet nuget push "$nupkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
-            done
-        else
-            echo "NUGET_API_KEY not set, skipping NuGet publish"
+    # If global.json exists, load expected version
+    if [[ -f "$DOTNET_GLOBAL_FILE" ]]; then
+        DOTNET_VERSION=$(FirstJsonValue "version" "$(cat "$DOTNET_GLOBAL_FILE")")
+        if [[ "$DOTNET_VERSION" == ""  ]]; then
+            unset DOTNET_VERSION
         fi
-        ;;
-    "Default"|*)
-        echo "Running default build (build + test + package)..."
-        dotnet build $SOLUTION_FILE --configuration $CONFIGURATION --verbosity $VERBOSITY
-        dotnet test $SOLUTION_FILE --configuration $CONFIGURATION --no-build --verbosity $VERBOSITY
-        dotnet pack $SOLUTION_FILE --configuration $CONFIGURATION --no-build --verbosity $VERBOSITY
-        ;;
-esac
+    fi
 
-echo "Build completed successfully!"
+    # Install by channel or version
+    DOTNET_DIRECTORY="$TEMP_DIRECTORY/dotnet-unix"
+    if [[ -z ${DOTNET_VERSION+x} ]]; then
+        "$DOTNET_INSTALL_FILE" --install-dir "$DOTNET_DIRECTORY" --channel "$DOTNET_CHANNEL" --no-path
+    else
+        "$DOTNET_INSTALL_FILE" --install-dir "$DOTNET_DIRECTORY" --version "$DOTNET_VERSION" --no-path
+    fi
+    export DOTNET_EXE="$DOTNET_DIRECTORY/dotnet"
+    export PATH="$DOTNET_DIRECTORY:$PATH"
+fi
+
+echo "Microsoft (R) .NET SDK version $("$DOTNET_EXE" --version)"
+
+if [[ ! -z ${NUKE_ENTERPRISE_TOKEN+x} && "$NUKE_ENTERPRISE_TOKEN" != "" ]]; then
+    "$DOTNET_EXE" nuget remove source "nuke-enterprise" &>/dev/null || true
+    "$DOTNET_EXE" nuget add source "https://f.feedz.io/nuke/enterprise/nuget" --name "nuke-enterprise" --username "PAT" --password "$NUKE_ENTERPRISE_TOKEN" --store-password-in-clear-text &>/dev/null || true
+fi
+
+"$DOTNET_EXE" build "$BUILD_PROJECT_FILE" /nodeReuse:false /p:UseSharedCompilation=false -nologo -clp:NoSummary --verbosity quiet
+"$DOTNET_EXE" run --project "$BUILD_PROJECT_FILE" --no-build -- "$@"

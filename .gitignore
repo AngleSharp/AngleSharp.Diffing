@@ -348,3 +348,9 @@ ASALocalRun/
 healthchecksdb
 
 *.ncrunchsolution
+
+# Nuke build artifacts
+.nuke/temp/
+bin/
+nuke/bin/
+nuke/obj/
