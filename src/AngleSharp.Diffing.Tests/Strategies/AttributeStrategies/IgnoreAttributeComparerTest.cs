@@ -17,7 +17,7 @@ public class IgnoreAttributeComparerTest : DiffingTestBase
             @"<p foo=""bar""></p>", "foo"
         );
 
-        IgnoreAttributeComparer
+        IgnoreAttributeStrategy
             .Compare(comparison, currentResult)
             .ShouldBe(currentResult);
     }
@@ -30,8 +30,8 @@ public class IgnoreAttributeComparerTest : DiffingTestBase
             @"<p foo=""bar""></p>", "foo"
         );
 
-        IgnoreAttributeComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
-        IgnoreAttributeComparer.Compare(comparison, CompareResult.Same).ShouldBe(CompareResult.Same);
+        IgnoreAttributeStrategy.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.Different);
+        IgnoreAttributeStrategy.Compare(comparison, CompareResult.Same).ShouldBe(CompareResult.Same);
     }
 
     [Fact(DisplayName = "When a attribute does contain have the ':ignore' postfix, Same is returned")]
@@ -42,6 +42,6 @@ public class IgnoreAttributeComparerTest : DiffingTestBase
             @"<p foo=""baz""></p>", "foo"
         );
 
-        IgnoreAttributeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Same);
+        IgnoreAttributeStrategy.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Same);
     }
 }
