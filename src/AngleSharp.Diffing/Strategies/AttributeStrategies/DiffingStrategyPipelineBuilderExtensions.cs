@@ -23,6 +23,7 @@ public static partial class DiffingStrategyPipelineBuilderExtensions
     public static IDiffingStrategyCollection AddAttributeNameMatcher(this IDiffingStrategyCollection builder)
     {
         builder.AddMatcher(AttributeNameMatcher.Match, StrategyType.Generalized);
+        builder.AddMatcher(IgnoreAttributeStrategy.Match, StrategyType.Generalized);
         return builder;
     }
 
@@ -33,7 +34,7 @@ public static partial class DiffingStrategyPipelineBuilderExtensions
     {
         builder.AddMatcher(PostfixedAttributeMatcher.Match, StrategyType.Specialized);
         builder.AddComparer(AttributeComparer.Compare, StrategyType.Generalized);
-        builder.AddComparer(IgnoreAttributeComparer.Compare, StrategyType.Specialized);
+        builder.AddComparer(IgnoreAttributeStrategy.Compare, StrategyType.Specialized);
         return builder;
     }
 

@@ -1,3 +1,8 @@
+using AngleSharp.Diffing.Strategies;
+using AngleSharp.Diffing.Strategies.AttributeStrategies;
+using AngleSharp.Diffing.Strategies.TextNodeStrategies;
+using AngleSharp.Diffing.TestData;
+
 namespace AngleSharp.Diffing;
 
 
@@ -115,5 +120,39 @@ public class DiffBuilderTest
             .ToList();
 
         diffs.ShouldBeEmpty();
+    }
+
+    [Theory(DisplayName =
+        "When a control element has ':ignore', elements with and without that attribute should return empty diffs")]
+    [MemberData(nameof(IgnoreAttributeTestData.ControlAndHtmlData), MemberType = typeof(IgnoreAttributeTestData))]
+    public void Test007(string controlHtml, string testHtml)
+    {
+        var diffs = DiffBuilder.Compare(controlHtml).WithTest(testHtml).Build();
+        Assert.Empty(diffs);
+    }
+
+    [Theory(DisplayName =
+        "When a control element has ':ignore', but IgnoreAttributeComparer is not active, diffs should be found")]
+    [MemberData(nameof(IgnoreAttributeTestData.ControlHtmlAndDiffData), MemberType = typeof(IgnoreAttributeTestData))]
+    public void Test008(string controlHtml, string testHtml, DiffResult expectedDiffResult)
+    {
+        var diffs = DiffBuilder
+            .Compare(controlHtml)
+            .WithTest(testHtml)
+            .WithOptions(a => a // Most important thing to note here is we do not have a ignore attribute comparer
+                .AddSearchingNodeMatcher()
+                .AddMatcher(AttributeNameMatcher.Match, StrategyType.Generalized)
+                .AddElementComparer(enforceTagClosing: false)
+                .AddMatcher(PostfixedAttributeMatcher.Match, StrategyType.Specialized)
+                .AddComparer(AttributeComparer.Compare, StrategyType.Generalized)
+                .AddClassAttributeComparer()
+                .AddBooleanAttributeComparer(BooleanAttributeComparision.Strict)
+                .AddStyleAttributeComparer())
+            .Build()
+            .ToList();
+
+        Assert.Single(diffs);
+        Assert.Equal(DiffTarget.Attribute, diffs[0].Target);
+        Assert.Equal(expectedDiffResult, diffs[0].Result);
     }
 }
