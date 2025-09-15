@@ -1,0 +1,9 @@
+<!-- This file is required to suppress the parent Directory.Build.targets -->
+
+<Project>
+
+  <Target Name="SignAssembly" />
+
+  <Target Name="SignAssemblyAttribute" />
+
+</Project>

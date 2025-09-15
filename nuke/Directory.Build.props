@@ -1,0 +1,11 @@
+<!-- This file is required to suppress the parent Directory.Build.props -->
+
+<Project>
+
+  <PropertyGroup>
+    <UseSharedCompilation>false</UseSharedCompilation>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+
+</Project>
