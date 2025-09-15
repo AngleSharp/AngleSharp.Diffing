@@ -20,8 +20,6 @@ DRYRUN=
 SHOW_VERSION=false
 SCRIPT_ARGUMENTS=()
 
-sudo apt install mono-devel # ubuntu-latest does not come with mono pre-installed anymore.
-
 # Parse arguments.
 for i in "$@"; do
     case $1 in
