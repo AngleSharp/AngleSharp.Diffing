@@ -1,3 +1,7 @@
+# 1.1.0
+
+- An ':ignore' marked attributes will no longer show up as a diff if the ignored attribute was NOT found in the test html. By [@RiRiSharp](https://github.com/RiRiSharp).
+
 # 1.0.0
 
 - Enabled using `diff:ignoreAttributes` and `diff:ignoreChildren` together on the same element.
