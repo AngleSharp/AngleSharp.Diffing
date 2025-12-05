@@ -30,5 +30,17 @@ public enum CompareDecision
     /// Use when the comparison should skip any attributes.
     /// </summary>
     SkipAttributes = 16,
+    /// <summary>
+    /// Use when the comparison is different and should skip children.
+    /// </summary>
+    DifferentAndSkipChildren = Different | SkipChildren,
+    /// <summary>
+    /// Use when the comparison is different and should skip attributes.
+    /// </summary>
+    DifferentAndSkipAttributes = Different | SkipAttributes,
+    /// <summary>
+    /// Use when the comparison is different and should skip both children and attributes.
+    /// </summary>
+    DifferentAndSkipChildrenAndSkipAttributes = Different | SkipChildren | SkipAttributes,
 }
 

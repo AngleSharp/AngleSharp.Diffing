@@ -47,4 +47,24 @@ public class IgnoreChildrenElementComparerTest : DiffingTestBase
         IgnoreChildrenElementComparer.Compare(comparison, CompareResult.SkipAttributes).ShouldBe(CompareResult.SkipChildrenAndAttributes);
         IgnoreChildrenElementComparer.Compare(comparison, CompareResult.SkipChildren).ShouldBe(CompareResult.SkipChildren);
     }
+
+    [Theory(DisplayName = "When control has 'diff:ignoreChildren' and current decision is Different, returns DifferentAndSkipChildren")]
+    [InlineData(@"<p diff:ignoreChildren></p>")]
+    [InlineData(@"<p diff:ignoreChildren=""true""></p>")]
+    public void Test004(string controlHtml)
+    {
+        var comparison = ToComparison(controlHtml, "<p></p>");
+
+        IgnoreChildrenElementComparer.Compare(comparison, CompareResult.Different).ShouldBe(CompareResult.DifferentAndSkipChildren);
+    }
+
+    [Theory(DisplayName = "When control has 'diff:ignoreChildren' and current decision is DifferentAndSkipAttributes, returns DifferentAndSkipChildrenAndSkipAttributes")]
+    [InlineData(@"<p diff:ignoreChildren></p>")]
+    [InlineData(@"<p diff:ignoreChildren=""true""></p>")]
+    public void Test005(string controlHtml)
+    {
+        var comparison = ToComparison(controlHtml, "<p></p>");
+
+        IgnoreChildrenElementComparer.Compare(comparison, CompareResult.DifferentAndSkipAttributes).ShouldBe(CompareResult.DifferentAndSkipChildrenAndSkipAttributes);
+    }
 }
