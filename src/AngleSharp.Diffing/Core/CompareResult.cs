@@ -33,7 +33,22 @@ public readonly record struct CompareResult(CompareDecision Decision, IDiff? Dif
     public static readonly CompareResult SkipAttributes = new(CompareDecision.SkipAttributes);
 
     /// <summary>
-    /// Use when the comparison should skip any attributes.
+    /// Use when the comparison should skip any attributes but has element differences.
+    /// </summary>
+    public static readonly CompareResult DifferentAndSkipAttributes = new(CompareDecision.Different | CompareDecision.SkipAttributes);
+
+    /// <summary>
+    /// Use when the comparison should skip any attributes and children but has element differences.
+    /// </summary>
+    public static readonly CompareResult DifferentAndSkipChildrenAndSkipAttributes = new(CompareDecision.Different | CompareDecision.SkipChildren | CompareDecision.SkipAttributes);
+
+    /// <summary>
+    /// Use when the comparison should skip children but has element differences.
+    /// </summary>
+    public static readonly CompareResult DifferentAndSkipChildren = new(CompareDecision.Different | CompareDecision.SkipChildren);
+
+    /// <summary>
+    /// Use when the comparison should skip any children and any attributes.
     /// </summary>
     public static readonly CompareResult SkipChildrenAndAttributes = new(CompareDecision.SkipChildren | CompareDecision.SkipAttributes);
 
@@ -50,7 +65,7 @@ public readonly record struct CompareResult(CompareDecision Decision, IDiff? Dif
     public static CompareResult FromDiff(IDiff diff) => new(CompareDecision.Different, diff);
 
     /// <summary>
-    /// Checks if a <see cref="CompareResult"/> is either a <see cref="CompareResult.Same"/> or <see cref="CompareResult.Skip"/>.
+    /// Checks if a <see cref="CompareResult"/> is either a <see cref="CompareDecision.Same"/> or <see cref="CompareDecision.Skip"/>.
     /// </summary>
-    public bool IsSameOrSkip => this == Same || this == Skip;
+    public bool IsSameOrSkip => Decision.HasFlag(CompareDecision.Same) || Decision.HasFlag(CompareDecision.Skip);
 }

@@ -187,7 +187,7 @@ public class HtmlDifferenceEngine
         foreach (var comparison in comparisons)
         {
             var compareRes = _diffingStrategy.Compare(comparison);
-            if (compareRes.Decision == CompareDecision.Different)
+            if (compareRes.Decision.HasFlag(CompareDecision.Different))
             {
                 yield return compareRes.Diff ?? new AttrDiff(comparison, AttrDiffKind.Unspecified);
             }

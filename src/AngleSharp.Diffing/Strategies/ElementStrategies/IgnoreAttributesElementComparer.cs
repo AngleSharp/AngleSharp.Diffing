@@ -22,8 +22,9 @@ public static class IgnoreAttributesElementComparer
         {
             CompareDecision.None => CompareResult.SkipAttributes,
             CompareDecision.Same => CompareResult.SkipAttributes,
-            CompareDecision.Different => CompareResult.SkipAttributes,
+            CompareDecision.Different => CompareResult.DifferentAndSkipAttributes,
             CompareDecision.SkipChildren => CompareResult.SkipChildrenAndAttributes,
+            CompareDecision.DifferentAndSkipChildren => CompareResult.DifferentAndSkipChildrenAndSkipAttributes,
             _ => currentDecision,
         };
     }
