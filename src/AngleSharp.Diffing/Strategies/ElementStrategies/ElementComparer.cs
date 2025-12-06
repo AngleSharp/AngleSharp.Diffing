@@ -41,7 +41,7 @@ public class ElementComparer
             ? CompareResult.Same
             : CompareResult.FromDiff(new ElementDiff(comparison, ElementDiffKind.Name));
 
-        if (EnforceTagClosing && result == CompareResult.Same)
+        if (EnforceTagClosing && result.Decision.HasFlag(CompareDecision.Same))
         {
             if (testElement.SourceReference is not HtmlTagToken testTag)
                 throw new InvalidOperationException("No source reference attached to test element, cannot determine element tag closing style.");
