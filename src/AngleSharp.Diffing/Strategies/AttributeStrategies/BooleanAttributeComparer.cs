@@ -70,9 +70,9 @@ public class BooleanAttributeComparer
             ? CompareStrict(comparison)
             : true;
 
-        return hasSameValue ?
-            CompareResult.Same :
-            CompareResult.FromDiff(new AttrDiff(comparison, AttrDiffKind.Value));
+        return hasSameValue
+            ? CompareResult.Same
+            : CompareResult.FromDiff(new AttrDiff(comparison, AttrDiffKind.Value));
     }
 
     private static bool IsAttributeNamesEqual(in AttributeComparison comparison)

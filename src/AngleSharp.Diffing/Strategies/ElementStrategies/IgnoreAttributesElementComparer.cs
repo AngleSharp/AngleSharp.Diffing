@@ -12,7 +12,7 @@ public static class IgnoreAttributesElementComparer
     /// </summary>
     public static CompareResult Compare(in Comparison comparison, CompareResult currentDecision)
     {
-        if (currentDecision == CompareResult.Skip || currentDecision == CompareResult.SkipAttributes || currentDecision == CompareResult.SkipChildrenAndAttributes)
+        if (currentDecision.Decision.HasFlag(CompareDecision.Skip) || currentDecision.Decision.HasFlag(CompareDecision.SkipAttributes))
             return currentDecision;
 
         if (!ControlHasTruthyIgnoreAttributesAttribute(comparison))
