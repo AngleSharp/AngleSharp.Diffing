@@ -1,3 +1,7 @@
+# 1.1.1
+
+- Fixed marking comaprison results in the pipeline so that strategies down the line see if there is a diff. By [@egil](https://github.com/egil) and [@linkdotnet](https://github.com/linkdotnet).
+
 # 1.1.0
 
 - An ':ignore' marked attributes will no longer show up as a diff if the ignored attribute was NOT found in the test html. By [@RiRiSharp](https://github.com/RiRiSharp).
