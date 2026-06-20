@@ -1,6 +1,10 @@
+# 1.1.2
+
+- Fixed `StyleAttributeComparer` and `OrderingStyleAttributeComparer` throwing a `NullReferenceException` when comparing a `style` attribute on an element that has no inline CSS style declaration — e.g. a non-HTML (SVG/MathML) element, or any element when the browsing context has no CSS parser registered. Such `style` attributes are now compared by their raw value.
+
 # 1.1.1
 
-- Fixed marking comaprison results in the pipeline so that strategies down the line see if there is a diff. By [@egil](https://github.com/egil) and [@linkdotnet](https://github.com/linkdotnet).
+- Fixed marking comparison results in the pipeline so that strategies down the line see if there is a diff. By [@egil](https://github.com/egil) and [@linkdotnet](https://github.com/linkdotnet).
 
 # 1.1.0
 
