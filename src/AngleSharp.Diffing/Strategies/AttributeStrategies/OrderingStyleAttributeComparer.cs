@@ -29,7 +29,16 @@ public static class OrderingStyleAttributeComparer
         var (ctrlElm, testElm) = comparison.AttributeElements;
         var ctrlStyle = ctrlElm.GetStyle();
         var testStyle = testElm.GetStyle();
-        return CompareCssStyleDeclarations(ctrlStyle, testStyle)
+
+        // GetStyle() returns null when an element exposes no inline CSS style declaration — e.g. a non-HTML
+        // (SVG/MathML) element, or any element when the browsing context has no CSS parser registered. Fall
+        // back to comparing the raw style attribute values in that case, so such elements are compared by
+        // value instead of throwing a NullReferenceException.
+        var areEqual = ctrlStyle is not null && testStyle is not null
+            ? CompareCssStyleDeclarations(ctrlStyle, testStyle)
+            : string.Equals(comparison.Control.Attribute.Value, comparison.Test.Attribute.Value, StringComparison.Ordinal);
+
+        return areEqual
             ? CompareResult.Same
             : CompareResult.FromDiff(new AttrDiff(comparison, AttrDiffKind.Value));
     }

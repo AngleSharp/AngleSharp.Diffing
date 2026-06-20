@@ -63,4 +63,19 @@ public class StyleAttributeComparerTest : DiffingTestBase
         var comparison = ToAttributeComparison(control, "style", test, "style");
         StyleAttributeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(CompareResult.Same);
     }
+
+    [Theory(DisplayName = "Style comparison falls back to the raw value when an element has no CSS style declaration (e.g. inline SVG)")]
+    [InlineData(@"<svg style=""color:red"">", @"<svg style=""color:red"">", true)]
+    [InlineData(@"<svg style=""color:red"">", @"<svg style=""color:blue"">", false)]
+    public void Test006(string control, string test, bool expectedSame)
+    {
+        // GetStyle() returns null when the browsing context has no CSS parser; the comparer must not throw.
+        var comparison = CssLessComparisonFactory.ToStyleAttributeComparison(control, test);
+
+        var expected = expectedSame
+            ? CompareResult.Same
+            : CompareResult.FromDiff(new AttrDiff(comparison, AttrDiffKind.Value));
+
+        StyleAttributeComparer.Compare(comparison, CompareResult.Unknown).ShouldBe(expected);
+    }
 }
