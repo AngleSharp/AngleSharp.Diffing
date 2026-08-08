@@ -349,8 +349,8 @@ healthchecksdb
 
 *.ncrunchsolution
 
-# Nuke build artifacts
-.nuke/temp/
+# Fallout build artifacts
+.fallout/temp/
 bin/
-nuke/bin/
-nuke/obj/
+build/bin/
+build/obj/
