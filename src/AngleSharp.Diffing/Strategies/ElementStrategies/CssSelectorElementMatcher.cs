@@ -43,7 +43,7 @@ public static class CssSelectorElementMatcher
         testNode = searchResult.Length switch
         {
             0 => null,
-            1 => searchResult[0],
+            1 => searchResult.First(),
             _ => throw new DiffMatchSelectorReturnedTooManyResultsException($@"The CSS selector ""{cssSelector}"" returned {searchResult.Length} matches from the test node tree. No more than one is allowed.")
         };
 
